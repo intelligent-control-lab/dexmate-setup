@@ -1,0 +1,44 @@
+<section id="gripper-hardware">
+  <div class="sechead"><span class="num">B10</span><h2>夹爪硬件连接</h2><span class="pill">一次性配置</span></div>
+  <h3>1. 连接 assembled 线束</h3>
+  <p>组装好的线束一头是 CAN adapter，两侧分支各有一组 4-pin／6-pin 接口。两侧均将 <strong>6-pin 接夹爪</strong>，<strong>4-pin 接机器人</strong>。</p>
+  <h3>2. 连接腕部相机线</h3>
+  <p>相机线也要连接，<strong>只接偏向内部的一边</strong>，位置见 IMG_9360。</p>
+  <figure class="fig hardware-media"><img src="assets/IMG_9360.jpg" alt="IMG_9360：腕部相机偏向内部的连接位置" loading="lazy"><figcaption>IMG_9360 · 相机线只接偏向内部的一边。</figcaption></figure>
+  <h3>3. 连接 USB，并设置两个开关</h3>
+  <p>CAN adapter 插入机器人的 USB 口。<strong>两个开关都一定要拨向 K 那边</strong>，见 IMG_9369。</p>
+  <figure class="fig hardware-media"><img src="assets/IMG_9369.jpg" alt="IMG_9369：CAN adapter 的两个开关均朝向 K" loading="lazy"><figcaption>IMG_9369 · 两个开关均朝向 K。</figcaption></figure>
+  <h3>整体连接示例</h3>
+  <figure class="fig hardware-media"><img src="assets/IMG_9361.jpg" alt="IMG_9361：夹爪与相机线的整体连接示例" loading="lazy"><figcaption>IMG_9361 · 整体连接示例。</figcaption></figure>
+  <figure class="fig hardware-media"><video controls playsinline preload="none" poster="assets/IMG_9368-poster.jpg" aria-label="IMG_9368 夹爪接线演示"><source src="assets/IMG_9368.mp4" type="video/mp4"><a href="assets/IMG_9368.mp4">播放 IMG_9368</a></video><figcaption>IMG_9368 · 整体连接 walkthrough。</figcaption></figure>
+</section>
+
+<section id="pcb-hardware">
+  <div class="sechead"><span class="num">B11</span><h2>PCB 与相机硬件安装</h2><span class="pill">一次性配置</span></div>
+  <p>参考：<a href="https://docs.waveshare.com/MAX9296-GMSL-Deser-Module/Jetson-Orin">Waveshare MAX9296-GMSL-Deser-Module · Jetson Orin</a>。改线前先断电。</p>
+  <h3>1. 安装采集卡并连接电源</h3>
+  <p>用 kit 自带的铜柱连接采集卡和 PCB，然后接电。红线接 <strong>排针 2、4（5 V）</strong>，地线接 <strong>6（GND）</strong>。这里是 Jetson 的 5 V 排针，不能接夹爪的 24 V 电源。</p>
+  <div class="hardware-grid">
+    <figure class="fig hardware-media"><img src="assets/waveshare-power.webp" alt="Waveshare 采集卡使用 kit 铜柱安装，连接红黑电源线" loading="lazy"><figcaption>Kit 铜柱与电源线连接。图片：Waveshare。</figcaption></figure>
+    <figure class="fig hardware-media"><img src="assets/jetson-pinout.png" alt="Jetson 40-pin 排针定义：2、4 为 5 V，6 为 GND" loading="lazy"><figcaption>排针定义 · 2／4 = 5 V；6 = GND。</figcaption></figure>
+  </div>
+  <h3>2. 设置 CFG 开关为 0100</h3>
+  <p>按板上编号 <strong>1 → 2 → 3 → 4</strong> 读取，依次设置为 <strong>0 → 1 → 0 → 0</strong>。</p>
+  <figure class="fig hardware-media"><img src="assets/waveshare-switch.webp" alt="Waveshare CFG 开关及板上 1、2、3、4 编号" loading="lazy"><figcaption>CFG 开关位置与编号。图片：Waveshare。</figcaption></figure>
+  <h3>3. 更换机器人内的铜柱</h3>
+  <p>拆下机器人的原装铜柱，<strong>妥善保存</strong>。先用 <strong>15 mm 铜柱固定钢架</strong>，再接 <strong>10 mm 铜柱安装剩余的内存／存储组件及风扇</strong>。</p>
+  <figure class="fig hardware-media"><img src="assets/IMG_9276.jpg" alt="IMG_9276：机器人内部安装参考" loading="lazy"><figcaption>IMG_9276 · 内部安装参考。</figcaption></figure>
+  <h3>4. 连接内部腕部相机线</h3>
+  <ul>
+    <li><strong>拿到母母线：</strong>直接拆开内部连接腕部相机的连线，连接到采集卡。</li>
+    <li><strong>拿到公母线：</strong>把机器人后盖上接外部相机的接口拆下，用公母线直连。IMG_9277 walkthrough 演示的就是这种接法。</li>
+  </ul>
+  <figure class="fig hardware-media"><video controls playsinline preload="none" poster="assets/IMG_9277-poster.jpg" aria-label="IMG_9277 内部接线演示"><source src="assets/IMG_9277.mp4" type="video/mp4"><a href="assets/IMG_9277.mp4">播放 IMG_9277</a></video><figcaption>IMG_9277 · 内部接线 walkthrough，使用公母线直连。</figcaption></figure>
+  <h3>5. 更换 CAM1 排线</h3>
+  <p>拆下原来接在 <strong>Jetson CAM1</strong> 上的线，使用 kit 自带的排线连接 <strong>Jetson CAM1 ↔ 采集卡 CSI0</strong>。</p>
+  <div class="hardware-grid">
+    <figure class="fig hardware-media"><img src="assets/jetson-board.jpg" alt="Jetson 载板及相机接口区域参考图" loading="lazy"><figcaption>Jetson 载板参考图。</figcaption></figure>
+    <figure class="fig hardware-media"><img src="assets/waveshare-kit.webp" alt="Waveshare 采集卡、相机及 CSI 排线连接参考" loading="lazy"><figcaption>采集卡与 kit 连接参考。图片：Waveshare。</figcaption></figure>
+  </div>
+  <div class="note"><p><strong>保存好从机器人拆下来的所有零件，包括原装铜柱、接口和线缆，之后归还机器人时还需要使用。</strong></p></div>
+</section>

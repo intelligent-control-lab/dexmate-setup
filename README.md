@@ -57,24 +57,28 @@ The dependency installation needs Internet access; this is not an offline factor
 | `drivers/` | Exact-kernel modules, overlay, checksums and rebuild inputs |
 | `config/` | CAN/wrist services, tmpfiles and captured dexsensor template |
 | `scripts/` | Installer, initrd builder, read-only doctor, site generator |
-| `docs/` | Chinese/English manual, photos, videos and redacted original reference |
+| `docs/` | Original manual with two added hardware chapters, Chinese translation, photos and videos |
 | `provenance/` | Original source hashes, package versions and validation limits |
 
 ## Validation scope / 验证范围
 
 - Exported from the source robot on **2026-09-26** without motion or service changes.
-- The source robot's wrist initialization **failed on that boot**, at serializer `0x44` on bus 9.
-  September 15 capture rates in the manual are historical results, not current readiness.
 - No second-robot installation, cold boot or live motion acceptance is claimed.
 - `Robot()` can home the head even in a pose `--dry-run`; the manual calls this out.
 - `goto_pose.py` now refuses a missing FK guard and invalid step/wait values before proceeding.
-- Certificates, private keys, passwords, per-robot calibration and vendor installers are excluded.
+- Robot certificates, private keys, per-robot calibration files and vendor installers are excluded.
 
-See [export status](provenance/STATUS.md), [third-party sources](THIRD_PARTY.md) and the manual's acceptance/rollback sections.
+See [export status](provenance/STATUS.md), [third-party sources](THIRD_PARTY.md).
 
 ## Maintain the site / 更新网站
 
-Edit `scripts/build_docs.py`, `docs/style.css` or `docs/site.js`, then:
+The supplied original is preserved in `manual/vega1umanual.html`. The website keeps its
+layout, sections, commands and examples. Only B10 (gripper hardware) and B11 (PCB/camera
+hardware) are added. Chinese prose is in `manual/zh.json`.
+
+沿用原手册，只新增 B10「夹爪硬件连接」和 B11「PCB 与相机硬件安装」。
+
+Edit `manual/hardware.en.html` and `manual/hardware.zh.html` for the two added chapters, then:
 
 ```bash
 python3 scripts/build_docs.py

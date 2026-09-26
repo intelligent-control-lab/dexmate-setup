@@ -1,0 +1,44 @@
+<section id="gripper-hardware">
+  <div class="sechead"><span class="num">B10</span><h2>Gripper hardware setup</h2><span class="pill">One-time setup</span></div>
+  <h3>1. Connect the assembled harness</h3>
+  <p>The assembled harness has a CAN adapter at one end and a 4-pin / 6-pin pair on each of its two branches. Connect each <strong>6-pin plug to the gripper</strong> and each <strong>4-pin plug to the robot</strong>.</p>
+  <h3>2. Connect the wrist camera cable</h3>
+  <p>Connect the camera cable as well. Use only the connector on the <strong>inward-facing side</strong>, as shown in IMG_9360.</p>
+  <figure class="fig hardware-media"><img src="assets/IMG_9360.jpg" alt="IMG_9360: inward-facing wrist camera connector" loading="lazy"><figcaption>IMG_9360 · Use the inward-facing camera connection.</figcaption></figure>
+  <h3>3. Connect USB and set both switches</h3>
+  <p>Plug the CAN adapter into a robot USB port. <strong>Both switches must be toward the K side</strong>, as shown in IMG_9369.</p>
+  <figure class="fig hardware-media"><img src="assets/IMG_9369.jpg" alt="IMG_9369: CAN adapter with both switches toward K" loading="lazy"><figcaption>IMG_9369 · Both switches toward K.</figcaption></figure>
+  <h3>Complete assembly</h3>
+  <figure class="fig hardware-media"><img src="assets/IMG_9361.jpg" alt="IMG_9361: completed gripper and camera wiring" loading="lazy"><figcaption>IMG_9361 · Overall wiring example.</figcaption></figure>
+  <figure class="fig hardware-media"><video controls playsinline preload="none" poster="assets/IMG_9368-poster.jpg" aria-label="IMG_9368 gripper wiring walkthrough"><source src="assets/IMG_9368.mp4" type="video/mp4"><a href="assets/IMG_9368.mp4">Play IMG_9368</a></video><figcaption>IMG_9368 · Complete assembly walkthrough.</figcaption></figure>
+</section>
+
+<section id="pcb-hardware">
+  <div class="sechead"><span class="num">B11</span><h2>PCB and camera hardware setup</h2><span class="pill">One-time setup</span></div>
+  <p>Reference: <a href="https://docs.waveshare.com/MAX9296-GMSL-Deser-Module/Jetson-Orin">Waveshare MAX9296-GMSL-Deser-Module · Jetson Orin</a>. Power off before changing connections.</p>
+  <h3>1. Mount the capture board and connect power</h3>
+  <p>Use the brass standoffs supplied in the kit to connect the capture board and PCB, then connect the power cable. Connect the red wires to <strong>header pins 2 and 4 (5 V)</strong>, and ground to <strong>pin 6 (GND)</strong>. These Jetson header pins are 5 V; the grippers' 24 V supply must not be connected here.</p>
+  <div class="hardware-grid">
+    <figure class="fig hardware-media"><img src="assets/waveshare-power.webp" alt="Waveshare capture board mounted on kit standoffs with red and black power leads" loading="lazy"><figcaption>Kit standoffs and power cable. Image: Waveshare.</figcaption></figure>
+    <figure class="fig hardware-media"><img src="assets/jetson-pinout.png" alt="Jetson 40-pin header: pins 2 and 4 are 5V; pin 6 is ground" loading="lazy"><figcaption>Header pinout · 2 / 4 = 5 V; 6 = GND.</figcaption></figure>
+  </div>
+  <h3>2. Set the CFG switches to 0100</h3>
+  <p>Read the switches in their numbered order <strong>1 → 2 → 3 → 4</strong> and set them to <strong>0 → 1 → 0 → 0</strong>.</p>
+  <figure class="fig hardware-media"><img src="assets/waveshare-switch.webp" alt="Waveshare CFG switches and their printed 1 2 3 4 numbering" loading="lazy"><figcaption>CFG switch locations and numbering. Image: Waveshare.</figcaption></figure>
+  <h3>3. Replace the robot's standoffs</h3>
+  <p>Remove and <strong>keep the robot's original brass standoffs</strong>. First secure the steel frame with <strong>15 mm standoffs</strong>, then add <strong>10 mm standoffs</strong> to mount the remaining memory/storage assembly and fan.</p>
+  <figure class="fig hardware-media"><img src="assets/IMG_9276.jpg" alt="IMG_9276: installation inside the robot" loading="lazy"><figcaption>IMG_9276 · Internal installation reference.</figcaption></figure>
+  <h3>4. Connect the internal wrist camera cables</h3>
+  <ul>
+    <li><strong>Female–female cable:</strong> disconnect the existing internal wrist-camera connection and connect it to the capture board.</li>
+    <li><strong>Male–female cable:</strong> remove the external-camera connector from the robot's rear cover and connect directly with the male–female cable. IMG_9277 demonstrates this connection.</li>
+  </ul>
+  <figure class="fig hardware-media"><video controls playsinline preload="none" poster="assets/IMG_9277-poster.jpg" aria-label="IMG_9277 internal wiring walkthrough"><source src="assets/IMG_9277.mp4" type="video/mp4"><a href="assets/IMG_9277.mp4">Play IMG_9277</a></video><figcaption>IMG_9277 · Internal wiring walkthrough, using the male–female cable.</figcaption></figure>
+  <h3>5. Replace the CAM1 ribbon cable</h3>
+  <p>Disconnect the cable originally attached to <strong>Jetson CAM1</strong>. Use the ribbon cable supplied in the kit to connect <strong>Jetson CAM1 ↔ capture board CSI0</strong>.</p>
+  <div class="hardware-grid">
+    <figure class="fig hardware-media"><img src="assets/jetson-board.jpg" alt="Jetson carrier board showing the camera connector area" loading="lazy"><figcaption>Jetson carrier board reference.</figcaption></figure>
+    <figure class="fig hardware-media"><img src="assets/waveshare-kit.webp" alt="Waveshare board and camera kit with CSI ribbon connection" loading="lazy"><figcaption>Capture board and kit connection reference. Image: Waveshare.</figcaption></figure>
+  </div>
+  <div class="note"><p><strong>Keep every part removed from the robot, including the original standoffs, connectors and cables. They will be needed when the robot is returned.</strong></p></div>
+</section>

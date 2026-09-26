@@ -2,6 +2,7 @@
 """Check local HTML assets, fragment links and language section parity."""
 from html.parser import HTMLParser
 from pathlib import Path
+import re
 from urllib.parse import urlsplit, unquote
 
 ROOT = Path(__file__).resolve().parents[1] / "docs"
@@ -27,7 +28,27 @@ class Page(HTMLParser):
                 self.refs.append(attrs[key])
 
 
+def check_original_preserved():
+    original = (ROOT.parent / "manual/vega1umanual.html").read_text()
+    english = (ROOT / "en.html").read_text()
+    chinese = (ROOT / "index.html").read_text()
+    pattern = r'<section id="([^"]+)"[^>]*>.*?</section>'
+    sections = {m.group(1): m.group(0) for m in re.finditer(pattern, original, re.S)}
+    en_sections = {m.group(1): m.group(0) for m in re.finditer(pattern, english, re.S)}
+    zh_sections = {m.group(1): m.group(0) for m in re.finditer(pattern, chinese, re.S)}
+    assert set(en_sections) - set(sections) == {"gripper-hardware", "pcb-hardware"}
+    for ident, source in sections.items():
+        assert en_sections[ident] == source, f"Original chapter rewritten: {ident}"
+        for tag in ("pre", "code"):
+            blocks = rf'<{tag}\b[^>]*>.*?</{tag}>'
+            assert re.findall(blocks, source, re.S) == re.findall(blocks, zh_sections[ident], re.S), (ident, "translated command/code changed")
+    assert re.search(r'<style>.*?</style>', original, re.S).group() in english
+    assert re.search(r'<style>.*?</style>', original, re.S).group() in chinese
+    print(f"PASS: all {len(sections)} original English sections unchanged; Chinese commands and original CSS preserved")
+
+
 def main():
+    check_original_preserved()
     pages = {path.resolve(): Page(path) for path in ROOT.glob("*.html")}
     count = 0
     for path, page in pages.items():
