@@ -1,0 +1,1172 @@
+<div style="padding:22px;background:#fff2d2;border:2px solid #b58c30;font:16px sans-serif"><strong>Historical English field manual • 2026-09-15.</strong> Current installation instructions: <a href="index.html">中文</a> / <a href="en.html">English</a>. Passwords and source robot identifiers have been removed. Historical success and left-cable status are not current acceptance. On 2026-09-26 the wrist initialization service failed to read serializer 0x44. Robot() may move the head even with --dry-run. Latest exported goto_ready.py also commands a reference head pose.</div><title>Vega-1U Field Manual</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ground:#EDF1F3;
+  --surface:#FFFFFF;
+  --surface-2:#F5F8F9;
+  --ink:#111C23;
+  --ink-2:#4B5C67;
+  --ink-3:#7C8D98;
+  --line:#D5DEE2;
+  --line-strong:#B9C6CC;
+  --accent:#0C6C75;
+  --accent-2:#0A555C;
+  --accent-soft:#DCECEE;
+  --danger:#9E2226;
+  --danger-soft:#F9E6E6;
+  --warn:#845506;
+  --warn-soft:#F8EEDA;
+  --ok:#236345;
+  --ok-soft:#DFEFE6;
+  --term-bg:#0E191F;
+  --term-bg-2:#152530;
+  --term-ink:#D5E4EA;
+  --term-ink-2:#8AA3AE;
+  --term-line:#24363F;
+  --term-accent:#63CFD6;
+  --shadow:0 1px 2px rgba(17,28,35,.05),0 8px 24px -16px rgba(17,28,35,.35);
+
+  --f-display:"Archivo",Helvetica,Arial,sans-serif;
+  --f-body:"IBM Plex Sans",Helvetica,Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0C1317;
+    --surface:#121D23;
+    --surface-2:#17242B;
+    --ink:#E3ECF0;
+    --ink-2:#A1B3BD;
+    --ink-3:#6E838E;
+    --line:#25343C;
+    --line-strong:#33454E;
+    --accent:#54C8D1;
+    --accent-2:#7FDDE4;
+    --accent-soft:#103137;
+    --danger:#EE8E8E;
+    --danger-soft:#331819;
+    --warn:#DDAB59;
+    --warn-soft:#31260F;
+    --ok:#6FCB9B;
+    --ok-soft:#112B20;
+    --term-bg:#091218;
+    --term-bg-2:#0E1B22;
+    --term-line:#1E2E36;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0C1317;
+  --surface:#121D23;
+  --surface-2:#17242B;
+  --ink:#E3ECF0;
+  --ink-2:#A1B3BD;
+  --ink-3:#6E838E;
+  --line:#25343C;
+  --line-strong:#33454E;
+  --accent:#54C8D1;
+  --accent-2:#7FDDE4;
+  --accent-soft:#103137;
+  --danger:#EE8E8E;
+  --danger-soft:#331819;
+  --warn:#DDAB59;
+  --warn-soft:#31260F;
+  --ok:#6FCB9B;
+  --ok-soft:#112B20;
+  --term-bg:#091218;
+  --term-bg-2:#0E1B22;
+  --term-line:#1E2E36;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -18px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:15.5px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1160px;margin:0 auto;padding:0 28px 96px}
+
+/* ---------- masthead ---------- */
+.masthead{
+  border-bottom:1px solid var(--line);
+  background:var(--surface);
+  margin:0 -28px 44px;
+  padding:44px 28px 0;
+}
+.masthead-inner{max-width:1160px;margin:0 auto}
+.eyebrow{
+  font-family:var(--f-mono);
+  font-size:11.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  margin:0 0 14px;
+}
+h1{
+  font-family:var(--f-display);
+  font-weight:800;
+  font-size:clamp(34px,5.2vw,52px);
+  line-height:1.06;
+  letter-spacing:-.025em;
+  margin:0 0 14px;
+  text-wrap:balance;
+}
+.standfirst{
+  max-width:64ch;color:var(--ink-2);margin:0 0 30px;font-size:16.5px;
+}
+.idcard{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(178px,1fr));
+  border-top:1px solid var(--line);
+  margin:0 -28px;
+  padding:0 28px;
+}
+.idcard div{
+  padding:16px 20px 18px 0;
+  border-right:1px solid var(--line);
+}
+.idcard div:last-child{border-right:0}
+.idcard dt{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 5px;
+}
+.idcard dd{
+  margin:0;font-family:var(--f-mono);font-size:13.5px;font-weight:500;
+  color:var(--ink);word-break:break-all;line-height:1.5;
+}
+.idcard dd small{display:block;font-size:11.5px;color:var(--ink-3);font-weight:400;letter-spacing:0}
+
+/* ---------- layout ---------- */
+.cols{display:block}
+@media (min-width:1000px){
+  .cols{display:grid;grid-template-columns:206px minmax(0,1fr);gap:64px;align-items:start}
+  nav.toc{position:sticky;top:24px}
+}
+nav.toc{margin-bottom:40px}
+nav.toc p{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 12px;
+}
+nav.toc p.grp{margin:22px 0 10px;padding-top:14px;border-top:1px solid var(--line)}
+nav.toc p.grp em{font-style:normal;color:var(--ink-3);opacity:.75;letter-spacing:.08em}
+nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+nav.toc a{
+  display:flex;gap:9px;text-decoration:none;color:var(--ink-2);
+  font-size:13.5px;padding:4px 0;border-left:2px solid transparent;padding-left:10px;
+  transition:color .15s,border-color .15s;
+}
+nav.toc a span{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);padding-top:2px}
+nav.toc a:hover{color:var(--accent)}
+nav.toc a.on{color:var(--ink);border-left-color:var(--accent);font-weight:500}
+nav.toc a.on span{color:var(--accent)}
+nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+main{min-width:0;display:flex;flex-direction:column;gap:54px}
+section{scroll-margin-top:24px}
+.sechead{display:flex;gap:14px;align-items:baseline;border-bottom:1px solid var(--line-strong);padding-bottom:10px;margin-bottom:22px;flex-wrap:wrap}
+.sechead .num{font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--accent);letter-spacing:.08em}
+.sechead .pill{
+  margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  border:1px solid var(--line-strong);color:var(--ink-3);border-radius:100px;padding:2px 9px;white-space:nowrap;
+}
+.sechead .pill.done{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.sechead .pill.live{border-color:var(--accent);color:var(--accent-2);background:var(--accent-soft)}
+h2{font-family:var(--f-display);font-weight:700;font-size:25px;letter-spacing:-.015em;margin:0;line-height:1.25;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:600;font-size:17.5px;letter-spacing:-.005em;margin:30px 0 10px}
+p{margin:0 0 14px;max-width:70ch}
+ul,ol.steps{max-width:70ch;margin:0 0 14px;padding-left:20px}
+li{margin-bottom:7px}
+code{
+  font-family:var(--f-mono);font-size:.885em;
+  background:var(--surface-2);border:1px solid var(--line);
+  border-radius:3px;padding:.08em .34em;color:var(--ink);
+  word-break:break-word;
+}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+strong{font-weight:600;color:var(--ink)}
+.lede{color:var(--ink-2)}
+
+/* ---------- terminal blocks ---------- */
+.cmd{
+  background:var(--term-bg);border:1px solid var(--term-line);border-radius:6px;
+  margin:0 0 16px;overflow:hidden;position:relative;
+}
+.cmd-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  background:var(--term-bg-2);border-bottom:1px solid var(--term-line);
+  padding:6px 10px 6px 12px;
+}
+.cmd-head span{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--term-ink-2)}
+.cmd-head button{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  background:transparent;color:var(--term-ink-2);border:1px solid var(--term-line);
+  border-radius:4px;padding:3px 9px;cursor:pointer;transition:color .15s,border-color .15s;
+  min-width:74px;
+}
+.cmd-head button:hover{color:var(--term-accent);border-color:var(--term-accent)}
+.cmd-head button:focus-visible{outline:2px solid var(--term-accent);outline-offset:2px}
+.cmd pre{
+  margin:0;padding:12px 14px;overflow-x:auto;
+  font-family:var(--f-mono);font-size:12.9px;line-height:1.65;color:var(--term-ink);
+}
+.cmd pre .c{color:var(--term-ink-2)}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.7px}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;background:var(--surface-2);white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:0}
+td code{background:transparent;border:0;padding:0;font-size:12.6px}
+.num-col{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:12.6px}
+
+/* ---------- callouts ---------- */
+.note{
+  border-left:3px solid var(--line-strong);background:var(--surface);
+  padding:13px 16px;margin:0 0 16px;border-radius:0 5px 5px 0;max-width:74ch;
+}
+.note p{max-width:none}
+.note p:last-child{margin-bottom:0}
+.note .tag{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  display:block;margin-bottom:5px;color:var(--ink-3);
+}
+.note.danger{border-left-color:var(--danger);background:var(--danger-soft)}
+.note.danger .tag{color:var(--danger)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note.warn .tag{color:var(--warn)}
+.note.ok{border-left-color:var(--ok);background:var(--ok-soft)}
+.note.ok .tag{color:var(--ok)}
+.note.mine{border-left-color:var(--accent);background:var(--accent-soft)}
+.note.mine .tag{color:var(--accent-2)}
+
+/* ---------- trap list ---------- */
+.traps{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:6px;background:var(--surface);overflow:hidden}
+.trap{display:grid;grid-template-columns:1fr;padding:16px 18px;border-bottom:1px solid var(--line)}
+.trap:last-child{border-bottom:0}
+@media (min-width:760px){.trap{grid-template-columns:236px minmax(0,1fr);gap:22px}}
+.trap .sym{font-family:var(--f-mono);font-size:12.4px;line-height:1.55;color:var(--ink);font-weight:500}
+.trap .sym b{display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--danger);font-weight:500;margin-bottom:4px}
+.trap .fix{font-size:14px;color:var(--ink-2);line-height:1.65}
+.trap .fix strong{color:var(--ink)}
+.trap .fix p{margin:0 0 8px;max-width:none}
+.trap .fix p:last-child{margin:0}
+
+/* ---------- step blocks ---------- */
+.step{display:grid;grid-template-columns:1fr;margin-bottom:26px}
+@media (min-width:760px){.step{grid-template-columns:52px minmax(0,1fr)}}
+.step .sn{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);padding-top:4px;letter-spacing:.06em}
+.step .sb{min-width:0}
+.step .sb h3{margin-top:0}
+
+/* ---------- source cards ---------- */
+.srcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.src{background:var(--surface);padding:15px 17px}
+.src b{display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;font-weight:500}
+.src p{margin:0;font-size:13.6px;color:var(--ink-2);line-height:1.6}
+.fig{margin:0 0 18px;border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:10px 10px 4px}
+.fig img{display:block;width:100%;height:auto;border-radius:3px}
+.fig figcaption{font-size:12.8px;color:var(--ink-2);line-height:1.6;padding:9px 4px 6px;max-width:76ch}
+.partline{border-top:2px solid var(--line-strong);padding-top:18px;margin-top:8px}
+.partline h2{font-family:var(--f-display);font-weight:800;font-size:20px;letter-spacing:-.01em;margin:0 0 6px}
+.partline p{color:var(--ink-2);font-size:14.5px;margin:0;max-width:70ch}
+.partline .eyebrow{margin:0 0 8px}
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12.5px;font-family:var(--f-mono);line-height:1.7}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<div class="masthead">
+<div class="masthead-inner">
+<p class="eyebrow">Dexmate Vega-1U · CMU · Internal</p>
+<h1>Vega-1U Field Manual</h1>
+<p class="standfirst">Two halves. <strong>Part A is what we do every session</strong> — the robot is already configured, so this is just SSH and go. <strong>Part B is the one-time bring-up</strong>, already completed on this unit; it's here for a reflash, a second robot, or when something breaks. Sources: the four Dexmate wiki pages, support ticket #126892650, and everything we worked out ourselves that exists in no documentation.</p>
+<dl class="idcard">
+<div><dt>Robot name</dt><dd>dm/YOUR_SERIAL-1u<small>slash, not dash</small></dd></div>
+<div><dt>Model</dt><dd>Vega-1U<small>upper body · 17 DOF · no torso/chassis published</small></dd></div>
+<div><dt>Firmware</dt><dd>0.5.0<small>arm 1248 · soc 1263</small></dd></div>
+<div><dt>Onboard</dt><dd>Jetson Orin Nano<small>L4T 36.5.0 · kernel 5.15.185</small></dd></div>
+<div><dt>WiFi</dt><dd>ROBOT_IP<small>YOUR_WIFI · DHCP, may change</small></dd></div>
+<div><dt>Wired</dt><dd>192.168.50.20<small>enP8p1s0 · SoC at .21</small></dd></div>
+</dl>
+</div>
+</div>
+<div class="wrap">
+<div class="cols">
+<nav class="toc">
+<p>A · Every session</p>
+<ol>
+<li><a href="#now"><span>A1</span>Connect &amp; start work</a></li>
+<li><a href="#sensor"><span>A2</span>Read sensors</a></li>
+<li><a href="#control"><span>A3</span>Drive the robot</a></li>
+<li><a href="#poses"><span>A4</span>Move between poses</a></li>
+<li><a href="#grippers"><span>A5</span>Drive the grippers</a></li>
+<li><a href="#traps"><span>A6</span>Trap table</a></li>
+</ol>
+<p class="grp">B · Reference <em>(setup done)</em></p>
+<ol>
+<li><a href="#arch"><span>B0</span>Architecture</a></li>
+<li><a href="#net"><span>B1</span>Get on the network</a></li>
+<li><a href="#cert"><span>B2</span>Certificate &amp; firmware</a></li>
+<li><a href="#comm"><span>B3</span>Workstation comms</a></li>
+<li><a href="#libs"><span>B4</span>Install the libraries</a></li>
+<li><a href="#verify"><span>B5</span>Verify &amp; diagnose</a></li>
+<li><a href="#dof"><span>B6</span>DOF &amp; joint limits</a></li>
+<li><a href="#gripper"><span>B7</span>CAN bus &amp; wiring</a></li>
+<li><a href="#reflash"><span>B8</span>Recovery after reflash</a></li>
+<li><a href="#camera-setup"><span>B9</span>Camera setup &amp; boot</a></li>
+<li><a href="#src"><span>—</span>Sources</a></li>
+</ol>
+</nav>
+<main>
+<div class="partline" style="margin-top:0;border-top:0;padding-top:0">
+<p class="eyebrow">Part A</p>
+<h2>Every session</h2>
+<p>The robot is configured and running. This is all you need for day-to-day work.</p>
+</div>
+<section id="now">
+<div class="sechead"><span class="num">A1</span><h2>Connecting today</h2><span class="pill live">Current setup</span></div>
+<p class="lede">This robot is already set up. Nothing in Part B needs repeating — the certificate is installed, the libraries are in place, and the Jetson joins <code>YOUR_WIFI</code> on its own at boot. A normal session is: SSH in, run a script onboard.</p>
+<div class="tw"><table>
+<thead><tr><th>What</th><th>Value</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Reach the robot</td><td><code>ssh dexmate@ROBOT_IP</code></td><td>Password <code>YOUR_SSH_PASSWORD</code> (the factory default). A key is also configured, so it may not prompt.</td></tr>
+<tr><td>Where code runs</td><td>Onboard, in <code>~/py_scripts/</code></td><td>Lowest latency, and everything is already installed there</td></tr>
+<tr><td>Robot name</td><td><code>dm/YOUR_SERIAL-1u</code></td><td>Must be passed explicitly — see below</td></tr>
+<tr><td>Wired fallback</td><td><code>192.168.50.20</code></td><td>Plug into the IO hub; your machine takes <code>192.168.50.x</code> (not .20/.21)</td></tr>
+<tr><td>SoC portal</td><td><code>https://192.168.50.21:57832</code></td><td>Needs <code>sshuttle</code> from off-robot; only for certificates and firmware</td></tr>
+</tbody>
+</table></div>
+<h3>When you have to spell out ROBOT_NAME</h3>
+<p>Dexmate pre-sets <code>ROBOT_NAME</code> on the Jetson, so once you are sitting in an interactive shell it is already there — <code>echo $ROBOT_NAME</code> confirms it, and scripts run normally with no prefix. The prefix matters in exactly one situation: a command that never gets an interactive shell, because <code>~/.bashrc</code> is not sourced and <code>Robot()</code> then raises <code>ValueError</code>.</p>
+<div class="tw"><table>
+<thead><tr><th>How you run it</th><th>ROBOT_NAME</th><th>Prefix needed?</th></tr></thead>
+<tbody>
+<tr><td><code>ssh</code> in, then run commands</td><td>Already set</td><td>No</td></tr>
+<tr><td><code>ssh dexmate@… 'python3 script.py'</code></td><td><strong>Not set</strong></td><td>Yes</td></tr>
+<tr><td>cron, systemd units, <code>nohup</code> from a one-liner</td><td><strong>Not set</strong></td><td>Yes</td></tr>
+</tbody>
+</table></div>
+<div class="cmd"><div class="cmd-head"><span>Terminal · one-shot from your machine</span><button type="button">Copy</button></div><pre>ssh dexmate@ROBOT_IP \
+  'ROBOT_NAME="dm/YOUR_SERIAL-1u" python3 ~/py_scripts/inspect_joints.py'</pre></div>
+<h3>A session, start to finish</h3>
+<div class="cmd"><div class="cmd-head"><span>Terminal · your machine → Jetson</span><button type="button">Copy</button></div><pre>ssh dexmate@ROBOT_IP
+
+<span class="c"># is the robot healthy and talking?</span>
+dextop topic list --timeout 10
+dextop doctor check
+
+<span class="c"># where are the joints right now? (before commanding any motion)</span>
+python3 ~/py_scripts/inspect_joints.py</pre></div>
+<p>That is the whole required part. Everything below is per-task — bring up only the subsystem you are about to use.</p>
+<div class="cmd"><div class="cmd-head"><span>Optional · camera readiness · Jetson</span><button type="button">Copy</button></div><pre>systemctl status dexsensor wrist-camera-init.service --no-pager
+cat /run/wrist-cameras/ready.json</pre></div>
+<p>The head service already runs on this unit. Subscribe with <a href="#sensor">A2</a>; the wrist API starts capture on demand. Wiring and boot configuration are in <a href="#camera-setup">B9</a>.</p>
+<div class="cmd"><div class="cmd-head"><span>Optional · grippers</span><button type="button">Copy</button></div><pre>sudo modprobe gs_usb                                    <span class="c"># asks for YOUR_SSH_PASSWORD</span>
+sudo ip link set can1 up type can bitrate 1000000 \
+     loopback off listen-only off                       <span class="c"># ip is NOPASSWD</span></pre></div>
+<div class="cmd"><div class="cmd-head"><span>Optional · arm motion</span><button type="button">Copy</button></div><pre>cd ~/py_scripts &amp;&amp; python3 goto_ready.py --dry-run</pre></div>
+<p>Cameras (<a href="#sensor">A2</a>), grippers (<a href="#grippers">A5</a>) and arm motion (<a href="#poses">A4</a>) are independent of each other. For arms always go through the named poses, never a <code>pose_pool</code> entry.</p>
+<div class="note danger"><span class="tag">Constructing Robot() moves the head</span><p>Every <code>Robot()</code> drives the head to <code>home</code>, and no flag prevents it — so <code>inspect_joints.py</code> and any other script that opens a session will move it. If you only need pixels, use <code>~/py_scripts/sensor_only.py</code>, which builds <code>Sensors()</code> directly and publishes no control topic at all. Details in <a href="#sensor">A2</a>.</p></div>
+<div class="note warn"><span class="tag">sudo mostly prompts</span><p>Only three things are passwordless in <code>sudoers</code>: <code>/usr/sbin/ip</code>, <code>tee</code> to the one USB <code>authorized</code> path, and <code>systemctl {stop,restart,start} dexsensor.service</code>. Anything else — <code>modprobe</code>, editing the dexsensor toml — needs <code>YOUR_SSH_PASSWORD</code> typed at an interactive prompt, so it cannot run over a non-interactive ssh.</p></div>
+<h3>When the IP has moved</h3>
+<p><code>ROBOT_IP</code> is a DHCP lease on <code>YOUR_WIFI</code> and <strong>will change eventually</strong>. When SSH stops answering, in ascending order of effort:</p>
+<ol class="steps">
+<li>Scan the subnet: <code>nmap -sn 172.26.160.0/22 | grep -B2 -A2 "vega\|dexmate\|ubuntu"</code></li>
+<li>Plug in a cable and use the wired address <code>192.168.50.20</code>, which does not move.</li>
+<li>Plug a monitor and keyboard into the IO hub and read the address off the desktop.</li>
+</ol>
+<div class="note warn"><span class="tag">What has <em>not</em> changed</span><p>A new IP does not mean re-running setup. The certificate, robot name, firmware and libraries all live on the robot and survive an address change — only <code>ROBOT_IP</code> (if you export it) and your SSH target need updating.</p></div>
+<h3>Working from a workstation instead</h3>
+<p>We currently run everything onboard. Driving the robot from your own machine is possible but needs its own one-time setup — <code>dextop</code>, the same certificate unpacked locally, and the environment variables — described in <a href="#comm">B3</a>. It buys you a better GPU at the cost of network latency.</p>
+</section>
+<section id="sensor">
+<div class="sechead"><span class="num">A2</span><h2>Reading sensor data</h2></div>
+<p class="lede">The head camera is published by the existing <code>dexsensor</code> service. The two OEM wrists use the local <code>WristCameras</code> Python API. Both can be read together. Use the sensor-only examples below to obtain images without constructing <code>Robot()</code>, which homes the head. Setup: <a href="#camera-setup">B9</a>.</p>
+<h3>Joints, current, wrench, buttons — no dexsensor needed</h3>
+<div class="cmd"><div class="cmd-head"><span>Python</span><button type="button">Copy</button></div><pre>from dexcontrol.robot import Robot
+
+robot = Robot()
+
+robot.left_arm.get_joint_pos()      <span class="c"># joint positions</span>
+robot.left_arm.get_joint_vel()      <span class="c"># joint velocities</span>
+robot.right_arm.get_joint_current() <span class="c"># current — arms only</span>
+robot.left_arm.wrench_sensor.get_wrench_state()   <span class="c"># [fx,fy,fz,tx,ty,tz]</span>
+robot.right_arm.wrench_sensor.get_button_state()  <span class="c"># blue / green wrist buttons</span>
+
+robot.shutdown()</pre></div>
+<h3>Head camera: subscribe to the running service</h3>
+<p>Run on the Jetson as <code>dexmate</code> with the installed system Python. Set the robot name explicitly in non-interactive shells. Do not launch a second head service or open another ZED SDK camera while <code>dexsensor</code> owns it.</p>
+<div class="cmd"><div class="cmd-head"><span>Bash · Jetson</span><button type="button">Copy</button></div><pre>export ROBOT_NAME=dm/YOUR_SERIAL-1u</pre></div>
+<div class="cmd"><div class="cmd-head"><span>Python · head only · no motion</span><button type="button">Copy</button></div><pre>from dexcontrol.core.config import get_robot_config
+from dexcontrol.sensors.manager import Sensors
+
+configs = get_robot_config()
+configs.sensors["head_camera"].enabled = True
+sensors = Sensors({"head_camera": configs.sensors["head_camera"]})
+try:
+    sensors.wait_for_all_active(timeout=10)
+    head = sensors.head_camera.get_obs(
+        obs_keys=["left_rgb", "right_rgb", "depth"],
+        include_timestamp=True,
+    )
+    if any(head[k] is None for k in ("left_rgb", "right_rgb", "depth")):
+        raise RuntimeError("Head streams are not ready")
+    rgb = head["left_rgb"]["data"]
+    print(rgb.shape, head["left_rgb"]["timestamp_ns"])
+    print(sensors.head_camera.get_camera_info())
+finally:
+    sensors.shutdown()</pre></div>
+<p>With <code>include_timestamp=True</code>, each stream returns a record with <code>data</code>, <code>timestamp_ns</code> and <code>receive_time_ns</code>; a stream can be <code>None</code> before it is ready. With the default <code>include_timestamp=False</code>, each value is the array directly. Left/right RGB are <code>(1200, 1920, 3)</code>; depth is a <code>(1200, 1920)</code> floating-point array in metres.</p>
+<div class="note mine"><span class="tag">Verified on this robot · three silent failures</span>
+<p><strong>The field is <code>enabled</code>, not <code>enable</code>.</strong> The wrong name throws no error and simply does nothing. And <code>configs.sensors</code> is a plain dict, so the wiki's attribute-style example (<code>configs.sensors.head_camera.enable</code>) does not work on this version. Client-side enabling is per-script and never persists.</p>
+<p><strong>Depth needs two switches.</strong> In <code>/etc/dexmate/dexsensor/default.toml</code>, <code>depth_mode = "NEURAL"</code> only says how depth <em>would</em> be computed; <code>[sensors.streams] depth</code> controls whether it is published. With the stream off, dexsensor tells the SDK <code>DEPTH_MODE::NONE</code> — so the log says NONE while the config appears to say NEURAL. Set <code>enabled = true</code> too, or the service starts no sensors at all; <code>dexsensor enable &lt;x&gt;</code> is runtime-only and lost on restart. These edits are backed up to <code>default.toml.bak</code> — a .deb upgrade may overwrite them.</p>
+<p><strong>The head camera streams RGB, not BGR</strong>, despite ZED's usual convention. <code>cv2.imwrite</code> and <code>cv2.VideoWriter</code> both want BGR, so frames need <code>cv2.COLOR_RGB2BGR</code> or red and blue come out swapped (a brown table renders blue). PIL assumes RGB and is correct as-is.</p>
+</div>
+<h3>Head camera resolution and intrinsics</h3>
+<p>Current head settings: <strong>HD1200, 1920×1200, configured 30 fps, NEURAL depth</strong>. In <code>/etc/dexmate/dexsensor/default.toml</code>, locate the sensor whose <code>id = "head_camera"</code>, then its parameters and stream flags. Do not edit by line number. The generic ZED X One wrist entries must stay disabled: they do not describe these ISX031 cameras. Measured throughput is listed in <a href="#camera-setup">B9</a>.</p>
+<div class="cmd"><div class="cmd-head"><span>Bash · only when changing head configuration</span><button type="button">Copy</button></div><pre>sudo cp -a /etc/dexmate/dexsensor/default.toml /etc/dexmate/dexsensor/default.toml.camera-$(date +%Y%m%d-%H%M%S).bak
+sudoedit /etc/dexmate/dexsensor/default.toml
+# After saving the intended head settings (interrupts head streaming):
+sudo systemctl restart dexsensor.service</pre></div>
+<p>Configuration edits require administrator privileges. Normal head and wrist API reads run without <code>sudo</code>.</p>
+<p>Runtime rectified intrinsics at HD1200, from <code>head_camera.get_camera_info()</code> — <code>distortion</code> is empty because the stream is already rectified:</p>
+<div class="cmd"><div class="cmd-head"><span>YAML</span><button type="button">Copy</button></div><pre>image_width: 1920
+image_height: 1200
+K: [734.7626953125, 0.0, 966.6296997070312,
+    0.0, 734.7626953125, 653.073486328125,
+    0.0, 0.0, 1.0]
+<span class="c"># example from 2026-09-15 · query runtime for current calibration
+# distortion [] · baseline ~0.0497 m · serial YOUR_CAMERA_SERIAL · ZedXMini</span></pre></div>
+<div class="note danger"><span class="tag">The API returns RGB, not BGR</span><p><code>cv2.imwrite</code> and <code>cv2.VideoWriter</code> want BGR, so convert with <code>cv2.COLOR_RGB2BGR</code> or red and blue come out swapped — the giveaway is the wooden table rendering blue. PIL assumes RGB and is correct with no conversion.</p></div>
+<h3 id="wrist-api">Two wrists: local Python API</h3>
+<p>On the Jetson, use <code>/usr/bin/python3</code> as <code>dexmate</code> (already in the <code>video</code> and <code>i2c</code> groups). Wrist-only reads require neither <code>sudo</code> nor <code>ROBOT_NAME</code>. Code is installed in <code>/opt/wrist-cameras/</code> and exposed through <code>wrist_cameras_local.pth</code> in the system Python 3.10 dist-packages directory. A separate virtual environment may not see this module or its GStreamer bindings.</p>
+<div class="cmd"><div class="cmd-head"><span>Python · dual wrists</span><button type="button">Copy</button></div><pre>from wrist_cameras import WristCameras
+
+with WristCameras() as cameras:
+    for _ in range(30):
+        obs = cameras.get_obs(timeout=3)
+        rgb_a = obs["wrist_a"]["rgb"]
+        rgb_b = obs["wrist_b"]["rgb"]
+        print(rgb_a.shape, rgb_b.shape,
+              obs["wrist_a"]["frame_id"], obs["wrist_b"]["frame_id"])
+# Context exit stops capture/trigger and releases both devices.</pre></div>
+<div class="tw"><table><thead><tr><th>Field / method</th><th>Contract</th></tr></thead><tbody>
+<tr><td><code>obs["wrist_a"]</code>, <code>obs["wrist_b"]</code></td><td>A/B identify camera links; physical left/right assignment has not been confirmed.</td></tr>
+<tr><td><code>rgb</code></td><td>Independent <code>numpy.uint8</code> RGB copy, shape <code>(1536, 1920, 3)</code>.</td></tr>
+<tr><td><code>frame_id</code></td><td>Increasing frame count within this open session.</td></tr>
+<tr><td><code>timestamp_ns</code></td><td>GStreamer pipeline presentation timestamp (PTS), <strong>not Unix time</strong>.</td></tr>
+<tr><td><code>received_monotonic_ns</code></td><td>Receipt time on this Jetson's monotonic clock.</td></tr>
+<tr><td><code>get_obs(timeout=2.0, fresh=True)</code></td><td>Waits for both cameras to advance since the previous call; raises <code>TimeoutError</code> if they do not. <code>fresh=False</code> allows the latest available pair.</td></tr>
+</tbody></table></div>
+<p>The API discovers V4L2 devices by their sensor names, owns both wrists under one lock and runs software triggering in a separate process. A second reader is rejected with <code>RuntimeError</code>. Always close the context before restarting initialization. This is a local API, not a network endpoint; it is not registered as <code>robot.sensors.left_wrist_camera</code> or <code>right_wrist_camera</code>.</p>
+<h3 id="head-wrists-api">Read head + both wrists in one process</h3>
+<p>Set <code>ROBOT_NAME</code> as above, save this as a Python script on the Jetson, then run it with <code>/usr/bin/python3</code>. The existing head publisher continues running while the wrist context acquires its two cameras.</p>
+<div class="cmd"><div class="cmd-head"><span>Python · head stereo + depth + dual wrists · no motion</span><button type="button">Copy</button></div><pre>from dexcontrol.core.config import get_robot_config
+from dexcontrol.sensors.manager import Sensors
+from wrist_cameras import WristCameras
+
+configs = get_robot_config()
+configs.sensors["head_camera"].enabled = True
+sensors = Sensors({"head_camera": configs.sensors["head_camera"]})
+try:
+    sensors.wait_for_all_active(timeout=10)
+    with WristCameras() as wrists:
+        for _ in range(30):
+            wrist = wrists.get_obs(timeout=3, fresh=True)
+            head = sensors.head_camera.get_obs(
+                obs_keys=["left_rgb", "right_rgb", "depth"],
+                include_timestamp=True,
+            )
+            if any(head[k] is None for k in ("left_rgb", "right_rgb", "depth")):
+                raise RuntimeError("Head streams are not ready")
+            head_left = head["left_rgb"]["data"]
+            head_right = head["right_rgb"]["data"]
+            depth = head["depth"]["data"]
+            wrist_a = wrist["wrist_a"]["rgb"]
+            wrist_b = wrist["wrist_b"]["rgb"]
+            print(head_left.shape, wrist_a.shape, wrist_b.shape)
+finally:
+    sensors.shutdown()</pre></div>
+<div class="note warn"><span class="tag">Concurrent does not mean synchronized</span><p>The head call returns the latest published data and may repeat a frame; use its <code>timestamp_ns</code> to detect repeats. Wrist freshness is checked separately. There is no verified hardware exposure synchronization. Head timestamps and wrist pipeline PTS use different time bases, so do not subtract them to infer alignment.</p></div>
+<p>To save an RGB frame with OpenCV, convert it first:</p>
+<div class="cmd"><div class="cmd-head"><span>Python · inside a capture loop</span><button type="button">Copy</button></div><pre>import cv2
+if not cv2.imwrite("wrist_a.png", cv2.cvtColor(wrist_a, cv2.COLOR_RGB2BGR)):
+    raise RuntimeError("Could not save wrist_a.png")</pre></div>
+<p>A tested four-view recorder is installed at <code>/home/dexmate/wrist-camera-debug/coexistence/record_api_demo.py</code>. It subscribes through these APIs, waits 15 seconds for the operator, then records; it sends no motion commands. Close other wrist readers first.</p>
+<div class="cmd"><div class="cmd-head"><span>Bash · Jetson · record a fresh 45-second demo</span><button type="button">Copy</button></div><pre>ROBOT_NAME=dm/YOUR_SERIAL-1u /usr/bin/python3   /home/dexmate/wrist-camera-debug/coexistence/record_api_demo.py   --seconds 45 --output "$HOME/wrist-camera-debug/coexistence/demo-$(date +%Y%m%d-%H%M%S)"</pre></div>
+<p>The new output directory contains <code>preview.avi</code> and <code>recording.json</code>. The AVI writer uses a fixed 6 fps; use the JSON's actual capture duration and frame timestamps when measuring time. Encoding a preview does not measure native camera frame rate.</p>
+<h3>Other sensors / custom dexsensor configuration</h3>
+<p>This is a generic reference for sensors supported by dexsensor, not an ISX031 wrist setup step. Only launch a custom publisher after stopping any existing publisher that owns the same camera. On this unit, normal head reads use the running service described above.</p>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre>dexsensor gen-cfg                                       <span class="c"># writes to ~/.dexmate/sensors/</span>
+dexsensor launch --config ~/.dexmate/sensors/default_config.yaml</pre></div>
+<p>Beyond the per-sensor <code>enabled</code> flag, the config file tunes resolution, frame rate, depth range, transport (<code>rtc</code> or <code>zenoh</code>) and JPEG quality — the levers for trading image quality against bandwidth.</p>
+</section>
+<section id="control">
+<div class="sechead"><span class="num">A3</span><h2>Driving the robot</h2></div>
+<div class="note danger"><span class="tag">Before anything moves</span><p>Keep a hand on the e-stop. Arms and torso are position-controlled, wheels are velocity-controlled, and <strong>killing the program stops motion</strong> — that is the fastest software brake you have.</p></div>
+<h3>Head — 3 DOF, but pitch / yaw / pitch</h3>
+<div class="note warn"><span class="tag">The axis order is not pan-tilt-roll</span><p>Verified by URDF forward kinematics: <code>head_j1</code> is <strong>pitch</strong>, <code>head_j2</code> is <strong>yaw</strong>, <code>head_j3</code> is a <strong>second pitch</strong>. Negative <code>head_j3</code> looks down — the vendor's own <code>tucked</code> pose is <code>[0, 0, -1.37]</code>, same convention. <code>fy = 734.72 px/rad</code> doubles as the pitch-to-pixel scale, so a pitch error of Δθ shifts the image by <code>734.72·Δθ</code> pixels.</p></div>
+<div class="note danger"><span class="tag">Robot() always drives the head home — there is no way to stop it</span><p><code>Robot.__init__</code> takes only <code>(configs, auto_shutdown)</code>. <code>_safe_initialize_components</code> runs a hardcoded step list ending in <code>("default state", self._set_default_state)</code> (robot.py:353), and <code>_set_default_state</code> (robot.py:424) calls <code>head.set_joint_pos(home_pos)</code> unconditionally unless the software e-stop is active. <strong>No flag, config key or environment variable skips it.</strong> Re-apply any head pose after construction, in that same session.</p><p>A head pose also <strong>does not survive process exit</strong>: it holds exactly while the session lives (measured: zero drift over 25 s), then relaxes from -0.5056 to about -0.13 rad. Anything that depends on head angle must hold its own live <code>Robot()</code> session.</p></div>
+<div class="cmd"><div class="cmd-head"><span>Python</span><button type="button">Copy</button></div><pre>import numpy as np
+from dexcontrol.robot import Robot
+
+robot = Robot()
+robot.head.set_joint_pos(np.array([-np.pi/6, 0.0, 0.0]), wait_time=2.0)
+robot.shutdown()</pre></div>
+<h3>Arms — 7 DOF, joint space</h3>
+<div class="cmd"><div class="cmd-head"><span>Python</span><button type="button">Copy</button></div><pre>current = robot.left_arm.get_joint_pos()
+robot.left_arm.set_joint_pos(current, wait_time=1.0)          <span class="c"># absolute</span>
+
+delta = np.zeros(7); delta[-1] += 0.2
+robot.left_arm.set_joint_pos(delta, relative=True, wait_time=4.0)  <span class="c"># relative</span></pre></div>
+<div class="note warn"><span class="tag">What wait_time=0 means</span><p>Setting <code>wait_time=0</code> puts you in real-time control: you must then call <code>set_joint_pos</code> continuously at <strong>100–500 Hz</strong>. Calling it infrequently produces inadequate motor response.</p></div>
+<h3>Hands, torso, chassis</h3>
+<div class="cmd"><div class="cmd-head"><span>Python</span><button type="button">Copy</button></div><pre>robot.right_hand.close_hand()
+
+<span class="c"># torso — not present on this robot; Vega-1 / Pro only</span>
+robot.torso.set_joint_target(target, tracked=True)   <span class="c"># dexcontrol == 0.5.0</span>
+robot.torso.set_joint_pos_vel(target, joint_vel=np.ones(3)*0.1, wait_time=3.0)  <span class="c"># &lt; 0.5</span>
+robot.torso.stop()
+
+<span class="c"># chassis — not present on this robot</span>
+robot.chassis.move_straight(speed=0.4, wait_time=2.0)
+robot.chassis.move_sideways(speed=0.4, wait_time=2.0)
+robot.chassis.turn(angular_speed=0.4, wait_time=2.0, center='base_center')
+robot.chassis.stop()</pre></div>
+<div class="note danger"><span class="tag">The low-level chassis API destroys motors</span><p><code>set_velocity</code>, <code>set_motion_state</code>, <code>set_steering_angle</code> and <code>set_wheel_velocity</code> can <strong>permanently damage the wheel motors</strong>: steering angles that point the wheels at each other while commanding forward motion, wheel velocities fighting the current steering, or rapid simultaneous changes to both. Stay on <code>move_straight</code> / <code>move_sideways</code> / <code>turn</code>.</p></div>
+<h3>Software e-stop</h3>
+<div class="cmd"><div class="cmd-head"><span>Python</span><button type="button">Copy</button></div><pre>robot.estop.activate()
+robot.estop.deactivate()</pre></div>
+<p>This complements the physical e-stop buttons. It does not replace them.</p>
+</section>
+<section id="poses">
+<div class="sechead"><span class="num">A4</span><h2>Moving between poses safely</h2><span class="pill live">This robot</span></div>
+<p class="lede">Two named poses, two scripts. The thing worth carrying away: the collision risk lives in the <em>schedule</em>, not in the target pose.</p>
+<div class="note danger"><span class="tag">The URDF the robot loads has no grippers in it</span><p>The two CAN grippers extend well past <code>L_ee</code> / <code>R_ee</code> and <strong>do not exist in <code>vega_1u.urdf</code></strong> — the file dexcontrol and pinocchio actually load. Anything built on that model is blind to them, which is how the vendor's <code>folded</code> pose passed every check and still crossed the jaws into each other on 2026-09-07, severing the left gripper's CAN cable.<br/><br/><strong>There is a fix:</strong> <code>vega_1u_gripper.urdf</code> (in <code>~/Downloads/Dexmate/</code>, and shipped in the <code>dexmate_urdf</code> package) <em>does</em> model the jaws, with <code>L_gripper_joint</code> / <code>R_gripper_joint</code> and real jaw meshes reaching ~0.198 m past the wrist. Point your collision checking at that file, not the plain one, and the numbers below become computable.</p></div>
+<h3>Real jaw clearance — measured, not assumed</h3>
+<p>The gripper-equipped URDF at <code>~/Downloads/Dexmate/vega_1u_gripper.urdf</code> models the jaws, so clearance can be computed properly: closest point on the left gripper to closest point on the right, over the collision meshes, sampled along a 25-step joint-space interpolation.</p>
+<figure class="fig">
+<img alt="pre_move, manip_init and folded rendered with grippers, in front and top views, each annotated with the closest jaw-to-jaw distance" src="assets/pose-reference-1.png"/>
+<figcaption>Front and top views with the grippers included. <code>pre_move</code> and <code>manip_init</code> are drawn jaws-closed; <code>folded</code> is drawn jaws-open, where the two grippers compute as touching.</figcaption>
+</figure>
+<div class="tw"><table>
+<thead><tr><th>Minimum jaw-to-jaw along the move</th><th>Concurrent</th><th>Left first</th><th>Right first</th></tr></thead>
+<tbody>
+<tr><td><code>pre_move</code> → <code>manip_init</code></td><td class="num-col">0.259 m</td><td class="num-col">0.330 m</td><td class="num-col">0.367 m</td></tr>
+<tr><td><code>manip_init</code> → <code>pre_move</code></td><td class="num-col">0.259 m</td><td class="num-col">0.367 m</td><td class="num-col">0.330 m</td></tr>
+<tr><td><code>pre_move</code> → <code>folded</code></td><td class="num-col">0.052 m</td><td class="num-col">0.052 m</td><td class="num-col">0.052 m</td></tr>
+</tbody>
+</table></div>
+<p>Sequencing buys <strong>7–11 cm</strong> on the working move, which is why <code>goto_ready.py</code> and <code>goto_rest.py</code> lead with opposite arms. It buys <strong>nothing</strong> on <code>folded</code>: all three schedules bottom out at the same 5 cm, because there the collision is in the <em>target pose itself</em>, not in the path.</p>
+<div class="tw"><table>
+<thead><tr><th>Gap at the pose itself</th><th>Jaws closed</th><th>Jaws fully open</th></tr></thead>
+<tbody>
+<tr><td><code>pre_move</code></td><td class="num-col">0.367 m</td><td class="num-col">0.298 m</td></tr>
+<tr><td><code>manip_init</code></td><td class="num-col">0.436 m</td><td class="num-col">0.333 m</td></tr>
+<tr><td><code>folded</code></td><td class="num-col">0.050 m</td><td class="num-col"><strong>0.000 m — contact</strong></td></tr>
+</tbody>
+</table></div>
+<div class="note danger"><span class="tag">The folded ban is now arithmetic, not judgement</span><p>With the jaws open, <code>folded</code> puts the two grippers <strong>in contact — 0.000 m</strong>. And that is computed with <em>Dexmate's own</em> gripper model; the third-party CAN grippers actually fitted are larger, so the real interference is worse than this figure shows. It is the direct explanation for the severed cable on 2026-09-07.</p></div>
+<h3>The two poses</h3>
+<div class="tw"><table>
+<thead><tr><th>Name</th><th>Left arm</th><th>Right arm</th></tr></thead>
+<tbody>
+<tr><td><code>pre_move</code><br/><small>parked / rest</small></td><td><code>[1.7289, 0.0101, 0.0041, -0.9924, -0.2311, 0.5011, -0.0066]</code></td><td><code>[-1.5683, -0.0026, 0.0031, -0.9916, 0.0908, -0.4138, -0.0018]</code></td></tr>
+<tr><td><code>manip_init</code><br/><small>alias <code>brickbench_home</code></small></td><td><code>[0, 1.2, 1.4, -1.57, -1.57, 1, -0.35]</code></td><td><code>[0, -1.2, -1.4, -1.57, 1.57, -1, 0.35]</code></td></tr>
+</tbody>
+</table></div>
+<p><code>pre_move</code> was recorded from the robot's own resting position, which is what makes it the one pose empirically known to be safe to park in. <code>manip_init</code> is the arm half of BrickBench's 23-long <code>Joint_Home_Position</code>; the wrists end up 0.656 m apart, roughly level with the shoulders.</p>
+<div class="cmd"><div class="cmd-head"><span>Bash</span><button type="button">Copy</button></div><pre>cd ~/py_scripts &amp;&amp; export ROBOT_NAME="dm/YOUR_SERIAL-1u"
+
+python3 goto_ready.py            <span class="c"># pre_move  -&gt; manip_init, right arm first</span>
+python3 goto_rest.py             <span class="c"># manip_init -&gt; pre_move,  left arm first</span>
+python3 goto_ready.py --dry-run  <span class="c"># plan + limit check + clearance, no motion</span></pre></div>
+<p>Any flag overrides the script's default, e.g. <code>--step 0.02 --wait 1.0</code> to go slower, because <code>goto_pose</code> reads the first occurrence and your arguments come first.</p>
+<figure class="fig">
+<img alt="pre_move and manip_init rendered from vega_1u.urdf in front, side and top orthographic views, with wrist separation annotated" src="assets/pose-reference-2.png"/>
+<figcaption>Both poses rendered from <code>vega_1u.urdf</code> collision meshes by forward kinematics. Left arm teal, right arm rust; the dashed line is wrist separation. The grippers are absent from the URDF, so the true jaw clearance is smaller than drawn — which is exactly how <code>folded</code> passed a collision check and still broke a cable.</figcaption>
+</figure>
+<h3>Why the arms move one at a time</h3>
+<p>Minimum wrist separation along the path, by schedule:</p>
+<div class="tw"><table>
+<thead><tr><th>Direction</th><th class="num-col">Concurrent</th><th class="num-col">Left first</th><th class="num-col">Right first</th></tr></thead>
+<tbody>
+<tr><td><code>pre_move</code> → <code>manip_init</code></td><td class="num-col">0.354 m</td><td class="num-col">0.431 m</td><td class="num-col"><strong>0.459 m</strong></td></tr>
+<tr><td><code>manip_init</code> → <code>pre_move</code></td><td class="num-col">0.267 m</td><td class="num-col"><strong>0.459 m</strong></td><td class="num-col">0.434 m</td></tr>
+</tbody>
+</table></div>
+<div class="note mine"><span class="tag">Both endpoints are safe in both directions</span><p>Concurrent motion is what swings the wrists past each other mid-path. Going back to <code>pre_move</code> with both arms at once dips to <strong>0.267 m</strong> — closer than the 0.31 m that actually broke a cable. One arm at a time costs double the wall clock and nothing else, so <strong>default to <code>--seq</code> for any large two-arm transfer.</strong></p></div>
+<h3>The clearance guard</h3>
+<p><code>goto_pose.py</code> simulates the exact waypoints the move will visit — the same per-joint clipping the real loop uses, and the same left/right schedule — computes wrist separation at each one by URDF forward kinematics, and raises <code>SystemExit</code> if any waypoint falls below <code>MIN_WRIST_SEP</code> (0.35 m, override with <code>--min-sep</code>). Calibration points, all from real outcomes:</p>
+<div class="tw"><table>
+<thead><tr><th>Pose / path</th><th class="num-col">Separation</th><th>Outcome</th></tr></thead>
+<tbody>
+<tr><td><code>folded</code></td><td class="num-col">0.31 m</td><td>jaws crossed, <strong>broke a cable</strong></td></tr>
+<tr><td><code>manip_init</code> → <code>pre_move</code>, concurrent</td><td class="num-col">0.267 m</td><td>traversed once, no contact</td></tr>
+<tr><td><code>pre_move</code> ↔ <code>manip_init</code>, concurrent</td><td class="num-col">0.364 m</td><td>traversed twice, no contact</td></tr>
+<tr><td><code>pre_move</code> endpoint</td><td class="num-col">0.44 m</td><td>fine</td></tr>
+<tr><td><code>manip_init</code> endpoint</td><td class="num-col">0.66 m</td><td>fine</td></tr>
+</tbody>
+</table></div>
+<div class="note warn"><span class="tag">It is a coarse screen, not proof of clearance</span><p>Note the 0.267 m row: <em>below</em> the value that caused damage, yet nothing touched. <strong>Wrist-centre distance ignores orientation</strong> — <code>folded</code> tucks both forearms inward so the jaws face each other, which is far worse than the number alone says. Re-measure rather than lowering the threshold.</p></div>
+<h3><code>folded</code> is banned</h3>
+<p><code>folded</code> and <code>folded_closed_hand</code> from the arm <code>pose_pool</code> are in <code>goto_pose.py</code>'s <code>BANNED</code> set and refuse to run. They were designed around Dexmate's own end effectors. Do not reach for them as a "safe stow" — <strong><code>pre_move</code> is the stow pose on this robot.</strong> Gravity torque is not the criterion either: <code>zero</code> has the lowest static torque of any pose (4.88 N·m) because the arms point straight up, which is an unstable equilibrium with the longest possible fall.</p>
+<h3>Finishing up</h3>
+<div class="cmd"><div class="cmd-head"><span>Bash</span><button type="button">Copy</button></div><pre>cd ~/py_scripts &amp;&amp; export ROBOT_NAME="dm/YOUR_SERIAL-1u"
+python3 goto_rest.py
+python3 -c "import gripper; g=gripper.Grippers(); g.release(); g.close_bus()"</pre></div>
+<p><strong>Leave the arms energised at <code>pre_move</code>.</strong> They hold position on their own; de-energised arms would simply sag. Leaving <code>can1</code> up between sessions is fine.</p>
+</section>
+<section id="grippers">
+<div class="sechead"><span class="num">A5</span><h2>Driving the grippers</h2><span class="pill live">This robot</span></div>
+<p class="lede">The grippers are <strong>not</strong> part of dexcontrol — the robot reports hand type <code>UNKNOWN</code>, so <code>robot.left_hand</code> does nothing. They are two MG4005-i10 V3 servos on a shared CAN bus, wrapped by <code>/home/dexmate/gripper.py</code>, which you drive in parallel with normal arm control. Wiring, bus rates and the protocol archaeology are in <a href="#gripper">B7</a>; this section is how to use the library.</p>
+<div class="note danger"><span class="tag">Current state — left gripper is off the bus</span><p>Since 2026-09-07 motor 1 (left) does not answer on CAN. The swap test settled it: the right gripper's known-good cable made <code>0x141</code> reply immediately, so <strong>the motor is fine and the left cable has a severed conductor</strong> — inside intact-looking jacket, caused by the <code>folded</code> arm pose crossing the two grippers. Until that cable is replaced, everything below works on the <strong>right gripper only</strong>. The library degrades gracefully: it probes both motors and drives whichever answer.</p></div>
+<h3>Before anything: the bus has to be up</h3>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre>sudo modprobe gs_usb                                          <span class="c"># prompts for YOUR_SSH_PASSWORD</span>
+sudo ip link set can1 up type can bitrate 1000000 \
+     loopback off listen-only off                             <span class="c"># NOPASSWD; spell out both flags</span>
+ip -details -statistics link show can1                        <span class="c"># want ERROR-ACTIVE and tx &gt; 3</span></pre></div>
+<p><code>can0</code> is the Jetson's own on-SoC controller and is <strong>not</strong> the adapter — always <code>can1</code>. <code>tx</code> stalling at exactly 3 means nobody is ACKing, not success.</p>
+<h3>The object model</h3>
+<div class="tw"><table>
+<thead><tr><th>Thing</th><th>What it is</th></tr></thead>
+<tbody>
+<tr><td><code>Motor</code></td><td>One servo. CAN id <code>0x140 + id</code>; replies come back on that <em>same</em> id. <code>alive()</code> / <code>_require_alive()</code> raise a message naming the real problem instead of failing deep inside a move.</td></tr>
+<tr><td><code>Grippers</code></td><td>Both motors plus the calibration frame. Motor <strong>1 = left</strong> (<code>0x141</code>), motor <strong>2 = right</strong> (<code>0x142</code>) — verified by driving one and watching the jaw, not inferred.</td></tr>
+<tr><td>Direction</td><td><strong>Negative = closed, positive = open</strong>, on both sides. Confirmed visually.</td></tr>
+<tr><td>Coordinates</td><td><code>move_to()</code> takes a <strong>fraction 0..1</strong> of the calibrated stroke — 0 closed, 1 open. Raw degrees stay inside the library.</td></tr>
+</tbody>
+</table></div>
+<h3>A normal session</h3>
+<div class="cmd"><div class="cmd-head"><span>Python · Jetson</span><button type="button">Copy</button></div><pre>from gripper import Grippers
+
+g = Grippers()          <span class="c"># opens can1, probes both motors</span>
+g.home()                <span class="c"># find the closed stop on each; ~1 min, do not skip</span>
+
+g.both_open()           <span class="c"># both jaws, concurrently — 9 s at 500 dps</span>
+g.both_close()
+g.both_move_to(0.4, speed=500)   <span class="c"># 40% open</span>
+
+print(g.position())     <span class="c"># fraction per motor</span>
+print(g.status())       <span class="c"># angle, current, temp, voltage, error state</span>
+
+g.grip(current=0.6)     <span class="c"># close until the current limit says contact</span>
+
+g.halt()                <span class="c"># stop motion, keep the frame</span>
+g.close_bus()           <span class="c"># release the socket, leave motors energised</span></pre></div>
+<h3>Homing is not optional</h3>
+<div class="note warn"><span class="tag">Stored calibration is not durable</span><p>The encoder frame has drifted <strong>three separate times</strong> between sessions — once by 2545 deg — while the mechanical stroke stayed identical. <strong>Always <code>home()</code>; never pass a saved <code>calibration=</code></strong> as your default.<br/><br/>The one legitimate exception: if the previous run ended on <code>halt()</code> and the motors were <em>never</em> de-energised since, the physical frame is still valid, so <code>Grippers(calibration=[left_closed, right_closed])</code> saves the minute of homing — but <strong>verify before moving</strong>: read <code>position()</code> and check it matches where you left the jaws (≈0.98 after an open). A mismatch means re-home. After <code>release()</code> or any power cycle, <code>home()</code> is mandatory.</p></div>
+<p>The reason is in the firmware: <code>0x80</code> (motor off) <strong>discards the multi-turn count</strong>, after which the angle reads only the single-turn value wrapped to (−180, 180]. Absolute coordinates are therefore valid only while the motor stays continuously enabled — which is exactly why the driver homes against a real stop at startup and then stays enabled for the whole session.</p>
+<h3>close() vs grip()</h3>
+<div class="tw"><table>
+<thead><tr><th>Call</th><th>Behavior</th><th>Use it for</th></tr></thead>
+<tbody>
+<tr><td><code>close()</code> / <code>both_close()</code></td><td>Drives to the closed position and <strong>will stall against anything in the way</strong></td><td>An empty jaw, going back to a known state</td></tr>
+<tr><td><code>grip(current=…)</code></td><td>Closes under a current limit and reports <code>gripped</code></td><td><strong>Any time there is an object.</strong> This is the one you want when picking something up</td></tr>
+<tr><td><code>move_to(f)</code></td><td>One motor to fraction <code>f</code>, blocking</td><td>Single-side work only — see the warning below</td></tr>
+<tr><td><code>both_move_to(f, speed=500)</code></td><td>Fires both <code>0xA4</code> commands back-to-back, then polls both</td><td><strong>The default for two-jaw motion</strong></td></tr>
+</tbody>
+</table></div>
+<div class="note warn"><span class="tag">Never loop move_to over the two motors</span><p>It serialises them: <strong>18.0 s</strong> for a full stroke against <strong>9.0 s</strong> through <code>both_move_to()</code>, which is wall-clock bounded by the slower motor rather than the sum. <code>gripper_demo.py</code> had exactly this bug and now uses <code>both_move_to</code> whenever both motors answer.</p></div>
+<h3>What healthy numbers look like</h3>
+<div class="tw"><table>
+<thead><tr><th>Quantity</th><th>Healthy</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>Current, full travel</td><td class="num-col">&lt; 0.3 A</td><td>0.17–0.18 A measured on the right gripper at 500 dps</td></tr>
+<tr><td>Current, holding</td><td class="num-col">0.09–0.13 A</td><td>The motors self-hold and do not back-drive</td></tr>
+<tr><td>Current, into a hard stop</td><td class="num-col">~2.5 A</td><td>This is contact, not a fault — it is how <code>home()</code> finds the stop</td></tr>
+<tr><td>Full stroke</td><td class="num-col">≈ 4680 deg</td><td>Left 4679.5, right 4681.1 — agreeing to 0.03%, which is the cross-check that the calibration is real</td></tr>
+<tr><td>Full open or close</td><td class="num-col">9 s at 500 dps</td><td>Concurrent. 500 dps costs no more current than slow moves</td></tr>
+<tr><td>Bus round-trip</td><td class="num-col">0.62 ms median</td><td>400/400 replies, zero errors, after the L4T downgrade and gs_usb rebuild</td></tr>
+<tr><td>Voltage / temp</td><td class="num-col">~24.0 V · ~31 °C</td><td>From <code>status()</code></td></tr>
+</tbody>
+</table></div>
+<h3>Shutting down</h3>
+<div class="tw"><table>
+<thead><tr><th>Call</th><th>Motors</th><th>Calibration frame</th><th>When</th></tr></thead>
+<tbody>
+<tr><td><code>close_bus()</code></td><td>Stay energised, holding</td><td><strong>Kept</strong></td><td>Pausing between sessions — costs ~0.1 A each and saves the next homing</td></tr>
+<tr><td><code>halt()</code> · <code>0x81</code></td><td>Motion stops, stay energised</td><td><strong>Kept</strong></td><td>Emergency stop</td></tr>
+<tr><td><code>release()</code> · <code>0x80</code></td><td>De-energised, jaws limp</td><td><strong>Destroyed</strong></td><td>End of day, or when someone will handle the jaws. <code>home()</code> required next time</td></tr>
+</tbody>
+</table></div>
+<div class="note danger"><span class="tag">Never exit mid-move</span><p>Ctrl-C leaves the motor still executing its last <code>0xA4</code> target — the process is gone but the jaw keeps travelling. <strong>Call <code>halt()</code> first.</strong> Leaving <code>can1</code> up between sessions is fine.</p></div>
+<h3>Two library traps</h3>
+<div class="note warn"><span class="tag">One CAN client at a time</span><p>SocketCAN delivers every frame to every socket, <em>including other processes' outgoing queries</em>. A query and its reply share the same arbitration ID and command byte, so naive matching decodes someone else's query as <strong>angle 0.00, current 0.00</strong> — two in a row trip stall detection and produce a phantom <code>(0.0, 0.0, 'stall')</code>. Fixed in <code>gripper.py</code> with <code>_cmd(..., ignore_echo=True)</code> on all telemetry reads (never on <code>0x88</code>/<code>0x80</code>/<code>0x81</code>, whose replies are legitimately identical to the query). Prefer one client on the bus anyway — and in a REPL, <code>importlib.reload</code> after editing the module.</p></div>
+<div class="note danger"><span class="tag">If you ever bypass the library</span><p>The motor firmware is a <strong>hybrid</strong>: read opcodes follow LK Tech legacy, motion opcodes follow MYACTUATOR, which is offset by one. <strong><code>0xA2</code> is SPEED closed-loop, not position</strong> — sending the current angle as a "hold here" no-op once made a motor rotate continuously into a hard stop. Use <code>0xA4</code> absolute position, which carries a speed limit and is therefore abortable, and keep the limit low (~20 dps) on any uncertain move. <code>0x81</code> stops, <code>0x80</code> switches off.</p></div>
+<h3>Files</h3>
+<div class="tw"><table>
+<thead><tr><th>Path</th><th>What it is</th></tr></thead>
+<tbody>
+<tr><td><code>/home/dexmate/gripper.py</code></td><td>The library: <code>Grippers</code> and <code>Motor</code></td></tr>
+<tr><td><code>~/GRIPPER_README.md</code></td><td>Written docs, including "Shutting down safely"</td></tr>
+<tr><td><code>~/py_scripts/gripper_demo.py</code></td><td>Probes both motors, homes and cycles whichever answer. <strong>The right script to run when checking on the broken left cable</strong>, since it degrades to one motor</td></tr>
+</tbody>
+</table></div>
+</section>
+<section id="traps">
+<div class="sechead"><span class="num">A6</span><h2>Trap table: symptom → actual cause</h2></div>
+<p class="lede">Ordered by what you see first. Most of these are in no documentation — they were found the hard way.</p>
+<div class="traps">
+<div class="trap">
+<div class="sym"><b>Symptom</b>One CAN motor answers, the other is silent, bus counters clean</div>
+<div class="fix"><p>An <strong>open circuit</strong>, not a short. A CAN_H/CAN_L short floods the bus with error frames and takes the working motor down too; one silent node with a healthy bus means that node is not electrically on the bus. Swap the known-good cable onto the dead gripper — if it answers, the fault is the cable. Do not hunt for short-circuit damage.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>ID scan "finds" motors at 0xc and 0x4</div>
+<div class="fix"><p>Those are <strong>error frames</strong>, not devices. Filtering received frames only by <code>data != query</code> counts them as replies. Skip <code>m.is_error_frame</code> first.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>Head is not where you left it</div>
+<div class="fix"><p>Every <code>Robot()</code> drives the head to <code>home</code> and no flag prevents it (robot.py:353 → robot.py:424). A head pose also relaxes from -0.5056 to about -0.13 rad once the owning process exits. Hold a live session, or use <code>Sensors()</code> directly if you only need pixels.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>TypeError: unsupported operand type(s) for +: 'NoneType' and 'float'</div>
+<div class="fix"><p><code>gripper.py</code> homing a motor that is off the bus — <code>angle()</code> returned <code>None</code>. Patched: <code>Motor.alive()</code> / <code>_require_alive()</code> now raise a message naming the real problem, and <code>Grippers.home()</code> skips a dead motor instead of aborting the live one.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>Wood table renders blue in a saved frame</div>
+<div class="fix"><p>The camera streams <strong>RGB</strong>; <code>cv2</code> wants BGR. Convert with <code>cv2.COLOR_RGB2BGR</code>. PIL needs no conversion.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>dextop firmware info times out</div>
+<div class="fix"><p><code>ROBOT_NAME</code> written as <code>dm-&lt;serial&gt;</code>. The real Zenoh keys are <code>dm/YOUR_SERIAL-1u/...</code> — <strong>slash</strong>. <code>topic list</code> passing does not mean the name is right.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>Missing argument 'PACKAGE_FILE'</div>
+<div class="fix"><p><code>dextop cert unpack</code> needs the certificate path as an argument.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>Failed to connect to SOC: timed out</div>
+<div class="fix"><p>No route to <code>192.168.50.21</code>. Either a reflash wiped the static IP on <code>enP8p1s0</code> (restore <code>192.168.50.20/24</code>), or you're on an external machine without <code>sshuttle</code> running.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>command not found: dextop (under sudo)</div>
+<div class="fix"><p>It installs to <code>~/.local/bin</code>, not on root's PATH. Use <code>sudo -E $(which dextop) …</code>.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>dextop node start fails on port 7447</div>
+<div class="fix"><p><code>dextop node install-service</code> already started the node. Harmless — ignore.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>CAMERA NOT DETECTED, but the log says ZED SDK available</div>
+<div class="fix"><p>Kernel version mismatch, not a missing driver. Check for <code>/dev/video*</code>, <code>zed_x_daemon</code> and the deserializer modules; the fix here was downgrading L4T 36.5.2 → 36.5.0 (kernel 5.15.199 → 5.15.185).</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>undefined symbol: getZEDSDKBuildVersion</div>
+<div class="fix"><p>dexsensor 0.7.6 is built against ZED SDK 5.2.2 and is running on 5.2.3. Warning only.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>ZED SDK not found, yet import pyzed works</div>
+<div class="fix"><p>C++ standard library mismatch: <code>conda update -c conda-forge libstdcxx-ng -y</code>.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>Camera enabled in code, no data arrives</div>
+<div class="fix"><p>The field is <code>enabled</code>, not <code>enable</code>, and it fails silently; <code>configs.sensors</code> is a dict, not an object. Also, <code>dexsensor launch</code> must be running on the Jetson.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>Log says DEPTH_MODE::NONE while the config says NEURAL</div>
+<div class="fix"><p><code>depth_mode</code> and <code>[sensors.streams] depth</code> are two separate switches; both must be on, plus <code>enabled = true</code> at the service level. <code>dexsensor enable</code> is runtime-only and lost on restart.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>Saved images have red and blue swapped</div>
+<div class="fix"><p>The camera streams RGB. OpenCV wants BGR — add <code>cv2.COLOR_RGB2BGR</code>. PIL needs no conversion.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>candump shows nothing</div>
+<div class="fix"><p>The grippers are poll-response and never broadcast, so an empty candump proves nothing. Confirm the bus is at 1 Mbit/s and <code>R120</code> is off.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>No activity at all on can1</div>
+<div class="fix"><p>Classic signature of swapped CAN_H/CAN_L — not even error frames. Alternatively <code>gs_usb.ko</code> stopped loading after a kernel change and needs rebuilding.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>ZED camera fails to initialize over SSH</div>
+<div class="fix"><p>You used <code>ssh -X</code>. Use a plain SSH session.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>Topic rates look far too low</div>
+<div class="fix"><p>Common for external machines over WiFi. Measure with <code>dextop topic hz &lt;topic&gt;</code>, and set <code>ZENOH_CONFIG</code> and <code>ROBOT_IP</code>.</p></div>
+</div>
+<div class="trap">
+<div class="sym"><b>Symptom</b>Odd behavior right after a firmware update</div>
+<div class="fix"><p><code>dextop doctor check</code>, then <code>dextop doctor restart</code>. Confirm dextop / dexcontrol / dexsensor versions match the firmware.</p></div>
+</div>
+</div>
+</section>
+<div class="partline">
+<p class="eyebrow">Part B</p>
+<h2>Reference and one-time setup</h2>
+<p>Nothing here is part of a normal session. It holds the bring-up that was already done on this robot — repeat it only for a reflash or a second unit — together with the reference material you look things up in: joint limits, and the gripper bus and wiring.</p>
+</div>
+<section id="arch">
+<div class="sechead"><span class="num">B0</span><h2>Architecture: three libraries on one Zenoh bus</h2><span class="pill done">Reference</span></div>
+<p class="lede">Every Dexmate component talks over <strong>Zenoh</strong>, authenticated by a single encrypted certificate. Knowing which library lives on which machine is the prerequisite for everything below — installing one in the wrong place is the most common way to lose an afternoon.</p>
+<div class="tw"><table>
+<thead><tr><th>Component</th><th>Where it runs</th><th>How to install</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>dextop</code></td><td>Jetson <em>and</em> workstation</td><td><code>pip install dextop --upgrade</code></td><td>Certificates, firmware, robot server, topic listing, health checks</td></tr>
+<tr><td><code>dexcontrol</code></td><td>Wherever your control code runs</td><td><code>pip install dexcontrol</code></td><td>The <code>Robot()</code> API: arms, head, hands, torso, chassis, e-stop</td></tr>
+<tr><td><code>dexsensor</code></td><td><strong>Jetson only</strong></td><td><code>sudo dpkg -i dexsensor_*.deb</code></td><td>Camera and LiDAR capture and streaming; depends on the ZED SDK</td></tr>
+<tr><td><code>dexbot_utils</code></td><td>Pulled in by dexcontrol</td><td>—</td><td>Robot configs, URDFs, <code>dexbot cfg list</code></td></tr>
+<tr><td>socbridge</td><td>The robot's SoC board</td><td><code>dextop firmware install-socbridge</code></td><td>The web portal at <code>https://192.168.50.21:57832</code></td></tr>
+</tbody>
+</table></div>
+<h3>Two ways to run</h3>
+<ul>
+<li><strong>Onboard</strong> — code executes on the Jetson. Lowest latency, <code>ROBOT_NAME</code> already set, and the right default for demos and real-time control.</li>
+<li><strong>From a workstation</strong> — run AI models on a better GPU and send control over WiFi or Ethernet. You pay latency for the convenience. Both machines must sit on the same LAN, both need <code>dextop</code>, and both need the same certificate unpacked.</li>
+</ul>
+<h3>The environment variables</h3>
+<div class="tw"><table>
+<thead><tr><th>Variable</th><th>Required?</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>ROBOT_NAME</code></td><td>Yes</td><td>Selects the robot. <code>Robot()</code> raises <code>ValueError</code> without it. Pre-set on the Jetson; export it in every workstation terminal.</td></tr>
+<tr><td><code>ROBOT_CONFIG</code></td><td>Recommended</td><td>Tells control scripts which end effector is fitted. List the options with <code>dexbot cfg list</code> (<code>vega_1u</code>, <code>vega_1u_gripper</code>, <code>vega_1u_f5d6</code>, …).</td></tr>
+<tr><td><code>ZENOH_CONFIG</code></td><td>Off-robot: effectively yes</td><td>Points at <code>~/.dexmate/comm/zenoh/&lt;cert&gt;/zenoh_peer_config.json5</code>. Needed in practice to pull topics from an external machine.</td></tr>
+<tr><td><code>ROBOT_IP</code></td><td>Optional</td><td>Recent dexcomm uses it to answer queries faster.</td></tr>
+</tbody>
+</table></div>
+<div class="note mine"><span class="tag">Verified on this robot</span><p>The name must be written <code>dm/YOUR_SERIAL-1u</code> — with a <strong>slash</strong>. The wiki's prose says <code>dm-&lt;serial&gt;</code>, and that form makes <code>dextop firmware info</code> time out, while the wiki's own sample output uses the slash. Note that <code>dextop topic list</code> passes with either spelling because it globs <code>dm/**</code>, so it is <strong>not</strong> a valid check that the name is right.</p></div>
+</section>
+<section id="net">
+<div class="sechead"><span class="num">B1</span><h2>Getting the robot on the network</h2><span class="pill done">Done · one-time</span></div>
+<p class="lede">A robot with no known WiFi brings up its own hotspot on boot. The rule is: <strong>no known network → hotspot; known network in range → joins it and the hotspot disappears</strong>. You only do this once per robot.</p>
+<h3>Three ways to reach a shell</h3>
+<div class="tw"><table>
+<thead><tr><th>Method</th><th>What you need</th><th>Address</th><th>Best for</th></tr></thead>
+<tbody>
+<tr><td><strong>Monitor</strong></td><td>DisplayPort cable, USB keyboard and mouse into the IO hub</td><td>—, just click the WiFi tray icon</td><td>Simplest; no SSH knowledge needed</td></tr>
+<tr><td><strong>Ethernet</strong></td><td>Cable, optionally a switch</td><td><code>192.168.50.20</code></td><td>Stable — use it for firmware and certificate work</td></tr>
+<tr><td><strong>Robot hotspot</strong></td><td>Any laptop with WiFi</td><td><code>10.42.0.1</code> or <code>192.168.4.1</code></td><td>When you have no cables at hand</td></tr>
+</tbody>
+</table></div>
+<p>For Ethernet, give your own computer a static address first: <code>192.168.50.x</code> on Vega-1 and Vega-1U (pick any x from 1–255 <strong>except 20 and 21</strong>). On Vega-1-Pro use <code>192.168.5.x</code> for the chassis port or <code>192.168.50.x</code> for the torso port. Netmask <code>255.255.255.0</code>, gateway empty.</p>
+<h3>Hotspot credentials by build date</h3>
+<div class="tw"><table>
+<thead><tr><th>Batch</th><th>SSID</th><th>Password</th><th>IP</th></tr></thead>
+<tbody>
+<tr><td>Before Jan 2026</td><td><code>vega_{mac}_hotspot</code></td><td class="num-col">YOUR_HOTSPOT_PASSWORD</td><td class="num-col">192.168.4.1</td></tr>
+<tr><td>After Jan 2026</td><td><code>dexmate-{mac}</code></td><td class="num-col">YOUR_HOTSPOT_PASSWORD</td><td class="num-col">10.42.0.1</td></tr>
+</tbody>
+</table></div>
+<p>Give it 2–3 minutes after power-on before looking for the hotspot. SSH credentials are always <code>dexmate</code> / <code>YOUR_SSH_PASSWORD</code>.</p>
+<div class="cmd"><div class="cmd-head"><span>Terminal · your machine</span><button type="button">Copy</button></div><pre>ssh dexmate@10.42.0.1</pre></div>
+<h3>Joining your WiFi</h3>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre><span class="c"># see what's around</span>
+timeout 5 sudo iw dev wlP1p1s0 scan &gt; /tmp/scan_results
+nmcli device wifi list</pre></div>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson · dynamic IP (recommended)</span><button type="button">Copy</button></div><pre>sudo nmcli device wifi connect "YourNetworkName" password "YourPassword"</pre></div>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson · static IP</span><button type="button">Copy</button></div><pre>sudo nmcli device wifi connect "YourNetworkName" password "YourPassword" \
+  ip4 JETSON_STATIC_IP/24 gw4 WIFI_GATEWAY</pre></div>
+<div class="note warn"><span class="tag">Expected, not a failure</span><p>The moment that command succeeds, <strong>the hotspot vanishes and your SSH session dies</strong>. That is the documented behavior.</p></div>
+<p>Now find the robot on its new network. Use the router's admin page if you have it; otherwise scan:</p>
+<div class="cmd"><div class="cmd-head"><span>Terminal · your machine</span><button type="button">Copy</button></div><pre>nmap -sn 192.168.1.0/24 | grep -B2 -A2 "vega\|dexmate"</pre></div>
+<h3>When it won't connect</h3>
+<ul>
+<li><strong>No hotspot appears</strong> — wait the full 5 minutes; make sure no saved network is left on the robot (it will join that instead); reboot if needed.</li>
+<li><strong>SSH connection refused</strong> — confirm you are actually on the robot's hotspot, that you used the IP for your batch, and that boot has finished.</li>
+<li><strong>WiFi join fails</strong> — recheck SSID and password, confirm the network is 2.4 GHz or dual-band, move the robot closer to the router.</li>
+<li><strong>Can't find it on the new network</strong> — allow 2–3 minutes; if you set a static IP, restart the router and confirm the address doesn't clash with its settings.</li>
+</ul>
+</section>
+<section id="cert">
+<div class="sechead"><span class="num">B2</span><h2>Certificate and firmware — once per robot</h2><span class="pill done">Done · one-time</span></div>
+<p class="lede">The certificate is the ticket onto the bus: install it once, it lasts until it expires. Firmware updates are optional; the certificate is not. Dexmate documents two paths, and <strong>the certificate can only go through the web portal</strong>.</p>
+<h3>Method 1 · Web portal (required for the certificate)</h3>
+<p>The SoC board sits on the <code>192.168.50.x</code> subnet, unreachable from the WiFi side, so open a route first:</p>
+<div class="cmd"><div class="cmd-head"><span>Terminal · your machine</span><button type="button">Copy</button></div><pre>sudo apt install sshuttle
+sshuttle -r dexmate@$ROBOT_IP 192.168.50.0/24</pre></div>
+<ol class="steps">
+<li>Open <code>https://192.168.50.21:57832</code>. First visit asks you to set a password — make it memorable.</li>
+<li><strong>Upgrade the dashboard itself first</strong> (Check for Updates). If that fails, download the socbridge file from <a href="https://software.dexmate.ai/">software.dexmate.ai</a> and upload it manually.</li>
+<li>Upload the Dexmate-issued certificate in the communication section.</li>
+<li>Firmware updates, if you want them, happen in the same portal.</li>
+</ol>
+<div class="note"><span class="tag">Portal won't load</span><p>Robots shipped before March 2026 may have no socbridge at all — install it from the Jetson with <code>dextop firmware install-socbridge</code>. <strong>That command needs a working route to <code>192.168.50.21</code></strong>; with the static IP on <code>enP8p1s0</code> wiped by a reflash it only ever prints <code>Failed to connect to SOC: timed out</code>.</p></div>
+<h3>Method 2 · Command line (only with a valid certificate already installed)</h3>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson or workstation</span><button type="button">Copy</button></div><pre>dextop firmware info      <span class="c"># per-board version table</span>
+dextop firmware update    <span class="c"># prompts for the version to install</span></pre></div>
+<div class="note warn"><span class="tag">Firmware ≥ 0.5.0 installs in two passes</span><p>Upload and install the <strong>robot-server</strong> file → <strong>reboot the robot</strong> → once the portal is reachable again, upload the firmware file and install. Versions below 0.5.0 are a single upload.<br/>Keep versions aligned: firmware 0.4.3 needs <code>dextop==0.4.6</code>; once firmware is ≥ 0.4.3, bring <code>dextop</code>, <code>dexcontrol</code> and <code>dexsensor</code> up to latest together.</p></div>
+</section>
+<section id="comm">
+<div class="sechead"><span class="num">B3</span><h2>Workstation communication</h2><span class="pill">Optional · not in use</span></div>
+<p class="lede">Skip this section if you only ever run code onboard. To drive the robot from your own machine, the workstation has to join the same Zenoh bus.</p>
+<div class="cmd"><div class="cmd-head"><span>Terminal · workstation &amp; Jetson</span><button type="button">Copy</button></div><pre>pip install dextop --upgrade</pre></div>
+<div class="cmd"><div class="cmd-head"><span>Terminal · workstation · once</span><button type="button">Copy</button></div><pre>dextop cert unpack &lt;certificate_file&gt;.dzcfg</pre></div>
+<div class="note danger"><span class="tag">Don't drop the argument</span><p><code>dextop cert unpack</code> <strong>requires the certificate path</strong>; bare, it only returns <code>Missing argument 'PACKAGE_FILE'</code>. Store certificates securely — they are the authority to drive the robot.</p></div>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson · dextop ≥ 0.5.0</span><button type="button">Copy</button></div><pre>dextop node install-service</pre></div>
+<p>Below 0.5.0 the relay is manual and has to stay running, so put it in tmux:</p>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson · dextop &lt; 0.5.0</span><button type="button">Copy</button></div><pre>tmux new -s relay
+dextop node start          <span class="c"># then Ctrl+B, D to detach</span></pre></div>
+<div class="note mine"><span class="tag">Verified on this robot</span><p><code>install-service</code> starts the node itself, so a follow-up <code>dextop node start</code> fails on port 7447 — harmless, ignore it. Also, <code>dextop</code> installs into <code>~/.local/bin</code>, which is not on root's PATH: use <code>sudo -E $(which dextop) …</code>.</p></div>
+<div class="cmd"><div class="cmd-head"><span>Terminal · every terminal that runs control code</span><button type="button">Copy</button></div><pre>export ROBOT_NAME=dm/YOUR_SERIAL-1u
+export ZENOH_CONFIG=~/.dexmate/comm/zenoh/&lt;cert_name&gt;/zenoh_peer_config.json5
+export ROBOT_IP=ROBOT_IP</pre></div>
+<p>For a fleet, give each robot its own terminal with its own <code>ROBOT_NAME</code> — one workstation drives all of them.</p>
+</section>
+<section id="libs">
+<div class="sechead"><span class="num">B4</span><h2>Installing dexcontrol and dexsensor</h2><span class="pill done">Done · one-time</span></div>
+<h3>dexcontrol — control</h3>
+<div class="cmd"><div class="cmd-head"><span>Terminal</span><button type="button">Copy</button></div><pre>pip install dexcontrol</pre></div>
+<p>Examples are open source at <a href="https://github.com/dexmate-ai">github.com/dexmate-ai</a>. Dexmate suggests running <code>examples/advanced_examples/fold_robot.py</code> first to unfold a new robot — <strong>do not run that on this one</strong>; see the trap table.</p>
+<h3>dexsensor — perception, Jetson only</h3>
+<p>Download the right architecture from <a href="https://software.dexmate.ai/packages/dexsensor">software.dexmate.ai</a> (arm64 for Jetson), then:</p>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre>sudo dpkg -i &lt;dexsensor_xxx&gt;.deb</pre></div>
+<ul>
+<li>Coming from the Python-based <code>dexsensor ≤ 0.3.1</code>, <strong>uninstall it cleanly first</strong>, then install <code>≥ 0.6.9</code>.</li>
+<li>The ZED SDK ships pre-installed at <code>/usr/local/zed</code>, with PyZED in the base conda env. For your own environment, run <code>python get_python_api.py</code> from that directory.</li>
+<li><code>ZED SDK not found</code> while <code>import pyzed</code> works is a C++ stdlib mismatch: <code>conda update -c conda-forge libstdcxx-ng -y</code>.</li>
+<li>Each dexsensor release expects a particular ZED SDK version — pull it from the Stereolabs release archives.</li>
+<li><strong>Never launch dexsensor over <code>ssh -X</code></strong>; the ZED camera will fail to initialize.</li>
+</ul>
+<div class="note mine"><span class="tag">This robot's version set</span><p>ZED SDK <code>5.2.3</code> (<code>ZED_SDK_Tegra_L4T36.5_v5.2.3.zstd.run</code>) + <code>dexsensor 0.7.6</code> + <code>dextop 0.5.0</code>. dexsensor 0.7.6 is compiled against ZED SDK 5.2.2, so 5.2.3 emits an <code>undefined symbol: getZEDSDKBuildVersion</code> warning — harmless.</p></div>
+</section>
+<section id="verify">
+<div class="sechead"><span class="num">B5</span><h2>Verification and diagnostics</h2><span class="pill">Use any time</span></div>
+<p class="lede">Run these before writing any code. Confirming the link works first saves a lot of "is it my script or the robot?"</p>
+<div class="cmd"><div class="cmd-head"><span>Terminal</span><button type="button">Copy</button></div><pre>dextop topic list --timeout 10</pre></div>
+<p>The first call from an external machine often returns nothing — dextop needs a moment to reach the robot. Run it again or raise the timeout.</p>
+<div class="tw"><table>
+<thead><tr><th>Command</th><th>When to reach for it</th></tr></thead>
+<tbody>
+<tr><td><code>dextop doctor check</code></td><td>First move when the robot behaves oddly; reports hardware-level issues</td></tr>
+<tr><td><code>dextop doctor restart</code></td><td>When doctor flags the robot server — common right after a firmware update — for a clean restart</td></tr>
+<tr><td><code>dextop topic hz &lt;topic&gt;</code></td><td>Quantify latency when rates look low, especially over WiFi</td></tr>
+<tr><td><code>dextop firmware info</code></td><td>Per-board hardware and software versions</td></tr>
+<tr><td><code>dexsensor status</code></td><td>Per-sensor state: Disabled / Running / Error</td></tr>
+<tr><td><code>/usr/local/zed/tools/ZED_Explorer -a</code></td><td>Confirm cameras are seen after a ZED SDK install (Rahul's diagnostic)</td></tr>
+</tbody>
+</table></div>
+<div class="note"><span class="tag">How to tell whether a component exists</span><p>Judge from the Zenoh topics in <code>dextop topic list</code>, or from <code>has_component()</code> in code — <strong>never from the <code>firmware info</code> table</strong>. That table lists firmware bundle entries, not the joints this machine actually has (see below).</p></div>
+</section>
+<section id="dof">
+<div class="sechead"><span class="num">B6</span><h2>What this robot actually has</h2><span class="pill live">Reference · this robot</span></div>
+<p class="lede"><strong>Vega-1U is the upper body of a Vega-1.</strong> Total controllable DOF is <strong>17</strong>: left arm 7 (<code>L_arm_j1..j7</code>), right arm 7 (<code>R_arm_j1..j7</code>), head 3 (<code>head_j1..j3</code>). <strong>No torso and no chassis</strong> — <code>Vega1UConfig.components</code> lists only the two arms, head, estop and heartbeat, and the 16 keys from <code>dextop topic list</code> contain no <code>state/torso</code> or <code>control/torso</code>.</p>
+<div class="note warn"><span class="tag">Trap</span><p>The <code>dextop firmware info</code> table <strong>does list a <code>torso</code> board</strong> (hw 5, sw 123). That is a firmware-bundle entry, not a joint. Do not read it as "this robot has a waist."</p></div>
+<h3>Arm joint limits (rad) — asymmetric between sides</h3>
+<div class="tw"><table>
+<thead><tr><th>Joint</th><th>Left</th><th>Right</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>j1</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
+<tr><td>j2</td><td class="num-col">[−0.453, 1.553]</td><td class="num-col">[−1.553, 0.453]</td><td>Shoulder pitch — the only joint on this robot that raises anything</td></tr>
+<tr><td>j3</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
+<tr><td>j4</td><td class="num-col">[−3.071, 0.244]</td><td class="num-col">[−3.071, 0.244]</td><td></td></tr>
+<tr><td>j5</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
+<tr><td>j6</td><td class="num-col">±1.396</td><td class="num-col">±1.396</td><td></td></tr>
+<tr><td>j7</td><td class="num-col">[−1.378, 1.117]</td><td class="num-col">[−1.117, 1.378]</td><td>Mirrored — useful as a cross-check on your mapping</td></tr>
+</tbody>
+</table></div>
+<p>Arm <code>pose_pool</code>: <code>folded</code>, <code>folded_closed_hand</code>, <code>L_shape</code>, <code>lift_up</code>, <code>zero</code>. Head: <code>home</code>, <code>tucked</code>.</p>
+<div class="note danger"><span class="tag">Never command the folded pose on this robot</span>
+<p><code>folded</code> and <code>folded_closed_hand</code> came within a hair of damaging a gripper. <strong>Do not command them, and do not offer them as a safe stow pose.</strong></p>
+<p>Why: those poses tuck the forearm hard against the body, and they were designed around Dexmate's own end effectors. This robot carries third-party CAN grippers that stick out well past <code>L_ee</code> / <code>R_ee</code> and <strong>do not exist in <code>vega_1u.urdf</code> at all</strong> — neither the URDF nor pinocchio's collision checking knows they are there. A pose the kinematic model calls clean can still crush a gripper.</p>
+<p>The known-good parked pose is the one the robot was actually sitting in, recorded before the first commanded move and saved as <code>pre_move</code>: left <code>[1.7289, 0.0101, 0.0041, -0.9924, -0.2311, 0.5011, -0.0066]</code>, right <code>[-1.5683, -0.0026, 0.0031, -0.9916, 0.0908, -0.4138, -0.0018]</code>, head <code>[-0.0883, -0.0338, 0.0486]</code>. Treat every <code>pose_pool</code> entry as unvalidated on this hardware, and judge stow poses by real clearance around the wrist rather than by gravity torque or the vendor's name for the pose — a low-torque pose can still be a colliding one.</p>
+</div>
+<div class="note"><span class="tag">About the Lift in the URDF</span><p>The runtime facts stand: no torso component, no <code>control/torso</code> topic, nothing commandable. But <code>vega_1u.urdf</code> <strong>does model a lift</strong> — pinocchio reads 19 joints, and the two ahead of the arms are <code>Lift</code> (prismatic Z, 0–0.4 m) and <code>torso_flip</code> (revolute X, 0–1.0 rad). So "the hardware isn't there" is not established; it may be present but not enabled on this variant. Settling it needs the SoC-side config at <code>https://192.168.50.21:57832</code>.<br/>Related: this identifies the head of BrickBench's 23-vector — <code>[0.2, 0.5]</code> sits mid-range in both <code>Lift</code> (0–0.4) and <code>torso_flip</code> (0–1.0), two joints for two numbers.</p></div>
+<h3>Scripts already on the robot</h3>
+<div class="tw"><table>
+<thead><tr><th>Script</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>~/py_scripts/inspect_joints.py</code></td><td>Dumps every component's DOF, joint names, limits and current position. <strong>Run this first on any mapping question.</strong></td></tr>
+<tr><td><code>~/py_scripts/goto_home.py</code></td><td>Drives both arms and the head to a pose with stepped interpolation (0.12 rad/step) and limit clipping; <code>--dry-run</code> prints the plan only</td></tr>
+<tr><td><code>~/py_scripts/goto_ready.py</code></td><td><code>pre_move</code> → <code>manip_init</code>, right arm first</td></tr>
+<tr><td><code>~/py_scripts/goto_rest.py</code></td><td><code>manip_init</code> → <code>pre_move</code>, left arm first</td></tr>
+<tr><td><code>~/py_scripts/goto_pose.py</code></td><td>The engine behind both: named poses, limit clipping, stepped motion, <code>--seq</code>, <code>--min-sep</code>, <code>--dry-run</code>, the gripper clearance guard and the <code>folded</code> ban</td></tr>
+<tr><td><code>~/py_scripts/head_pose.py</code></td><td><code>read_head_joint_pos()</code> and <code>move_head_smooth()</code>; run directly to set <code>[0, 0, -0.5056]</code></td></tr>
+<tr><td><code>~/py_scripts/sensor_only.py</code></td><td>Camera info and a frame with <strong>no <code>Robot()</code></strong>, so nothing moves</td></tr>
+<tr><td><code>~/py_scripts/cam_info_capture.py</code></td><td>Set head pitch, dump <code>get_camera_info()</code>, save a full-res left RGB frame</td></tr>
+<tr><td><code>~/py_scripts/path_compare.py</code></td><td>Offline FK: compare concurrent vs sequential schedules by minimum wrist separation</td></tr>
+<tr><td><code>~/py_scripts/gripper_demo.py</code></td><td>Probe both motors, home whichever answer, concurrent open/close cycle</td></tr>
+<tr><td><code>~/py_scripts/gravity_check.py</code></td><td>Static gravity torque and wrist position from the URDF. <strong>It knows nothing about the grippers.</strong></td></tr>
+</tbody>
+</table></div>
+<div class="note mine"><span class="tag">Always prefix your commands</span><p>A non-interactive <code>ssh</code> does not source the interactive shell config, so <code>ROBOT_NAME</code> won't be set — pass it explicitly every time:<br/><code>ROBOT_NAME="dm/YOUR_SERIAL-1u" python3 script.py</code>. Key-based SSH to <code>dexmate@ROBOT_IP</code> is configured; no password needed.</p></div>
+</section>
+<section id="gripper">
+<div class="sechead"><span class="num">B7</span><h2>Gripper CAN bus and wiring</h2><span class="pill live">Reference · hardware</span></div>
+<p class="lede">Two third-party grippers hang off a shared CAN bus driven by a <strong>Jhoinrch RH-02</strong> USB-to-CAN adapter (a Canable/candleLight clone, STM32F072C8T6, USB ID <code>1d50:606f</code>). The robot reports hand type <code>UNKNOWN</code>, so <strong>they cannot be driven through <code>robot.left_hand</code></strong> — they are commanded over <code>can1</code> in parallel with arm control.</p>
+<div class="tw"><table>
+<thead><tr><th>Item</th><th>Value</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Bus rate</td><td class="num-col">1 Mbit/s</td><td><strong>Not 500k.</strong> Every other rate wedges the bus</td></tr>
+<tr><td>Power</td><td class="num-col">24 V + GND</td><td>Taken from the robot</td></tr>
+<tr><td>Wiring</td><td>Both grippers' CAN_H/CAN_L to the adapter terminal block</td><td>The adapter is T-tapped mid-bus</td></tr>
+<tr><td>Termination</td><td><code>R120</code> <strong>must be off</strong></td><td>Both grippers carry internal 120 Ω — expect 60 Ω at the screws; R120 on makes it 40 Ω and breaks the bus</td></tr>
+<tr><td>Polarity</td><td>Keep the original orientation</td><td>Swapping H/L gives <strong>no bus activity at all</strong> — no completions, no error frames</td></tr>
+</tbody>
+</table></div>
+<div class="note warn"><span class="tag">Don't be misled while debugging</span><p>The grippers are <strong>poll-response</strong> devices: they never broadcast, so a passive <code>candump</code> is always empty and proves nothing. They also do not answer CANopen SDO reads of 0x1000 at <code>0x600+n</code> for n = 1..127.</p></div>
+<h3>gs_usb has to be built by hand</h3>
+<p>The L4T kernel ships no <code>gs_usb</code> (<code>CONFIG_CAN_GS_USB is not set</code>, and the whole <code>drivers/net/can/usb/</code> directory is absent), and no <code>slcan</code> either — so reflashing the adapter with slcan firmware is not a way around it. The headers are present and an out-of-tree build works:</p>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre>mkdir -p ~/gs_usb_build &amp;&amp; cd ~/gs_usb_build
+curl -fsSLO https://raw.githubusercontent.com/gregkh/linux/v5.15.199/drivers/net/can/usb/gs_usb.c
+echo 'obj-m += gs_usb.o' &gt; Makefile
+make -C /lib/modules/$(uname -r)/build M=$PWD modules
+sudo cp gs_usb.ko /lib/modules/$(uname -r)/kernel/drivers/net/can/usb/ &amp;&amp; sudo depmod -a</pre></div>
+<p><strong>Any kernel change wipes this</strong> — rebuild against the new version (match the source tag to the running kernel). DKMS would make it permanent.</p>
+</section>
+<section id="reflash">
+<div class="sechead"><span class="num">B8</span><h2>Recovering after a Jetson reflash</h2><span class="pill">Only if reflashed</span></div>
+<p class="lede">On 2026-08-25 this robot was reflashed to JetPack 6.2.3, which wiped the entire factory Dexmate config: ZED SDK, dexsensor, dextop, the Zenoh certificate, and the static IP on <code>enP8p1s0</code>. Dexmate documents <strong>no</strong> reflash-recovery procedure. What follows is Rahul's four steps from ticket #126892650 plus everything we had to work out to finish the job.</p>
+<div class="step"><div class="sn">R1</div><div class="sb">
+<h3>Install the ZED SDK</h3>
+<p>Run <code>ZED_SDK_Tegra_L4T36.5_v5.2.3.zstd.run</code> on the Jetson. Confirm with <code>/usr/local/zed/tools/ZED_Explorer -a</code> that cameras are seen.</p>
+</div></div>
+<div class="step"><div class="sn">R2</div><div class="sb">
+<h3>Install dexsensor</h3>
+<p><code>sudo dpkg -i dexsensor_0.7.6_arm64.deb</code>.</p>
+</div></div>
+<div class="step"><div class="sn">R3</div><div class="sb">
+<h3>Install dextop and set the robot name</h3>
+<div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre>pip install dextop
+sudo -E $(which dextop) robot set_name dm/YOUR_SERIAL-1u</pre></div>
+<p>The name comes from the sticker on the chassis name tag. If the sticker is gone, read it from socbridge or dig it out of old logs.</p>
+</div></div>
+<div class="step"><div class="sn">R4</div><div class="sb">
+<h3>Unpack the certificate</h3>
+<p><code>dextop cert unpack &lt;file&gt;.dzcfg</code> — with the filename argument.</p>
+</div></div>
+<div class="step"><div class="sn">R5</div><div class="sb">
+<h3>Install socbridge</h3>
+<p><code>dextop firmware install-socbridge</code> (this robot used <code>socbridgepkg_v0.18.8.dpsw</code>). <code>Failed to connect to SOC: timed out</code> means the route to <code>192.168.50.21</code> is gone — restore the static IP <code>192.168.50.20/24</code> on <code>enP8p1s0</code> first.</p>
+</div></div>
+<div class="step"><div class="sn">R6</div><div class="sb">
+<h3>Match the kernel to the installed camera drivers</h3>
+<p>This unit was recovered using <code>5.15.185-tegra</code>, matching the installed ZED Link package. The historical downgrade is described below; the subsequent head + ISX031 wrist setup is in <a href="#camera-setup">B9</a>.</p>
+</div></div>
+<h3>The camera problem was never a missing driver</h3>
+<p>Stereolabs' ZED Link driver ships <strong>prebuilt</strong> kernel modules with no DKMS source, pinned to an exact kernel: <code>stereolabs-zedlink-duo_1.4.3-LI-MAX96712-L4T36.5.0</code> declares <code>Depends: nvidia-l4t-kernel (&gt;= 5.15.185), (&lt;&lt; 5.15.186)</code>. JetPack 6.2.3 / L4T <strong>36.5.2</strong> ships kernel <strong>5.15.199</strong>, so every <code>.ko</code> had the wrong vermagic.</p>
+<div class="note danger"><span class="tag">Both are labelled "36.5"</span><p>The L4T minor version is <strong>not enough</strong> to judge compatibility — check the kernel version.<br/>And never use <code>--ignore-depends</code> on this package: its postinst also overwrites <code>host1x.ko</code> and <code>tegra-drm.ko</code> (display and hardware engines) with builds for the other kernel.</p></div>
+<p>The symptom is deceptive: the SDK's userspace libraries load fine (<code>ZED SDK available</code>) while <code>CAMERA NOT DETECTED</code> persists — because there is no <code>/dev/video*</code>, no <code>zed_x_daemon</code>, and no deserializer modules. <strong>Check those three before suspecting cables or config.</strong></p>
+<h3>The downgrade — no reflash needed</h3>
+<p>36.5.0 and 36.5.2 live in the same <code>r36.5</code> apt repo, so a straight package downgrade works. The critical part: <strong>enumerate every installed <code>nvidia-l4t-*</code> that has a 36.5.0 version and name them all in one command</strong>. Naming only a few makes apt <em>remove</em> the rest, including <code>nvidia-l4t-bootloader</code> and <code>nvidia-l4t-initrd</code>. The correct result is "48 downgraded, 0 to remove."</p>
+<ul>
+<li>Always dry-run with <code>apt-get install -s</code> first.</li>
+<li><code>apt-mark hold</code> the lot afterwards.</li>
+<li>It rewrites the bootloader via capsule update, so <strong>be at the console</strong>.</li>
+</ul>
+<div class="note ok"><span class="tag">Side effect worth knowing</span><p>The downgrade also restored the static IP <code>192.168.50.20/24</code> on <code>enP8p1s0</code> that the reflash had wiped — strong evidence that <strong>Dexmate's factory image is built on L4T 36.5.0</strong>, and that the SoC portal at 192.168.50.21 should be reachable again.</p></div>
+<h3>Hardware confirmed on this unit</h3>
+<p>The capture card is a <strong>ZED Link Duo</strong> on a stock Orin Nano devkit carrier (<code>p3768</code> / <code>p3767-0005</code>). The head camera is a <strong>ZED X Mini</strong> (stereo, one GMSL link, two <code>/dev/video*</code> nodes, S/N YOUR_CAMERA_SERIAL) on port 0. <code>/etc/dexmate/dexsensor/default.toml</code> is generic across Vega variants and includes ZED X One wrist, base-camera and LiDAR entries. The actual wrists on this unit are <strong>two OEM ISX031 / MAX9295 cameras on a separate Waveshare MAX9296A</strong>; the ZED X One entries do not apply. See <a href="#camera-setup">B9</a> for their wiring and driver setup.</p>
+</section>
+<section id="camera-setup">
+<div class="sechead"><span class="num">B9</span><h2>Head + wrist camera setup</h2><span class="pill">Recorded 2026-09-15</span></div>
+<p class="lede">The head stereo camera and both wrists have delivered images concurrently on <code>dm/YOUR_SERIAL-1u</code>. Hardware: Orin Nano 8 GB <code>p3767-0005</code> on the stock <code>p3768</code> carrier; L4T 36.5 with <strong>Linux 5.15.185-tegra</strong>. Daily API examples are in <a href="#sensor">A2</a>.</p>
+<div class="note warn"><span class="tag">Default configured · cold boot still pending</span><p><code>DEFAULT HeadWrists</code> and automatic wrist initialization are installed. The running system at this checkpoint is the successfully tested <code>HeadWristsPatchedTest</code> boot. The new default initrd passed extraction/static checks, and its initialization service and API worked in the current boot. <strong>The complete new-default boot + automatic initialization sequence has not yet been reboot-tested.</strong></p></div>
+<h3>Physical connections</h3>
+<div class="tw"><table><thead><tr><th>Component</th><th>Connection / setting</th></tr></thead><tbody>
+<tr><td>Head: ZED X Mini, S/N YOUR_CAMERA_SERIAL</td><td>ZED Link Duo / MAX96712 → Jetson <strong>CAM0</strong>; <code>serial_b</code>, port-index 1, 2 CSI lanes. One GMSL link carries the stereo pair.</td></tr>
+<tr><td>Wrists A + B</td><td>OEM <strong>ISP/ISX-31 MAX9295 AA H195</strong>, PN <code>MC30E0Z23-00-08</code>. ISX031 ISP output is 1920×1536, UYVY / YUV422.</td></tr>
+<tr><td>Wrist deserializer</td><td>Waveshare <strong>MAX9296A</strong> (SKU 33623): <strong>CSI0 → Jetson CAM1</strong>; <code>serial_c</code>, port-index 2, 4 CSI lanes.</td></tr>
+<tr><td>Waveshare board settings</td><td>CFG DIP pattern <strong>0100</strong> in the board's numbered switch order. 5 V from header pins 2 and 4; GND pin 6. Pin 1 is 3.3 V, not the 5 V supply. Power off before changing wiring.</td></tr>
+<tr><td>Addresses / device discovery</td><td>Wrist bus was I²C 9: deserializer <code>0x48</code>, serializer aliases A <code>0x44</code>, B <code>0x42</code>. API identifies sensor suffixes <code>001a</code>/<code>001b</code> by name.</td></tr>
+</tbody></table></div>
+<p>The tested enumeration was wrists <code>/dev/video0</code>, <code>/dev/video1</code> and head <code>/dev/video2</code>, <code>/dev/video3</code>. These numbers can change after boot: use the API's discovery, not hard-coded indices. A power LED alone does not establish that frames are arriving; the stream tests below do.</p>
+<h3>Installed boot and initialization chain</h3>
+<ol class="steps">
+<li><code>/boot/extlinux/extlinux.conf</code> selects <code>DEFAULT HeadWrists</code>, loading <code>/boot/tegra234-head-wrists.dtbo</code> and <code>/boot/initrd-head-wrists-default</code>.</li>
+<li>The initrd supplies patched <code>tegra-camera.ko</code> and <code>isx031-gmsl-camera-b.ko</code> through read-only bind mounts before modules load. The original kernel, base DTB, on-disk modules and <code>/boot/initrd</code> are retained.</li>
+<li>The enabled <code>wrist-camera-init.service</code> waits for both wrist probes, applies camera-specific initialization and writes <code>/run/wrist-cameras/ready.json</code>. It is a oneshot: <code>active (exited)</code> with exit status 0 is normal. It skips the old single-camera fallback configuration.</li>
+<li><code>dexsensor.service</code> continues publishing the head through the ZED stack. <code>WristCameras()</code> starts wrist capture and software triggering on demand; closing its context stops them. Boot initialization does not start continuous wrist recording.</li>
+</ol>
+<div class="tw"><table><thead><tr><th>Path on Jetson</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>/opt/wrist-cameras/</code></td><td><code>wrist_cameras.py</code>, <code>initialize.py</code>, <code>trigger.py</code>, <code>wrist_camera_runtime.py</code> and README.</td></tr>
+<tr><td><code>/etc/systemd/system/wrist-camera-init.service</code></td><td>Boot initialization unit.</td></tr>
+<tr><td><code>/etc/tmpfiles.d/wrist-cameras.conf</code></td><td>Creates runtime paths and shared <code>/run/lock/wrist-cameras.lock</code>, root:i2c mode 0660.</td></tr>
+<tr><td><code>/usr/local/lib/python3.10/dist-packages/wrist_cameras_local.pth</code></td><td>Makes the local wrist module importable.</td></tr>
+<tr><td><code>/etc/dexmate/dexsensor/default.toml</code></td><td>Head enabled; HD1200, configured 30 fps, NEURAL, left/right/depth streams enabled. Generic ZED X One wrist entries remain disabled.</td></tr>
+</tbody></table></div>
+<h3>Why the stock packages were insufficient</h3>
+<p>The two original overlays overlapped VI/CSI channels. The combined overlay preserves the head's 26 channels and adds wrists at 26/27, with six physical CSI lanes total. It also removes the permanent CAM0-select GPIO hog and places the head board's TCA9546 below the carrier's CAM0 GPIO-mux branch.</p>
+<p>The camera framework needed a parent-walk patch for that nested I²C mux; otherwise the head probe failed with <code>i2c bus regbase unavailable</code> / error -75. The wrist driver needed MAX9295 identification and a 3 Gbps link configuration, followed by the OEM camera's reset, clock, video and trigger initialization. Device nodes alone were not enough to produce frames.</p>
+<p>The supplied <code>Downloads/orin_kernel_img_260506_v3.4/</code> package contains a <code>5.15.148-rt</code> kernel and AGX-specific device tree. Those binaries do not match this Nano's <code>5.15.185-tegra</code>. Only the camera-specific initialization was adapted; do not apply that package's whole-system installer to this setup. Rebuild/recheck the custom modules after any kernel or JetPack upgrade.</p>
+<h3>Readiness and recovery checks</h3>
+<div class="cmd"><div class="cmd-head"><span>Bash · Jetson · read-only checks</span><button type="button">Copy</button></div><pre>uname -r
+systemctl is-enabled wrist-camera-init.service
+systemctl status dexsensor wrist-camera-init.service --no-pager
+cat /run/wrist-cameras/ready.json
+journalctl -u wrist-camera-init.service -b --no-pager</pre></div>
+<p>A successful initialization marker must belong to the current boot. If it is missing, inspect the service log and selected boot files. Device-busy errors mean another reader owns the wrists; close that reader. A plain V4L2 pull does not provide the required software triggering.</p>
+<p>If camera initialization must be repeated, first close every wrist reader, then run:</p>
+<div class="cmd"><div class="cmd-head"><span>Bash · after closing wrist readers</span><button type="button">Copy</button></div><pre>sudo systemctl restart wrist-camera-init.service</pre></div>
+<p>This restarts camera initialization, not the robot. Re-open the API after the service succeeds.</p>
+<div class="note danger"><span class="tag">Recovery constraint from an observed crash</span><p>Do not hot-unload <code>nvhost_isp5</code> or batch-unload the camera stack: the original ISP driver's unload path caused a kernel panic during debugging. For boot validation, connect a display and keyboard and retain a way to select the original <code>ISX031</code> or <code>Stereolabs</code> boot entry.</p></div>
+<p>Boot configuration backup: <code>/boot/extlinux/extlinux.conf.before-default-head-wrists-20260915</code>. Selecting the old <code>ISX031</code> entry restores the wrist-only boot path; it does not provide the combined head + wrists configuration. New default initrd SHA256:</p>
+<div class="cmd"><div class="cmd-head"><span>SHA256 · /boot/initrd-head-wrists-default</span><button type="button">Copy</button></div><pre>f449a4ea16dc1bda7a0ce3dc6508c82472faf07e6b02e7b31cd102d72eedad69</pre></div>
+<h3>Measured results and limits</h3>
+<div class="tw"><table><thead><tr><th>Test path</th><th>Observed rate</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Head left/right RGB, HD1200</td><td>15.105 fps each</td><td>New subscribed frames during the 20 s concurrent raw-capture test.</td></tr>
+<tr><td>Head NEURAL depth, HD1200</td><td>15.054 fps</td><td>Measured publication rate; the configuration says 30 fps.</td></tr>
+<tr><td>Wrists A / B, native UYVY</td><td>9.327 / 9.293 fps</td><td>Independent software trigger; full 1920×1536 buffers.</td></tr>
+<tr><td>Full-resolution RGB wrist API + head subscriber</td><td>5.80 pairs/s</td><td>25 paired API reads in one process; includes conversion/copy overhead.</td></tr>
+<tr><td>45.020 s four-view motion demo</td><td>236 frames; 5.24 fps preview</td><td>API capture plus composition/recording; not native sensor fps.</td></tr>
+</tbody></table></div>
+<p>The raw test had 19.662 seconds of common overlap, unique increasing source timestamps and zero application-level capture/trigger errors. Some startup/stop kernel messages remained; this does not establish an error-free kernel log. Long-duration stability, 30 fps wrists, disconnect/reconnect and new-default cold boot are still unverified.</p>
+<h3>Rebuild files and evidence</h3>
+<p>Jetson workspace: <code>/home/dexmate/wrist-camera-debug/coexistence/</code>. Mac archive: <code>LOCAL_ARCHIVE/camera-coexistence/</code>. Keep the archive with this manual when reproducing the setup; the prose alone is not a replacement for the patched modules and camera register initialization.</p>
+<ul>
+<li><code>default-camera/README.md</code>, <code>api-test.json</code> and <code>initrd-build-verification.json</code>: installed API, service checks and new-default validation scope.</li>
+<li><code>build_candidate.py</code>, <code>sensor-common-nested-gpio-mux.patch</code> and <code>default-camera/build_default_initrd.py</code>: combined overlay, framework patch and default initrd builder.</li>
+<li><code>RESULTS.md</code> and <code>concurrent-independent-trigger-20s.json</code>: concurrent capture results.</li>
+<li>Mac motion demo: <code>LOCAL_ARCHIVE/output/head-wrists-motion-demo-20260915/head-wrists-motion-demo.mp4</code>.</li>
+</ul>
+</section>
+<section id="src">
+<div class="sechead"><span class="num">—</span><h2>Where this came from</h2></div>
+<div class="srcs">
+<div class="src"><b>Wiki · Connect to Vega</b><p>The three connection methods, hotspot credentials, nmcli setup, communication protocol</p></div>
+<div class="src"><b>Wiki · Software setup</b><p>Certificates and firmware, socbridge, dextop diagnostics, dexcontrol and dexsensor installation and config</p></div>
+<div class="src"><b>Wiki · Basic Concepts</b><p><code>ROBOT_NAME</code> and <code>ROBOT_CONFIG</code>, naming conventions across the three models</p></div>
+<div class="src"><b>Wiki · Sensors &amp; control</b><p>Joint, wrench, camera and LiDAR reads; head/arm/hand/torso/chassis control; the low-level chassis danger list</p></div>
+<div class="src"><b>Support ticket #126892650</b><p>2026-08-21 → 08-26 with Rahul at Dexmate: the four post-reflash steps, the ZED SDK 5.2.3 installer, <code>ZED_Explorer -a</code>, finding the robot name via socbridge</p></div>
+<div class="src"><b>Camera integration · 2026-09-15</b><p>Local camera-coexistence archive: successful concurrent captures, installed WristCameras API, default-camera README and initrd validation. New default cold boot remains pending.</p></div>
+<div class="src"><b>Our own debugging</b><p>2026-08-25 → 09-07: kernel downgrade, CAN bus bring-up, dexsensor config, 17-DOF verification, the gripper near-miss</p></div>
+</div>
+<footer>
+    Vega-1U · dm/YOUR_SERIAL-1u · compiled 2026-09-08 · camera setup/API updated 2026-09-15<br/>
+    Credentials on this robot are still the factory defaults (dexmate / YOUR_SSH_PASSWORD) — Dexmate recommends changing them after initial setup.
+  </footer>
+</section>
+</main>
+</div>
+</div>
+<script>
+document.querySelectorAll('.cmd-head button').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var pre = btn.closest('.cmd').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(function(){
+      btn.textContent = 'Copied';
+      setTimeout(function(){ btn.textContent = 'Copy'; }, 1400);
+    }).catch(function(){
+      btn.textContent = 'Failed';
+      setTimeout(function(){ btn.textContent = 'Copy'; }, 1400);
+    });
+  });
+});
+
+var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+var map = {};
+links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+if ('IntersectionObserver' in window) {
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) {
+        links.forEach(function(a){ a.classList.remove('on'); });
+        if (map[e.target.id]) map[e.target.id].classList.add('on');
+      }
+    });
+  }, { rootMargin: '-10% 0px -75% 0px' });
+  document.querySelectorAll('main section').forEach(function(s){ obs.observe(s); });
+}
+</script>

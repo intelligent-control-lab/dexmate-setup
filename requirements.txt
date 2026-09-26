@@ -1,0 +1,3 @@
+# Robot-exported direct versions plus a complete ARM64 wheel lock.
+--require-hashes
+-r requirements.lock.txt

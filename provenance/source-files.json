@@ -1,0 +1,160 @@
+{
+  "exported_at": "2026-09-26",
+  "files": [
+    {
+      "file": "software/gripper/GRIPPER_README.md",
+      "sha256": "959aa487e7cc5058dae892602f3207868bf9538a1dd7add9a6a16b70fc3a8b5f",
+      "source": "/home/dexmate/py_scripts/GRIPPER_README.md"
+    },
+    {
+      "file": "software/gripper/gripper.py",
+      "sha256": "00decc072d615dfefc996cb096744ae6843728a657f7c32b799410fdbb42a6b5",
+      "source": "/home/dexmate/py_scripts/gripper.py"
+    },
+    {
+      "file": "software/gripper/gripper_selftest.py",
+      "sha256": "d9b18bf161e666882c3d6c57d0cddf803d4e895794b0455ed584ed64a390293d",
+      "source": "local integration archive / installed gripper skill"
+    },
+    {
+      "file": "software/poses/ARM_POSES_README.md",
+      "sha256": "1b0c6be1d1f7820e0b77ca8a2571934bce24212bab18d8d9162e17fe0fdef056",
+      "source": "/home/dexmate/py_scripts/ARM_POSES_README.md"
+    },
+    {
+      "file": "software/poses/goto_home.py",
+      "sha256": "e03c2f0e444245db5270d799421dd2f229d46cbaff41651f437b31f6d8f0e56b",
+      "source": "/home/dexmate/py_scripts/goto_home.py"
+    },
+    {
+      "file": "software/poses/goto_pose.py",
+      "sha256": "920f8f620b7264d4fe27fd76dd67a677b0575c7bcde2500373d583b5f7602d61",
+      "source": "/home/dexmate/py_scripts/goto_pose.py"
+    },
+    {
+      "file": "software/poses/goto_ready.py",
+      "sha256": "d4791be21cbb7a5072e5bf1705df7707211234bff9793825818622f6b351c2a4",
+      "source": "/home/dexmate/py_scripts/goto_ready.py"
+    },
+    {
+      "file": "software/poses/goto_rest.py",
+      "sha256": "a9acbb09e4d790031b16629cd9b2a3ebb63943b1cabcf8d130ee377ad300943e",
+      "source": "/home/dexmate/py_scripts/goto_rest.py"
+    },
+    {
+      "file": "software/poses/head_pose.py",
+      "sha256": "72759c3d48647b3aa4dd158a4b42f49785ed4867f15d9110c3b0a7df03cd4c4e",
+      "source": "/home/dexmate/py_scripts/head_pose.py"
+    },
+    {
+      "file": "software/poses/inspect_joints.py",
+      "sha256": "0b341b5beacb6638d2c9ff76a9a2fdda1dde420d0435352fe03cc56f1e06f20c",
+      "source": "/home/dexmate/py_scripts/inspect_joints.py"
+    },
+    {
+      "file": "software/poses/path_compare.py",
+      "sha256": "45dd5d34639e93818a5d88b3f9bdf62da5c5711750190dc98e0fb6186948d71f",
+      "source": "/home/dexmate/py_scripts/path_compare.py"
+    },
+    {
+      "file": "software/poses/sensor_only.py",
+      "sha256": "d577743a2b9795ded2f5b454213e3699e2b4ec4f6a31d5047e0b4358fcec81f8",
+      "source": "/home/dexmate/py_scripts/sensor_only.py"
+    },
+    {
+      "file": "software/wrist_cameras/initialize.py",
+      "sha256": "7843bc5f07c5745413b3f0b61859d7cca363933efbb7f556378e5b0fd6bb8634",
+      "source": "/opt/wrist-cameras/initialize.py"
+    },
+    {
+      "file": "software/wrist_cameras/trigger.py",
+      "sha256": "c02bbcf21c071f45e59f43b519fe46cc8658382427f8127d42648a2f3d2bb9e9",
+      "source": "/opt/wrist-cameras/trigger.py"
+    },
+    {
+      "file": "software/wrist_cameras/wrist_camera_runtime.py",
+      "sha256": "bffae5095c6602748d8e544a28463137e65014547d3e8ca8a00ff5343077947b",
+      "source": "/opt/wrist-cameras/wrist_camera_runtime.py"
+    },
+    {
+      "file": "software/wrist_cameras/wrist_cameras.py",
+      "sha256": "c15bb0f432a5ec36618c641db986c7888b4954c5b4616e98a5a4ca422860b885",
+      "source": "/opt/wrist-cameras/wrist_cameras.py"
+    },
+    {
+      "file": "config/can1.service",
+      "sha256": "e4356204ae2169aa5eb9cf2edad5b7fffab1988e8e8f338eabae40bcbab292a4",
+      "source": "/etc/systemd/system/can1.service"
+    },
+    {
+      "file": "config/dexsensor.reference.toml",
+      "sha256": "54ab64434294402d2b007635cfdf5b9fe77a1a25fa37347111b34a6274982a92",
+      "source": "robot camera integration workspace (SSH export)"
+    },
+    {
+      "file": "config/wrist-camera-init.service",
+      "sha256": "fd1866ad377ac63020aa750ca2d7420946423cdc07df2961e5e7c7112f78b450",
+      "source": "/etc/systemd/system/wrist-camera-init.service"
+    },
+    {
+      "file": "config/wrist-cameras.conf",
+      "sha256": "34b3124c1aa4ab85c872324c5fe6ac77f2c58dd73694e57cc6685a2f2b02198d",
+      "source": "/etc/tmpfiles.d/wrist-cameras.conf"
+    },
+    {
+      "file": "drivers/5.15.185-tegra/gs_usb.ko",
+      "sha256": "9c565593f430674c75ea5d31c7f860e02f2a90d02ac9267a770349c947d4ce64",
+      "source": "/home/dexmate/gs_usb_build/gs_usb.ko"
+    },
+    {
+      "file": "drivers/5.15.185-tegra/isx031-gmsl-camera-b.ko",
+      "sha256": "a18e789842747f890e9cd6ad798e03cc7399224690fe80c75fabd5df32aca5a2",
+      "source": "robot camera integration workspace (SSH export)"
+    },
+    {
+      "file": "drivers/5.15.185-tegra/tegra-camera.ko",
+      "sha256": "f8775709b3ef32bbcb12d1f8112e9079206be1c049c7ab712de899f65d6bbd35",
+      "source": "robot camera integration workspace (SSH export)"
+    },
+    {
+      "file": "drivers/5.15.185-tegra/tegra234-head-wrists.dtbo",
+      "sha256": "31bb4f8734f0e53ad7f1c82cae773ef6c1cfaa00cbfc10166f37753365dcec94",
+      "source": "/boot/tegra234-head-wrists.dtbo"
+    },
+    {
+      "file": "drivers/source/build_candidate.py",
+      "sha256": "5cdb591f90cae4d6cdedb18f64bd800dfb37598bc2aec9c9e342dc790e177fd5",
+      "source": "local integration archive / installed gripper skill"
+    },
+    {
+      "file": "drivers/source/gs_usb.c",
+      "sha256": "d1ee028fd35e29f1c120577f62d1c3d670731b3b5104f4107278d061a7e5ac06",
+      "source": "/home/dexmate/gs_usb_build/gs_usb.c"
+    },
+    {
+      "file": "drivers/source/head-wrists.dts",
+      "sha256": "e4073a632cbe5dabb7ca5269f86f4400a9afa37f2b9851197ab2544a65049595",
+      "source": "robot camera integration workspace (SSH export)"
+    },
+    {
+      "file": "drivers/source/patch_wrist_driver.py",
+      "sha256": "795a8bec2f11475ccc6d21f83ab3dfaa5b22aae735edf10b6c16a69019fc937c",
+      "source": "local integration archive / installed gripper skill"
+    },
+    {
+      "file": "drivers/source/sensor-common-nested-gpio-mux.patch",
+      "sha256": "e2e0256417bd9b70effc5c5c3d4df2c4d964abcf7b56333edf5812c3d28b6f57",
+      "source": "robot camera integration workspace (SSH export)"
+    },
+    {
+      "file": "drivers/source/wrist-original.dts",
+      "sha256": "c9e9b4f8e364478d6001e7ef80a2d6c0043da6e3889bb1d266747f23de75104f",
+      "source": "local integration archive / installed gripper skill"
+    },
+    {
+      "file": "drivers/source/zedlink-original.dts",
+      "sha256": "bcbd7e5788bdd5b323c6b47756467ab4861fdcf77196e5d5a2c54179fa666c89",
+      "source": "local integration archive / installed gripper skill"
+    }
+  ]
+}

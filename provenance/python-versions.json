@@ -1,0 +1,16 @@
+{
+  "dexcontrol": "0.5.0",
+  "dextop": "0.5.0",
+  "dexmate-urdf": "0.8.4",
+  "python-can": "4.6.1",
+  "numpy": "2.2.6",
+  "pin": "4.1.0",
+  "opencv-python": "5.0.0.93",
+  "dexcomm": "0.6.0",
+  "dexbot-utils": "0.5.2",
+  "libpinocchio": "4.1.0",
+  "coal": "3.0.3",
+  "cmeel": "0.60.1",
+  "cmeel-boost": "1.90.0",
+  "cmeel-urdfdom": "6.0.0"
+}

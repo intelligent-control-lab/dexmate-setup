@@ -1,0 +1,16 @@
+[Unit]
+Description=Initialize MAX9295 wrist cameras alongside the ZED head camera
+After=systemd-udev-trigger.service systemd-tmpfiles-setup.service
+ConditionPathExists=/proc/device-tree/bus@0/cam_i2cmux/i2c@0/tca9546@70
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/wrist-cameras/initialize.py
+TimeoutStartSec=90
+RemainAfterExit=yes
+RuntimeDirectory=wrist-cameras
+RuntimeDirectoryMode=0755
+RuntimeDirectoryPreserve=yes
+
+[Install]
+WantedBy=multi-user.target

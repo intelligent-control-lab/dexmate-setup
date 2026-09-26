@@ -1,0 +1,306 @@
+# DexSensor Default Configuration
+#
+# All sensors are disabled by default.
+# Enable specific sensors at launch with: --sensor head_camera
+# Or enable all sensors with: --sensor all
+
+[robot]
+name = "default"                    # Robot identifier (used in Zenoh topic namespace)
+
+# =============================================================================
+# ZED X Cameras (GMSL2 Multi-Camera)
+# =============================================================================
+
+# Head Camera (GMSL Port 0) - ZED X Mini Stereo
+[[sensors]]
+type = "zed_x_camera"              # Sensor driver type
+id = "head_camera"                 # Unique sensor identifier
+enabled = true                    # Set true to launch by default (without --sensor flag)
+
+[sensors.connection]
+camera_id = 0                      # GMSL2 port number (0-7)
+
+[sensors.params]
+camera_model = "ZED_X_MINI"        # ZED_X, ZED_X_MINI
+resolution = "HD1200"                # SVGA (960x600), HD1080 (1920x1080), HD1200 (1920x1200)
+rate = 30                          # Capture frame rate in Hz
+depth_mode = "NEURAL"              # NONE, NEURAL_PLUS, NEURAL_LIGHT, NEURAL
+coordinate_units = "METER"         # METER, MILLIMETER
+depth_min = 0.1                    # Minimum depth range in coordinate_units
+depth_max = 8.0                    # Maximum depth range in coordinate_units
+confidence_threshold = 50          # Depth confidence threshold 0-100 (higher = stricter)
+texture_confidence_threshold = 100 # Texture confidence threshold 0-100
+auto_exposure_gain = true          # Enable automatic exposure and gain control
+auto_whitebalance = true           # Enable automatic white balance
+unrectified = false                # true = raw sensor images (wider FOV, no distortion correction)
+imu_reference = "current"          # IMU timestamp reference: "current" or "image"
+
+# RGB Transport Options:
+#
+# Zenoh transport (default): JPEG-encoded frames over Zenoh pub/sub
+#   type = "zenoh"
+#   quality = 75              # JPEG quality 1-100 (higher = better quality, larger size)
+#   jpeg_encoder = "auto"     # "auto" (hw > cuda > sw), "hardware", "cuda", or "software"
+#
+# RTC transport: WebRTC video streaming with H264/VP8 codec
+#   type = "rtc"
+#   codec = "h264"            # "h264", "vp8", or "h265" — video codec
+#   bitrate = 4000000         # Target bitrate in bits/sec (default: 4 Mbps)
+#                             #   1-2 Mbps: low bandwidth, lower quality
+#                             #   4 Mbps: good balance for 960x600
+#                             #   8 Mbps: high quality for 1080p
+#   network_mode = "local"    # "local" (LAN), "internet" (STUN), "internet_with_turn" (relay)
+
+[sensors.params.left_rgb_transport]
+type = "zenoh"                     # Transport type: "zenoh" or "rtc"
+quality = 75                       # JPEG quality 1-100
+jpeg_encoder = "auto"              # auto = hardware > cuda > software
+
+[sensors.params.right_rgb_transport]
+type = "zenoh"                     # Transport type: "zenoh" or "rtc"
+quality = 75                       # JPEG quality 1-100
+jpeg_encoder = "auto"              # auto = hardware > cuda > software
+
+[sensors.streams]
+left_rgb = true                    # Enable left RGB image stream
+right_rgb = true                   # Enable right RGB image stream
+depth = true                      # Enable depth map stream
+imu = true                         # Enable IMU data stream (~200 Hz)
+
+# Left Wrist Camera (GMSL Port 1) - ZED X One Monocular
+[[sensors]]
+type = "zed_x_one_camera"         # Sensor driver type
+id = "left_wrist_camera"          # Unique sensor identifier
+enabled = false
+
+[sensors.connection]
+camera_id = 1                      # GMSL2 port number
+
+[sensors.params]
+camera_model = "ZED_X_ONE_GS"     # ZED_X_ONE_GS, ZED_X_ONE_UHD, ZED_X_ONE_HDR
+resolution = "SVGA"                # SVGA (960x600), HD1080 (1920x1080), HD1200 (1920x1200)
+rate = 30                          # Capture frame rate in Hz
+sdk_verbose = 0                    # ZED SDK verbosity level (0=quiet, 1-5=verbose)
+auto_exposure_gain = true          # Enable automatic exposure and gain control
+auto_whitebalance = true           # Enable automatic white balance
+unrectified = false                # true = raw fisheye images (no distortion correction)
+
+[sensors.params.rgb_transport]
+type = "zenoh"                     # Transport type: "zenoh" or "rtc"
+quality = 75                       # JPEG quality 1-100
+jpeg_encoder = "auto"              # auto = hardware > cuda > software
+
+[sensors.streams]
+rgb = true                         # Enable RGB image stream
+imu = false                        # Enable IMU data stream
+
+# Right Wrist Camera (GMSL Port 2) - ZED X One Monocular
+[[sensors]]
+type = "zed_x_one_camera"
+id = "right_wrist_camera"
+enabled = false
+
+[sensors.connection]
+camera_id = 2                      # GMSL2 port number
+
+[sensors.params]
+camera_model = "ZED_X_ONE_GS"     # ZED_X_ONE_GS, ZED_X_ONE_UHD, ZED_X_ONE_HDR
+resolution = "SVGA"                # SVGA (960x600)
+rate = 30                          # Capture frame rate in Hz
+sdk_verbose = 0                    # ZED SDK verbosity level
+auto_exposure_gain = true
+auto_whitebalance = true
+unrectified = false                # true = raw fisheye images (no distortion correction)
+
+[sensors.params.rgb_transport]
+type = "zenoh"                     # Transport type: "zenoh" or "rtc"
+quality = 75                       # JPEG quality 1-100
+jpeg_encoder = "auto"              # auto = hardware > cuda > software
+
+[sensors.streams]
+rgb = true                         # Enable RGB image stream
+imu = false                        # Enable IMU data stream
+
+# =============================================================================
+# USB Cameras (Base Cameras)
+# =============================================================================
+# Use --sensor base_camera to launch all base cameras at once
+
+# USB Camera - Front
+[[sensors]]
+type = "usb_camera"                # Sensor driver type
+id = "base_front_camera"
+enabled = false
+
+[sensors.connection]
+device = "/dev/camera_front"       # V4L2 device path (use udev symlinks for stability)
+
+[sensors.params]
+width = 640                        # Capture width in pixels
+height = 480                       # Capture height in pixels
+rate = 30                          # Capture frame rate in Hz
+
+[sensors.params.rgb_transport]
+type = "zenoh"                     # Transport type: "zenoh" or "rtc"
+quality = 75                       # JPEG quality 1-100
+
+[sensors.streams]
+rgb = true                         # Enable RGB image stream
+
+# USB Camera - Back
+[[sensors]]
+type = "usb_camera"
+id = "base_back_camera"
+enabled = false
+
+[sensors.connection]
+device = "/dev/camera_back"        # V4L2 device path
+
+[sensors.params]
+width = 640                        # Capture width in pixels
+height = 480                       # Capture height in pixels
+rate = 30                          # Capture frame rate in Hz
+
+[sensors.params.rgb_transport]
+type = "zenoh"                     # Transport type
+quality = 75                       # JPEG quality 1-100
+
+[sensors.streams]
+rgb = true
+
+# USB Camera - Left
+[[sensors]]
+type = "usb_camera"
+id = "base_left_camera"
+enabled = false
+
+[sensors.connection]
+device = "/dev/camera_left"        # V4L2 device path
+
+[sensors.params]
+width = 640
+height = 480
+rate = 30
+
+[sensors.params.rgb_transport]
+type = "zenoh"
+quality = 80
+
+[sensors.streams]
+rgb = true
+
+# USB Camera - Right
+[[sensors]]
+type = "usb_camera"
+id = "base_right_camera"
+enabled = false
+
+[sensors.connection]
+device = "/dev/camera_right"       # V4L2 device path
+
+[sensors.params]
+width = 640
+height = 480
+rate = 30
+
+[sensors.params.rgb_transport]
+type = "zenoh"
+quality = 80
+
+[sensors.streams]
+rgb = true
+
+# =============================================================================
+# LiDAR
+# =============================================================================
+
+# RPLiDAR (UDP/Network) - 2D LiDAR
+[[sensors]]
+type = "rplidar"                   # Sensor driver type
+id = "lidar_2d_front"
+enabled = false
+
+[sensors.connection]
+type = "udp"                       # Connection type: "udp" or "serial"
+ip = "192.168.50.41"               # LiDAR IP address
+port = 8089                        # UDP data port
+
+[sensors.params]
+rate = 10.0                        # Expected scan rate in Hz
+downsample_factor = 1              # Keep every Nth point (1 = no downsampling)
+
+[sensors.streams]
+scan = true                        # Enable 2D scan data stream
+
+# Robosense Airy - 3D LiDAR Front (96-beam mechanical, 360 FOV)
+[[sensors]]
+type = "robosense_airy"            # Sensor driver type
+id = "lidar_3d_front"
+enabled = false
+
+[sensors.connection]
+host_address = "192.168.50.20"     # Local IP that receives LiDAR data
+msop_port = 6699                   # Measurement data port (MSOP)
+difop_port = 7788                  # Device info/config port (DIFOP)
+imu_port = 6688                    # IMU data port (Airy has built-in IMU)
+
+[sensors.params]
+min_distance = 0.2                 # Minimum range filter in meters
+max_distance = 60.0                # Maximum range filter in meters
+rate = 10.0                        # Expected point cloud frame rate in Hz
+
+[sensors.streams]
+point_cloud = true                 # Enable 3D point cloud stream
+imu = true                         # Enable built-in IMU data stream
+
+# Robosense E1R - 3D LiDAR Back (144-beam MEMS, 120 FOV)
+[[sensors]]
+type = "robosense_e1r"             # Sensor driver type
+id = "lidar_3d_back"
+enabled = false
+
+[sensors.connection]
+host_address = "192.168.50.20"     # Local IP that receives LiDAR data
+msop_port = 6799                   # Measurement data port (MSOP)
+difop_port = 7888                  # Device info/config port (DIFOP)
+imu_port = 6788                    # IMU data port (if supported)
+
+[sensors.params]
+min_distance = 0.2                 # Minimum range filter in meters
+max_distance = 75.0                # Maximum range filter in meters
+rate = 10.0                        # Expected point cloud frame rate in Hz
+
+[sensors.streams]
+point_cloud = true                 # Enable 3D point cloud stream
+imu = true                         # Enable built-in IMU data stream
+
+# =============================================================================
+# Usage Examples:
+# =============================================================================
+#
+# Launch specific sensor:
+#   dexsensor launch --sensor head_camera
+#
+# Launch multiple sensors:
+#   dexsensor launch --sensor head_camera --sensor lidar_3d_front
+#
+# Launch front Airy LiDAR with IMU:
+#   dexsensor launch --sensor lidar_3d_front
+#
+# Launch both front (Airy) and back (E1R) LiDARs:
+#   dexsensor launch --sensor lidar_3d_front --sensor lidar_3d_back
+#
+# Launch all 3D LiDARs (pattern matching):
+#   dexsensor launch --sensor lidar_3d
+#   (launches lidar_3d_front, lidar_3d_back)
+#
+# Launch all base cameras (pattern matching):
+#   dexsensor launch --sensor base_camera
+#   (launches base_front_camera, base_back_camera, base_left_camera, base_right_camera)
+#
+# Launch all sensors:
+#   dexsensor launch --sensor all
+#
+# No --sensor flag: only launches sensors with enabled=true
+#   dexsensor launch
+#

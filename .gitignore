@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+vendor/
+*.dzcfg
+*.pem
+*.key
+.env
+.DS_Store
+.pytest_cache/
+build/

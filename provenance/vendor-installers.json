@@ -1,0 +1,8 @@
+{
+  "description": "Vendor prerequisites; exact files were copied from the robot into a local archive, not redistributed in Git. Obtain official installers for a new robot.",
+  "files": [
+    {"name":"dexsensor_0.7.6_arm64.deb","sha256":"f1d76236329fbf6b812f8baca5c90227a1694e61ed05d12ddca8e4372a05211e","source":"https://software.dexmate.ai/packages/dexsensor"},
+    {"name":"stereolabs-zedlink-duo_1.4.3-LI-MAX96712-L4T36.5.0_arm64.deb","sha256":"12c101be7a8963ab501e0382286e9da9287d44f40e6ca91258c8c05d52abc889","source":"https://www.stereolabs.com/docs/get-started-with-zed-link"},
+    {"name":"ZED_SDK_Tegra_L4T36.5_v5.2.3.zstd.run","sha256":"5fe94605ebe09d4d7bd624da0ddbcb496b41a7595e3d0de97c017157c9766643","source":"https://www.stereolabs.com/developers/release/5.2"}
+  ]
+}

@@ -1,0 +1,21 @@
+--- a/sensor_common.c
++++ b/sensor_common.c
+@@ -685,6 +685,18 @@
+ 		/* move to i2c bus node */
+ 		parent = of_get_parent(node);
+ 		of_node_put(node);
++
++		/* A capture-card mux may be below the carrier GPIO mux. */
++		node = of_get_parent(parent);
++		if (of_device_is_compatible(node, "i2c-mux-gpio")) {
++			of_node_put(parent);
++			parent = of_parse_phandle(node, "i2c-parent", 0);
++			if (!parent) {
++				of_node_put(node);
++				return -EINVAL;
++			}
++		}
++		of_node_put(node);
+ 	} else {
+ 		/* move to next parent to check
+ 		 * if it is a gpio based i2c mux

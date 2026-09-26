@@ -1,0 +1,224 @@
+[
+  {
+    "name": "annotated-doc",
+    "version": "0.0.5",
+    "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101",
+    "wheel": "annotated_doc-0.0.5-py3-none-any.whl"
+  },
+  {
+    "name": "cmeel",
+    "version": "0.60.1",
+    "sha256": "3f92b68353a58b4d6b5a664ea96bf58a3fef0891a8ed570d3c153361bbbb94b7",
+    "wheel": "cmeel-0.60.1-py3-none-any.whl"
+  },
+  {
+    "name": "cmeel-assimp",
+    "version": "6.0.5",
+    "sha256": "db6fe58f8bd633cb05ab9f390c576a4e774927ed8c343083fad4f939e834bf6e",
+    "wheel": "cmeel_assimp-6.0.5-0-py3-none-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "cmeel-boost",
+    "version": "1.90.0",
+    "sha256": "6fc2ef59aecb088fd0e86c74dbdf7ec8c2e4f56ded0c95af87d967489b6ca479",
+    "wheel": "cmeel_boost-1.90.0-0-cp310-cp310-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "cmeel-console-bridge",
+    "version": "1.0.2.3",
+    "sha256": "372942e9c44f681bfff377fba25b348801283aa6f3826a00e4195089bda9737a",
+    "wheel": "cmeel_console_bridge-1.0.2.3-0-py3-none-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "cmeel-octomap",
+    "version": "1.10.0",
+    "sha256": "d9e6f9c826905e8de632e9df8cc20e59ce2eb5d1e0b368d8d4abbbc5c0829c1a",
+    "wheel": "cmeel_octomap-1.10.0-5-py3-none-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "cmeel-qhull",
+    "version": "8.0.2.1",
+    "sha256": "fd0b2d4ce749b102c3cdead4588249befd34f1a660628f6bfc090ce942925aac",
+    "wheel": "cmeel_qhull-8.0.2.1-1-py3-none-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "cmeel-tinyxml2",
+    "version": "11.0.0",
+    "sha256": "6f830007917c3e36f26b27d170ce84a619a62f46104d3cce435dff0125dd665f",
+    "wheel": "cmeel_tinyxml2-11.0.0-0-py3-none-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "cmeel-urdfdom",
+    "version": "6.0.0",
+    "sha256": "0436f5230f1484c8e583284ef48c7291b230ada3dc5fb2937941f582e72409ec",
+    "wheel": "cmeel_urdfdom-6.0.0-0-py3-none-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "cmeel-zlib",
+    "version": "1.3.2",
+    "sha256": "3b07fb7e28aaa917e6accb59a29dd0f5c1d272d42988f32ba2c232f5f455be4c",
+    "wheel": "cmeel_zlib-1.3.2-0-py3-none-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "coal",
+    "version": "3.0.3",
+    "sha256": "6641e1b9de4a10d7986749751c4507f9b1708e438621e361c512037e7d249ad2",
+    "wheel": "coal-3.0.3-0-cp310-cp310-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "dexbot-utils",
+    "version": "0.5.2",
+    "sha256": "ee0364d382595a20127605ba3a08f8e8bfbba20ce4e082e6a832fccc97d24310",
+    "wheel": "dexbot_utils-0.5.2-py3-none-any.whl"
+  },
+  {
+    "name": "dexcomm",
+    "version": "0.6.0",
+    "sha256": "b122a685a7ead81c160fd3459d24e2070e000e3723af9a4b78edc7c473249715",
+    "wheel": "dexcomm-0.6.0-cp310-abi3-manylinux_2_34_aarch64.whl"
+  },
+  {
+    "name": "dexcontrol",
+    "version": "0.5.0",
+    "sha256": "ced017ddce148b49173eb02daf8b680d218ce1c15517fcb616a71a838a3f7e90",
+    "wheel": "dexcontrol-0.5.0-py3-none-any.whl"
+  },
+  {
+    "name": "dexmate-urdf",
+    "version": "0.8.4",
+    "sha256": "0c04e8134e625fa13401268249ab3fead3ce7c54d267eb07950f2eb7deafe67c",
+    "wheel": "dexmate_urdf-0.8.4-py3-none-any.whl"
+  },
+  {
+    "name": "dextop",
+    "version": "0.5.0",
+    "sha256": "c047163f865a414bfadc2cf95af90570e9a5f0ad8924ef38ccef95068c299a0c",
+    "wheel": "dextop-0.5.0-py3-none-manylinux_2_34_aarch64.whl"
+  },
+  {
+    "name": "eigenpy",
+    "version": "3.13.0",
+    "sha256": "7716543b81705c4be8a3c6d11c0c9e43dbb2ef1863cb3379afc696d10b1f0a3b",
+    "wheel": "eigenpy-3.13.0-0-cp310-cp310-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "jaxtyping",
+    "version": "0.3.7",
+    "sha256": "303ab8599edf412eeb40bf06c863e3168fa186cf0e7334703fa741ddd7046e66",
+    "wheel": "jaxtyping-0.3.7-py3-none-any.whl"
+  },
+  {
+    "name": "libcoal",
+    "version": "3.0.3",
+    "sha256": "18e203ed53da8b96b192a74c4c041fe33f98b0249bb7ec27a3b67397ce1ecc4d",
+    "wheel": "libcoal-3.0.3-0-py3-none-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "libpinocchio",
+    "version": "4.1.0",
+    "sha256": "6cdc1e0f0068b50ed9e63b9f0d7e1c6387086316219157831d32bf7116700585",
+    "wheel": "libpinocchio-4.1.0-0-py3-none-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "loguru",
+    "version": "0.7.3",
+    "sha256": "31a33c10c8e1e10422bfd431aeb5d351c7cf7fa671e3c4df004162264b28220c",
+    "wheel": "loguru-0.7.3-py3-none-any.whl"
+  },
+  {
+    "name": "markdown-it-py",
+    "version": "4.2.0",
+    "sha256": "9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a",
+    "wheel": "markdown_it_py-4.2.0-py3-none-any.whl"
+  },
+  {
+    "name": "mdurl",
+    "version": "0.1.2",
+    "sha256": "84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8",
+    "wheel": "mdurl-0.1.2-py3-none-any.whl"
+  },
+  {
+    "name": "numpy",
+    "version": "2.2.6",
+    "sha256": "efd28d4e9cd7d7a8d39074a4d44c63eda73401580c5c76acda2ce969e0a38e83",
+    "wheel": "numpy-2.2.6-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+  },
+  {
+    "name": "opencv-python",
+    "version": "5.0.0.93",
+    "sha256": "08d5d91d967b58d6db86073b2ad3eaef88ca4ebdfd45c9059bf59f5ded0c7ad2",
+    "wheel": "opencv_python-5.0.0.93-cp37-abi3-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "orjson",
+    "version": "3.12.0",
+    "sha256": "18a87929f31d94a77f7dc93cf527e91f39ce7fe7813d588a4de2507efd32a387",
+    "wheel": "orjson-3.12.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+  },
+  {
+    "name": "packaging",
+    "version": "26.3",
+    "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+    "wheel": "packaging-26.3-py3-none-any.whl"
+  },
+  {
+    "name": "pin",
+    "version": "4.1.0",
+    "sha256": "a281fadbb283e357449c0f54ce4e43b6c6f504fdab03a281352d586522d83be4",
+    "wheel": "pin-4.1.0-0-cp310-cp310-manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "Pygments",
+    "version": "2.21.0",
+    "sha256": "2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9",
+    "wheel": "pygments-2.21.0-py3-none-any.whl"
+  },
+  {
+    "name": "python-can",
+    "version": "4.6.1",
+    "sha256": "17f95255868a95108dcfcb90565a684dad32d5a3ebb35afd14f739e18c84ff6c",
+    "wheel": "python_can-4.6.1-py3-none-any.whl"
+  },
+  {
+    "name": "rich",
+    "version": "15.0.0",
+    "sha256": "33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb",
+    "wheel": "rich-15.0.0-py3-none-any.whl"
+  },
+  {
+    "name": "shellingham",
+    "version": "1.5.4",
+    "sha256": "7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686",
+    "wheel": "shellingham-1.5.4-py2.py3-none-any.whl"
+  },
+  {
+    "name": "typer",
+    "version": "0.27.2",
+    "sha256": "b3a5fc4342d5fc8fda8fc3010b1cf117e9249aab7fae800c2eff62fd3842d97d",
+    "wheel": "typer-0.27.2-py3-none-any.whl"
+  },
+  {
+    "name": "typing_extensions",
+    "version": "4.16.0",
+    "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+    "wheel": "typing_extensions-4.16.0-py3-none-any.whl"
+  },
+  {
+    "name": "wadler_lindig",
+    "version": "0.1.7",
+    "sha256": "e3ec83835570fd0a9509f969162aeb9c65618f998b1f42918cfc8d45122fe953",
+    "wheel": "wadler_lindig-0.1.7-py3-none-any.whl"
+  },
+  {
+    "name": "wrapt",
+    "version": "1.17.3",
+    "sha256": "343e44b2a8e60e06a7e0d29c1671a0d9951f59174f3709962b5143f60a2a98bd",
+    "wheel": "wrapt-1.17.3-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl"
+  },
+  {
+    "name": "zstandard",
+    "version": "0.25.0",
+    "sha256": "e05ab82ea7753354bb054b92e2f288afb750e6b439ff6ca78af52939ebbc476d",
+    "wheel": "zstandard-0.25.0-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.whl"
+  }
+]

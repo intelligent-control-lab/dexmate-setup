@@ -1,0 +1,13 @@
+[Unit]
+Description=Bring up can1 (Jhoinrch RH-02 USB-CAN) at 1 Mbit/s
+BindsTo=sys-subsystem-net-devices-can1.device
+After=sys-subsystem-net-devices-can1.device
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/ip link set can1 up type can bitrate 1000000 loopback off listen-only off restart-ms 100
+ExecStop=/usr/sbin/ip link set can1 down
+
+[Install]
+WantedBy=sys-subsystem-net-devices-can1.device
