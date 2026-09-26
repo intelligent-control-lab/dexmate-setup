@@ -1,12 +1,12 @@
 <section id="hardware-control-reference">
-  <div class="sechead"><span class="num">B1</span><h2>硬件与控制信息</h2></div>
+  <div class="sechead"><span class="num">C5</span><h2>硬件与控制信息</h2></div>
   <p class="lede">来自「整理 DexMate 硬件与控制信息」任务的测量记录（2026-09-14 UTC）。该次测量时，左右腕部相机均未启用。</p>
   <div class="tw"><table><thead><tr><th>项目</th><th>记录配置</th></tr></thead><tbody>
     <tr><td>相机</td><td>头部为 ZED X Mini 双目相机，接 ZED Link Duo；左右腕为 Sony ISX031。</td></tr>
     <tr><td>头部输出</td><td>提供左右 RGB 和深度，无点云输出；需用 <code>depth + K</code> 反投影。</td></tr>
     <tr><td>分辨率／频率</td><td>配置为 1920×1200、30 fps；实测 RGB 和深度约 24 Hz。</td></tr>
     <tr><td>头部内参</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code>，单位为像素。双目基线：<code>0.0497 m</code>。</td></tr>
-    <tr><td>外参模型</td><td>名义机器人几何以 pip 包 <code>dexmate_urdf</code> 内的 URDF 为准。上传的模型及实测 TCP／相机变换见 <a href="#tcp-extrinsics">B2</a>。</td></tr>
+    <tr><td>外参模型</td><td>名义机器人几何以 pip 包 <code>dexmate_urdf</code> 内的 URDF 为准。上传的模型及实测 TCP／相机变换见 <a href="#tcp-extrinsics">C6</a>。</td></tr>
     <tr><td>通信</td><td>纯 Zenoh + dexcontrol，无 ROS 2。该次 RGB 实际走 <strong>Zenoh/JPEG</strong>，不是 RTC。延迟未测。</td></tr>
     <tr><td>计算机</td><td>Jetson Orin Nano；L4T 36.5.0；kernel 5.15.185。</td></tr>
     <tr><td>控制</td><td><code>dexcontrol 0.5.0</code>，仅支持关节位置控制；<code>wait_time=0</code> 时需以 100–500 Hz 循环调用。无公开笛卡尔、关节 velocity／current 控制接口。第三方 CAN 夹爪单独控制。</td></tr>
@@ -25,7 +25,7 @@ p_base = T_base_camera @ p_camera</pre></div>
 </section>
 
 <section id="tcp-extrinsics">
-  <div class="sechead"><span class="num">B2</span><h2>TCP、相机外参与 URDF 文件</h2></div>
+  <div class="sechead"><span class="num">C6</span><h2>TCP、相机外参与 URDF 文件</h2></div>
   <p class="lede">标定记录来自「暂存代码并重新标定区域」任务。该任务在 9 月 24 日最终恢复了 clean 提交 <code>b90bcac</code> 的 TCP／相机组合。原始 pivot 实测拟合值和此前调整 Y 后的组合在下方分别列出。</p>
   <h3>文件</h3>
   <ul>
@@ -61,7 +61,7 @@ head_j3 = -0.5056219100952148 rad
 torso_flip = 0.22689280275926285 rad
 Lift = 0 m</pre></div>
   <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>{{CLEAN_CAMERA}}</pre></div>
-  <p>矩阵对应上面的头部姿态；头部运动后，基座到相机的变换会变化。标定记录保存的校正左目内参为 <code>fx = fy = 734.7626953125</code>、<code>cx = 966.6296997070312</code>、<code>cy = 653.073486328125</code>，分辨率 1920×1200；这是该次标定保存的值，与 <a href="#hardware-control-reference">B1</a> 中较早记录的值分别列出。</p>
+  <p>矩阵对应上面的头部姿态；头部运动后，基座到相机的变换会变化。标定记录保存的校正左目内参为 <code>fx = fy = 734.7626953125</code>、<code>cx = 966.6296997070312</code>、<code>cy = 653.073486328125</code>，分辨率 1920×1200；这是该次标定保存的值，与 <a href="#hardware-control-reference">C5</a> 中较早记录的值分别列出。</p>
   <details><summary>此前调整 Y 的 TCP／相机组合</summary>
     <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>{{ADJUSTED_TCP}}</pre></div>
     <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>{{ADJUSTED_CAMERA}}</pre></div>

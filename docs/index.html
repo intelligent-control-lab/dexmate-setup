@@ -327,8 +327,8 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:v
   </ol>
   <p class="grp">B · 必读与必要设置</p>
   <ol>
-<li><a href="#hardware-control-reference"><span>B1</span>硬件与控制信息</a></li>
-<li><a href="#tcp-extrinsics"><span>B2</span>TCP、外参与 URDF</a></li>
+<li><a href="#gripper-hardware"><span>B1</span>夹爪硬件连接</a></li>
+<li><a href="#pcb-hardware"><span>B2</span>PCB／相机硬件安装</a></li>
 <li><a href="#net"><span>B3</span>连接网络</a></li>
 <li><a href="#cert"><span>B4</span>证书与固件</a></li>
 <li><a href="#comm"><span>B5</span>工作站通信</a></li>
@@ -342,8 +342,8 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:v
 <li><a href="#dof"><span>C2</span>自由度与关节限位</a></li>
 <li><a href="#gripper"><span>C3</span>CAN 总线与接线</a></li>
 <li><a href="#reflash"><span>C4</span>重刷系统后的恢复</a></li>
-<li><a href="#gripper-hardware"><span>C5</span>夹爪硬件连接</a></li>
-<li><a href="#pcb-hardware"><span>C6</span>PCB／相机硬件安装</a></li>
+<li><a href="#hardware-control-reference"><span>C5</span>硬件与控制信息</a></li>
+<li><a href="#tcp-extrinsics"><span>C6</span>TCP、外参与 URDF</a></li>
 </ol>
 <ol><li><a href="#src"><span>—</span>资料来源</a></li></ol>
 </nav>
@@ -868,133 +868,49 @@ g.close_bus()           <span class="c"># release the socket, leave motors energ
 </section>
 
 <div class="partline"><p class="eyebrow">Part B</p><h2>必读与必要设置</h2><p>每台新机器人都需阅读 B1–B8，并完成适用的设置与检查；B5 中的工作站配置适用于使用外部电脑的情况。</p></div>
-<section id="hardware-control-reference">
-  <div class="sechead"><span class="num">B1</span><h2>硬件与控制信息</h2></div>
-  <p class="lede">来自「整理 DexMate 硬件与控制信息」任务的测量记录（2026-09-14 UTC）。该次测量时，左右腕部相机均未启用。</p>
-  <div class="tw"><table><thead><tr><th>项目</th><th>记录配置</th></tr></thead><tbody>
-    <tr><td>相机</td><td>头部为 ZED X Mini 双目相机，接 ZED Link Duo；左右腕为 Sony ISX031。</td></tr>
-    <tr><td>头部输出</td><td>提供左右 RGB 和深度，无点云输出；需用 <code>depth + K</code> 反投影。</td></tr>
-    <tr><td>分辨率／频率</td><td>配置为 1920×1200、30 fps；实测 RGB 和深度约 24 Hz。</td></tr>
-    <tr><td>头部内参</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code>，单位为像素。双目基线：<code>0.0497 m</code>。</td></tr>
-    <tr><td>外参模型</td><td>名义机器人几何以 pip 包 <code>dexmate_urdf</code> 内的 URDF 为准。上传的模型及实测 TCP／相机变换见 <a href="#tcp-extrinsics">B2</a>。</td></tr>
-    <tr><td>通信</td><td>纯 Zenoh + dexcontrol，无 ROS 2。该次 RGB 实际走 <strong>Zenoh/JPEG</strong>，不是 RTC。延迟未测。</td></tr>
-    <tr><td>计算机</td><td>Jetson Orin Nano；L4T 36.5.0；kernel 5.15.185。</td></tr>
-    <tr><td>控制</td><td><code>dexcontrol 0.5.0</code>，仅支持关节位置控制；<code>wait_time=0</code> 时需以 100–500 Hz 循环调用。无公开笛卡尔、关节 velocity／current 控制接口。第三方 CAN 夹爪单独控制。</td></tr>
-    <tr><td>六维力</td><td><code>get_wrench_state()</code> 返回 <code>[fx, fy, fz, tx, ty, tz]</code>，类型为 <code>float32</code>。单位和参考坐标系未注明，需要确认或标定。传感器在该次测量时已激活。</td></tr>
-  </tbody></table></div>
-  <h3>实测发布频率</h3>
-  <div class="tw"><table><thead><tr><th>数据流</th><th>实测频率</th></tr></thead><tbody>
-    <tr><td>双臂关节状态</td><td>91–92 Hz</td></tr><tr><td>头部关节状态</td><td>48 Hz</td></tr><tr><td>头部 IMU</td><td>186–190 Hz</td></tr><tr><td>RGB／深度</td><td>≈24 Hz</td></tr><tr><td>六维力</td><td>91–92 Hz</td></tr>
-  </tbody></table></div>
-  <h3>深度反投影</h3>
-  <p>对校正后的像素 <code>(u, v)</code>，深度 <code>Z</code> 有效且单位为米时，使用对应图像流的内参：</p>
-  <div class="cmd"><div class="cmd-head"><span>相机光学坐标 · 米</span><button type="button">复制</button></div><pre>X = (u - cx) * Z / fx
-Y = (v - cy) * Z / fy
-p_camera = [X, Y, Z, 1]
-p_base = T_base_camera @ p_camera</pre></div>
+<section id="gripper-hardware">
+  <div class="sechead"><span class="num">B1</span><h2>夹爪硬件连接</h2><span class="pill">一次性配置</span></div>
+  <h3>1. 连接 assembled 线束</h3>
+  <p>组装好的线束一头是 CAN adapter，两侧分支各有一组 4-pin／6-pin 接口。两侧均将 <strong>6-pin 接夹爪</strong>，<strong>4-pin 接机器人</strong>。</p>
+  <h3>2. 连接腕部相机线</h3>
+  <p>相机线也要连接，<strong>只接偏向内部的一边</strong>，位置见 IMG_9360。</p>
+  <figure class="fig hardware-media"><img src="assets/IMG_9360.jpg" alt="IMG_9360：腕部相机偏向内部的连接位置" loading="lazy"><figcaption>IMG_9360 · 相机线只接偏向内部的一边。</figcaption></figure>
+  <h3>3. 连接 USB，并设置两个开关</h3>
+  <p>CAN adapter 插入机器人的 USB 口。<strong>两个开关都一定要拨向 K 那边</strong>，见 IMG_9369。</p>
+  <figure class="fig hardware-media"><img src="assets/IMG_9369.jpg" alt="IMG_9369：CAN adapter 的两个开关均朝向 K" loading="lazy"><figcaption>IMG_9369 · 两个开关均朝向 K。</figcaption></figure>
+  <h3>整体连接示例</h3>
+  <figure class="fig hardware-media"><img src="assets/IMG_9361.jpg" alt="IMG_9361：夹爪与相机线的整体连接示例" loading="lazy"><figcaption>IMG_9361 · 整体连接示例。</figcaption></figure>
+  <figure class="fig hardware-media"><video controls playsinline preload="none" poster="assets/IMG_9368-poster.jpg" aria-label="IMG_9368 夹爪接线演示"><source src="assets/IMG_9368.mp4" type="video/mp4"><a href="assets/IMG_9368.mp4">播放 IMG_9368</a></video><figcaption>IMG_9368 · 整体连接 walkthrough。</figcaption></figure>
 </section>
 
-<section id="tcp-extrinsics">
-  <div class="sechead"><span class="num">B2</span><h2>TCP、相机外参与 URDF 文件</h2></div>
-  <p class="lede">标定记录来自「暂存代码并重新标定区域」任务。该任务在 9 月 24 日最终恢复了 clean 提交 <code>b90bcac</code> 的 TCP／相机组合。原始 pivot 实测拟合值和此前调整 Y 后的组合在下方分别列出。</p>
-  <h3>文件</h3>
+<section id="pcb-hardware">
+  <div class="sechead"><span class="num">B2</span><h2>PCB 与相机硬件安装</h2><span class="pill">一次性配置</span></div>
+  <p>参考：<a href="https://docs.waveshare.com/MAX9296-GMSL-Deser-Module/Jetson-Orin">Waveshare MAX9296-GMSL-Deser-Module · Jetson Orin</a>。改线前先断电。</p>
+  <h3>1. 安装采集卡并连接电源</h3>
+  <p>用 kit 自带的铜柱连接采集卡和 PCB，然后接电。红线接 <strong>排针 2、4（5 V）</strong>，地线接 <strong>6（GND）</strong>。这里是 Jetson 的 5 V 排针，不能接夹爪的 24 V 电源。</p>
+  <div class="hardware-grid">
+    <figure class="fig hardware-media"><img src="assets/waveshare-power.webp" alt="Waveshare 采集卡使用 kit 铜柱安装，连接红黑电源线" loading="lazy"><figcaption>Kit 铜柱与电源线连接。图片：Waveshare。</figcaption></figure>
+    <figure class="fig hardware-media"><img src="assets/jetson-pinout.png" alt="Jetson 40-pin 排针定义：2、4 为 5 V，6 为 GND" loading="lazy"><figcaption>排针定义 · 2／4 = 5 V；6 = GND。</figcaption></figure>
+  </div>
+  <h3>2. 设置 CFG 开关为 0100</h3>
+  <p>按板上编号 <strong>1 → 2 → 3 → 4</strong> 读取，依次设置为 <strong>0 → 1 → 0 → 0</strong>。</p>
+  <figure class="fig hardware-media"><img src="assets/waveshare-switch.webp" alt="Waveshare CFG 开关及板上 1、2、3、4 编号" loading="lazy"><figcaption>CFG 开关位置与编号。图片：Waveshare。</figcaption></figure>
+  <h3>3. 更换机器人内的铜柱</h3>
+  <p>拆下机器人的原装铜柱，<strong>妥善保存</strong>。先用 <strong>15 mm 铜柱固定钢架</strong>，再接 <strong>10 mm 铜柱安装剩余的内存／存储组件及风扇</strong>。</p>
+  <figure class="fig hardware-media"><img src="assets/IMG_9276.jpg" alt="IMG_9276：机器人内部安装参考" loading="lazy"><figcaption>IMG_9276 · 内部安装参考。</figcaption></figure>
+  <h3>4. 连接内部腕部相机线</h3>
   <ul>
-    <li><a href="files/urdf/vega_1u.urdf" download>vega_1u.urdf</a> · 上传的机器人模型。</li>
-    <li><a href="files/urdf/vega_1u_gripper.urdf" download>vega_1u_gripper.urdf</a> · 上传的夹爪模型，包含 <code>L_camera_link</code> 和 <code>R_camera_link</code>。</li>
-    <li><a href="files/urdf/custom/vega_1u_gripper.urdf" download>标定项目中的自定义夹爪 URDF</a> · 另一份包含 <code>tip_l</code>／<code>tip_r</code> 的模型，用于名义 TCP 对照。</li>
-    <li><a href="files/calibration/clean-20260924.json" download>Clean TCP＋相机标定</a> · <a href="files/calibration/adjusted-20260924.json" download>此前调整 Y 的组合</a> · <a href="files/calibration/tcp-pivot-fit.json" download>Pivot 实测拟合结果</a>。</li>
-    <li><a href="files/reference-data.json" download>全部矩阵、源文件校验值及坐标系定义（JSON）</a>。</li>
+    <li><strong>拿到母母线：</strong>直接拆开内部连接腕部相机的连线，连接到采集卡。</li>
+    <li><strong>拿到公母线：</strong>把机器人后盖上接外部相机的接口拆下，用公母线直连。IMG_9277 walkthrough 演示的就是这种接法。</li>
   </ul>
-  <p>两份上传的 URDF 与 <code>dexmate_urdf 0.8.4</code> 包内文件逐字节一致，保留了原文件及相对 mesh 路径。Mesh 需在软件包的目录结构中解析；单独下载 URDF 不包含 mesh。用于对照的自定义模型单独存放。</p>
-  <h3>坐标约定</h3>
-  <p><code>T_parent_child</code> 将列向量坐标从 child 转到 parent：<code>p_parent = T_parent_child @ p_child</code>。平移单位为米，角度单位为弧度。<code>R = Rz(yaw) @ Ry(pitch) @ Rx(roll)</code>。基座轴向：X 向前、Y 向机器人左侧、Z 向上；已标定的左相机光学轴向：X 向图像右侧、Y 向图像下方、Z 向前。</p>
-  <h3>右侧 TCP：模型、实测拟合与选用值</h3>
-  <p>两份上传的软件包 URDF 定义了 <code>L_ee</code>／<code>R_ee</code>，但没有定义 <code>tip_l</code>／<code>tip_r</code> 夹持 TCP。下面的名义 tip 来自单独的自定义模型。</p>
-  <div class="tw"><table><thead><tr><th>来源</th><th>R_ee 中的 XYZ（mm）</th><th>含义</th></tr></thead><tbody>
-    <tr><td>自定义 URDF 名义 tip</td><td><code>≈ [0, -15, 198]</code></td><td>模型几何值；完整连乘变换见下方。</td></tr>
-    <tr><td>Pivot 拟合 · 9 月 19 日</td><td><code>[-1.025481, -10.438899, 196.928685]</code></td><td>实测平移；拟合 RMS 为 1.801540 mm。Pivot 拟合不确定旋转。</td></tr>
-    <tr><td>调整 Y 的组合 · 9 月 24 日 11:16</td><td><code>[-1.025481, -18, 196.928685]</code></td><td>采用实测 X／Z，Y 由用户指定；配套相机外参保存在可下载记录中。</td></tr>
-    <tr><td>恢复的 clean 组合 · 9 月 24 日 11:43</td><td><code>[-1, -15, 198]</code></td><td>引用任务最终选用的组合。</td></tr>
-  </tbody></table></div>
-  <p>最终选用值和调整 Y 的组合使用工具坐标约定 <code>rpy = [π, 0, π/2]</code>。这一旋转是名义约定，并非 pivot 实测结果。提供的实测 TCP 数据针对右夹爪。</p>
-  <div class="cmd"><div class="cmd-head"><span>Clean · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
-  [ 0.000000000,  1.000000000,  0.000000000, -0.001000000],
-  [ 1.000000000,  0.000000000,  0.000000000, -0.015000000],
-  [ 0.000000000,  0.000000000, -1.000000000,  0.198000000],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <details><summary>自定义 URDF 中的左右 TCP 变换</summary>
-    <p>以下连乘对应 EE 坐标系到 tip 之间的全部固定关节，是模型值，不是左右夹持中心的实测值。</p>
-    <div class="cmd"><div class="cmd-head"><span>Custom · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
-  [ 0.000000127,  1.000000000, -0.000000046,  0.000000193],
-  [ 1.000000000, -0.000000127,  0.000006200, -0.015001328],
-  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-    <div class="cmd"><div class="cmd-head"><span>Custom · T_L_ee_tip_l · 米</span><button type="button">复制</button></div><pre>[
-  [-0.000012680, -1.000000000,  0.000000046, -0.000000005],
-  [-1.000000000,  0.000012680, -0.000006200,  0.015001328],
-  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  </details>
-  <h3>实测头部相机外参</h3>
-  <p>Clean 相机外参使用水平棋盘约束拟合，并与 clean TCP 一起恢复。记录中的留出点 RMS 为 1.176229 mm。该组合对应以下参考头部姿态：</p>
-  <div class="cmd"><div class="cmd-head"><span>参考关节位置</span><button type="button">复制</button></div><pre>head_j1 = -0.00017453292093705386 rad
-head_j2 = -0.00017453292093705386 rad
-head_j3 = -0.5056219100952148 rad
-torso_flip = 0.22689280275926285 rad
-Lift = 0 m</pre></div>
-  <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
-  [-0.001383542, -0.636266466,  0.771468126,  0.089032073],
-  [-0.999930278, -0.008166881, -0.008528878,  0.026881780],
-  [ 0.011727127, -0.771426138, -0.636210805,  1.169376372],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <p>矩阵对应上面的头部姿态；头部运动后，基座到相机的变换会变化。标定记录保存的校正左目内参为 <code>fx = fy = 734.7626953125</code>、<code>cx = 966.6296997070312</code>、<code>cy = 653.073486328125</code>，分辨率 1920×1200；这是该次标定保存的值，与 <a href="#hardware-control-reference">B1</a> 中较早记录的值分别列出。</p>
-  <details><summary>此前调整 Y 的 TCP／相机组合</summary>
-    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
-  [ 0.000000000,  1.000000000,  0.000000000, -0.001025481],
-  [ 1.000000000,  0.000000000,  0.000000000, -0.018000000],
-  [ 0.000000000,  0.000000000, -1.000000000,  0.196928685],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
-  [-0.001383713, -0.636266468,  0.771468125,  0.089057487],
-  [-0.999930277, -0.008166772, -0.008529010,  0.023881859],
-  [ 0.011727127, -0.771426138, -0.636210805,  1.170447698],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  </details>
-  <h3>上传 URDF 中的名义外参</h3>
-  <p>每行是文件中存储的父子关节原点。两份文件均包含头部和 EE 条目；夹爪和腕部相机安装条目位于 <code>vega_1u_gripper.urdf</code>。</p>
-  <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody><tr><td><code>head_l3 → zed_depth_frame</code></td><td><code>0.025 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_left_camera</code></td><td><code>0.0365 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_right_camera</code></td><td><code>0.0365 -0.027 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 -1.57079</code></td></tr><tr><td><code>R_arm_l8 → R_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_gripper_base</code></td><td><code>0.0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>L_gripper_base → L_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr><tr><td><code>R_arm_l8 → R_gripper_base</code></td><td><code>0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>R_gripper_base → R_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr></tbody></table></div>
-  <p>在上述相同参考关节位置下，通过软件包 URDF 正运动学计算出的名义头部变换如下：</p>
-  <div class="cmd"><div class="cmd-head"><span>URDF FK · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
-  [-0.000165524, -0.668606938,  0.743615987,  0.084498283],
-  [-0.999999986,  0.000085701, -0.000145537,  0.024989645],
-  [ 0.000033578, -0.743616000, -0.668606942,  1.144781202],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <h3>URDF 腕部相机安装变换</h3>
-  <p>上传的夹爪 URDF 包含两侧腕部相机 link。连乘固定关节后得到：</p>
-  <div class="cmd"><div class="cmd-head"><span>URDF · T_L_ee_L_camera_link · 米</span><button type="button">复制</button></div><pre>[
-  [ 1.000000000,  0.000009962,  0.000000872,  0.000199254],
-  [-0.000010000,  0.996194738,  0.087155282, -0.074590002],
-  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <div class="cmd"><div class="cmd-head"><span>URDF · T_R_ee_R_camera_link · 米</span><button type="button">复制</button></div><pre>[
-  [-1.000000000,  0.000002643,  0.000000231, -0.000200198],
-  [-0.000002654, -0.996194738, -0.087155282,  0.074589999],
-  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <p>这些是名义 <code>camera_link</code> 安装坐标系。文件没有单独定义腕部光学坐标系，也没有给出经实测确认的 ISX031 光学坐标变换。旧任务中“夹爪 URDF 没有腕部相机 link”的结论不适用于这次上传的文件。</p>
-  <details><summary>单独的自定义对照模型中的关节原点</summary>
-    <p>该模型头部父坐标系是 <code>vega_1u_head_l3</code>，软件包模型则为 <code>head_l3</code>；对比时应使用完整坐标链，不能只比较局部 XYZ／RPY。</p>
-    <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody><tr><td><code>L_ee_link_gripper_link → tip_l</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>R_ee → R_ee_link_gripper_link</code></td><td><code>0.0000001 -0.0000001 -0.0000001</code></td><td><code>0.0000062 0. 0.0000062</code></td></tr><tr><td><code>R_ee_link_gripper_link → tip_r</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_left_camera</code></td><td><code>0.0365 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_depth_frame</code></td><td><code>0.025 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_right_camera</code></td><td><code>0.0365 0.027 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr></tbody></table></div>
-  </details>
+  <figure class="fig hardware-media"><video controls playsinline preload="none" poster="assets/IMG_9277-poster.jpg" aria-label="IMG_9277 内部接线演示"><source src="assets/IMG_9277.mp4" type="video/mp4"><a href="assets/IMG_9277.mp4">播放 IMG_9277</a></video><figcaption>IMG_9277 · 内部接线 walkthrough，使用公母线直连。</figcaption></figure>
+  <h3>5. 更换 CAM1 排线</h3>
+  <p>拆下原来接在 <strong>Jetson CAM1</strong> 上的线，使用 kit 自带的排线连接 <strong>Jetson CAM1 ↔ 采集卡 CSI0</strong>。</p>
+  <div class="hardware-grid">
+    <figure class="fig hardware-media"><img src="assets/jetson-board.jpg" alt="Jetson 载板及相机接口区域参考图" loading="lazy"><figcaption>Jetson 载板参考图。</figcaption></figure>
+    <figure class="fig hardware-media"><img src="assets/waveshare-kit.webp" alt="Waveshare 采集卡、相机及 CSI 排线连接参考" loading="lazy"><figcaption>采集卡与 kit 连接参考。图片：Waveshare。</figcaption></figure>
+  </div>
+  <div class="note"><p><strong>保存好从机器人拆下来的所有零件，包括原装铜柱、接口和线缆，之后归还机器人时还需要使用。</strong></p></div>
 </section>
 
 <section id="net">
@@ -1150,7 +1066,7 @@ sudo journalctl -k -b --no-pager | grep -Ei 'isx031|max929|tegra.*camera|i2c|csi
     <tr><td>头部服务失败，或相机被占用</td><td>查看 dexsensor 日志，检查 ZED SDK／ZED Link 安装及头部连线。关闭独立 ZED 查看器或重复发布进程，再重启 dexsensor；同一头部相机只保留一个占用者。</td></tr>
     <tr><td>头部服务运行，但没有 RGB／深度</td><td>检查 <code>/etc/dexmate/dexsensor/default.toml</code> 的 <code>head_camera</code> 块：<code>enabled = true</code>、<code>left_rgb = true</code>、<code>right_rgb = true</code>、<code>depth = true</code>、<code>depth_mode = "NEURAL"</code>。保存后重启服务。通用 ZED X One 腕部项保持禁用。客户端使用 <code>configs.sensors["head_camera"].enabled = True</code>，并核对 <code>ROBOT_NAME</code> 和证书。本机能读但工作站不能读，查看 <a href="#comm">B5</a>。</td></tr>
     <tr><td>腕部服务被跳过／找不到腕部设备</td><td><code>ConditionPathExists</code> 要求存在组合设备树路径 <code>/proc/device-tree/bus@0/cam_i2cmux/i2c@0/tca9546@70</code>。检查启动 overlay 和驱动日志。API 需要两个 ISX031 设备，并按名称发现它们；不要固定假设 <code>/dev/videoN</code> 编号。</td></tr>
-    <tr><td>Wrist probes not ready／串行器读取错误／GMSL 链路未锁定</td><td>断电后检查 5 V／GND 供电、CFG <code>0100</code>、CSI0 → CAM1 排线及两条 GMSL 连接，见 <a href="#pcb-hardware">C6</a>。2／4 脚为 5 V，6 脚为 GND；夹爪 24 V 电路保持独立。配套驱动要求 MAX9295／3 Gbps。先修复连线或启动配置再重试初始化，不要猜测写入 I²C 寄存器。</td></tr>
+    <tr><td>Wrist probes not ready／串行器读取错误／GMSL 链路未锁定</td><td>断电后检查 5 V／GND 供电、CFG <code>0100</code>、CSI0 → CAM1 排线及两条 GMSL 连接，见 <a href="#pcb-hardware">B2</a>。2／4 脚为 5 V，6 脚为 GND；夹爪 24 V 电路保持独立。配套驱动要求 MAX9295／3 Gbps。先修复连线或启动配置再重试初始化，不要猜测写入 I²C 寄存器。</td></tr>
     <tr><td>未初始化／标记来自另一次开机</td><td>将 <code>ready.json</code> 中的 <code>boot_id</code> 与上方本次开机 ID 比较。关闭腕部读取程序，重启 <code>wrist-camera-init.service</code>，查看退出状态和日志。不要手动创建或修改就绪标记。</td></tr>
     <tr><td>Already owned／设备忙</td><td>正常关闭另一份腕部程序。可用 <code>sudo fuser -v /dev/video*</code> 找占用者，不要终止无关进程。API 用一个锁同时管理两个腕部，只允许一个读取者。</td></tr>
     <tr><td>没有新帧／trigger worker exited</td><td>使用 <a href="#wrist-api">A2 的 WristCameras 示例</a>，它会启动软件触发进程；单独用 V4L2 拉流不会。检查异常、GStreamer／内核日志及设备权限。重新初始化前先关闭 API 上下文。</td></tr>
@@ -1220,7 +1136,7 @@ journalctl -u wrist-camera-init.service -b --no-pager</pre></div>
   </ul>
 </section>
 
-<div class="partline"><p class="eyebrow">Part C</p><h2>进阶信息</h2><p>架构、关节限位、CAN 细节、刷机恢复，以及带图片的硬件安装参考。</p></div>
+<div class="partline"><p class="eyebrow">Part C</p><h2>进阶信息</h2><p>架构、关节限位、CAN 细节、刷机恢复、硬件与控制信息，以及 TCP／外参参考。</p></div>
 <section id="arch">
   <div class="sechead"><span class="num">C1</span><h2>架构：一条 Zenoh 总线上的三个库</h2><span class="pill done">参考</span></div>
   <p class="lede">每个 Dexmate 组件都通过 <strong>Zenoh</strong>通信，使用同一份加密证书认证。了解各库应该运行在哪台机器上，是后续步骤的前提——装错位置最容易白费半天。</p>
@@ -1366,49 +1282,133 @@ sudo -E $(which dextop) robot set_name dm/vg3eb20f25bb-1u</pre></div>
   <p>采集卡为 <strong>ZED Link Duo</strong> ，安装在原装 Orin Nano 开发套件载板上（<code>p3768</code> / <code>p3767-0005</code>）。头部相机为 <strong>ZED X Mini</strong> （双目、一条 GMSL 链路、两个 <code>/dev/video*</code> 节点、S/N 53756133），接端口 0。 <code>/etc/dexmate/dexsensor/default.toml</code> 是多个 Vega 型号共用的通用配置，包含 ZED X One 腕部、底部相机和 LiDAR 条目。本机实际腕部为 <strong>两只原装 ISX031／MAX9295 相机，连接独立 Waveshare MAX9296A</strong>；ZED X One 条目不适用。接线和驱动配置见 <a href="#camera-setup">B8</a> 。</p>
 </section>
 
-<section id="gripper-hardware">
-  <div class="sechead"><span class="num">C5</span><h2>夹爪硬件连接</h2><span class="pill">一次性配置</span></div>
-  <h3>1. 连接 assembled 线束</h3>
-  <p>组装好的线束一头是 CAN adapter，两侧分支各有一组 4-pin／6-pin 接口。两侧均将 <strong>6-pin 接夹爪</strong>，<strong>4-pin 接机器人</strong>。</p>
-  <h3>2. 连接腕部相机线</h3>
-  <p>相机线也要连接，<strong>只接偏向内部的一边</strong>，位置见 IMG_9360。</p>
-  <figure class="fig hardware-media"><img src="assets/IMG_9360.jpg" alt="IMG_9360：腕部相机偏向内部的连接位置" loading="lazy"><figcaption>IMG_9360 · 相机线只接偏向内部的一边。</figcaption></figure>
-  <h3>3. 连接 USB，并设置两个开关</h3>
-  <p>CAN adapter 插入机器人的 USB 口。<strong>两个开关都一定要拨向 K 那边</strong>，见 IMG_9369。</p>
-  <figure class="fig hardware-media"><img src="assets/IMG_9369.jpg" alt="IMG_9369：CAN adapter 的两个开关均朝向 K" loading="lazy"><figcaption>IMG_9369 · 两个开关均朝向 K。</figcaption></figure>
-  <h3>整体连接示例</h3>
-  <figure class="fig hardware-media"><img src="assets/IMG_9361.jpg" alt="IMG_9361：夹爪与相机线的整体连接示例" loading="lazy"><figcaption>IMG_9361 · 整体连接示例。</figcaption></figure>
-  <figure class="fig hardware-media"><video controls playsinline preload="none" poster="assets/IMG_9368-poster.jpg" aria-label="IMG_9368 夹爪接线演示"><source src="assets/IMG_9368.mp4" type="video/mp4"><a href="assets/IMG_9368.mp4">播放 IMG_9368</a></video><figcaption>IMG_9368 · 整体连接 walkthrough。</figcaption></figure>
+<section id="hardware-control-reference">
+  <div class="sechead"><span class="num">C5</span><h2>硬件与控制信息</h2></div>
+  <p class="lede">来自「整理 DexMate 硬件与控制信息」任务的测量记录（2026-09-14 UTC）。该次测量时，左右腕部相机均未启用。</p>
+  <div class="tw"><table><thead><tr><th>项目</th><th>记录配置</th></tr></thead><tbody>
+    <tr><td>相机</td><td>头部为 ZED X Mini 双目相机，接 ZED Link Duo；左右腕为 Sony ISX031。</td></tr>
+    <tr><td>头部输出</td><td>提供左右 RGB 和深度，无点云输出；需用 <code>depth + K</code> 反投影。</td></tr>
+    <tr><td>分辨率／频率</td><td>配置为 1920×1200、30 fps；实测 RGB 和深度约 24 Hz。</td></tr>
+    <tr><td>头部内参</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code>，单位为像素。双目基线：<code>0.0497 m</code>。</td></tr>
+    <tr><td>外参模型</td><td>名义机器人几何以 pip 包 <code>dexmate_urdf</code> 内的 URDF 为准。上传的模型及实测 TCP／相机变换见 <a href="#tcp-extrinsics">C6</a>。</td></tr>
+    <tr><td>通信</td><td>纯 Zenoh + dexcontrol，无 ROS 2。该次 RGB 实际走 <strong>Zenoh/JPEG</strong>，不是 RTC。延迟未测。</td></tr>
+    <tr><td>计算机</td><td>Jetson Orin Nano；L4T 36.5.0；kernel 5.15.185。</td></tr>
+    <tr><td>控制</td><td><code>dexcontrol 0.5.0</code>，仅支持关节位置控制；<code>wait_time=0</code> 时需以 100–500 Hz 循环调用。无公开笛卡尔、关节 velocity／current 控制接口。第三方 CAN 夹爪单独控制。</td></tr>
+    <tr><td>六维力</td><td><code>get_wrench_state()</code> 返回 <code>[fx, fy, fz, tx, ty, tz]</code>，类型为 <code>float32</code>。单位和参考坐标系未注明，需要确认或标定。传感器在该次测量时已激活。</td></tr>
+  </tbody></table></div>
+  <h3>实测发布频率</h3>
+  <div class="tw"><table><thead><tr><th>数据流</th><th>实测频率</th></tr></thead><tbody>
+    <tr><td>双臂关节状态</td><td>91–92 Hz</td></tr><tr><td>头部关节状态</td><td>48 Hz</td></tr><tr><td>头部 IMU</td><td>186–190 Hz</td></tr><tr><td>RGB／深度</td><td>≈24 Hz</td></tr><tr><td>六维力</td><td>91–92 Hz</td></tr>
+  </tbody></table></div>
+  <h3>深度反投影</h3>
+  <p>对校正后的像素 <code>(u, v)</code>，深度 <code>Z</code> 有效且单位为米时，使用对应图像流的内参：</p>
+  <div class="cmd"><div class="cmd-head"><span>相机光学坐标 · 米</span><button type="button">复制</button></div><pre>X = (u - cx) * Z / fx
+Y = (v - cy) * Z / fy
+p_camera = [X, Y, Z, 1]
+p_base = T_base_camera @ p_camera</pre></div>
 </section>
 
-<section id="pcb-hardware">
-  <div class="sechead"><span class="num">C6</span><h2>PCB 与相机硬件安装</h2><span class="pill">一次性配置</span></div>
-  <p>参考：<a href="https://docs.waveshare.com/MAX9296-GMSL-Deser-Module/Jetson-Orin">Waveshare MAX9296-GMSL-Deser-Module · Jetson Orin</a>。改线前先断电。</p>
-  <h3>1. 安装采集卡并连接电源</h3>
-  <p>用 kit 自带的铜柱连接采集卡和 PCB，然后接电。红线接 <strong>排针 2、4（5 V）</strong>，地线接 <strong>6（GND）</strong>。这里是 Jetson 的 5 V 排针，不能接夹爪的 24 V 电源。</p>
-  <div class="hardware-grid">
-    <figure class="fig hardware-media"><img src="assets/waveshare-power.webp" alt="Waveshare 采集卡使用 kit 铜柱安装，连接红黑电源线" loading="lazy"><figcaption>Kit 铜柱与电源线连接。图片：Waveshare。</figcaption></figure>
-    <figure class="fig hardware-media"><img src="assets/jetson-pinout.png" alt="Jetson 40-pin 排针定义：2、4 为 5 V，6 为 GND" loading="lazy"><figcaption>排针定义 · 2／4 = 5 V；6 = GND。</figcaption></figure>
-  </div>
-  <h3>2. 设置 CFG 开关为 0100</h3>
-  <p>按板上编号 <strong>1 → 2 → 3 → 4</strong> 读取，依次设置为 <strong>0 → 1 → 0 → 0</strong>。</p>
-  <figure class="fig hardware-media"><img src="assets/waveshare-switch.webp" alt="Waveshare CFG 开关及板上 1、2、3、4 编号" loading="lazy"><figcaption>CFG 开关位置与编号。图片：Waveshare。</figcaption></figure>
-  <h3>3. 更换机器人内的铜柱</h3>
-  <p>拆下机器人的原装铜柱，<strong>妥善保存</strong>。先用 <strong>15 mm 铜柱固定钢架</strong>，再接 <strong>10 mm 铜柱安装剩余的内存／存储组件及风扇</strong>。</p>
-  <figure class="fig hardware-media"><img src="assets/IMG_9276.jpg" alt="IMG_9276：机器人内部安装参考" loading="lazy"><figcaption>IMG_9276 · 内部安装参考。</figcaption></figure>
-  <h3>4. 连接内部腕部相机线</h3>
+<section id="tcp-extrinsics">
+  <div class="sechead"><span class="num">C6</span><h2>TCP、相机外参与 URDF 文件</h2></div>
+  <p class="lede">标定记录来自「暂存代码并重新标定区域」任务。该任务在 9 月 24 日最终恢复了 clean 提交 <code>b90bcac</code> 的 TCP／相机组合。原始 pivot 实测拟合值和此前调整 Y 后的组合在下方分别列出。</p>
+  <h3>文件</h3>
   <ul>
-    <li><strong>拿到母母线：</strong>直接拆开内部连接腕部相机的连线，连接到采集卡。</li>
-    <li><strong>拿到公母线：</strong>把机器人后盖上接外部相机的接口拆下，用公母线直连。IMG_9277 walkthrough 演示的就是这种接法。</li>
+    <li><a href="files/urdf/vega_1u.urdf" download>vega_1u.urdf</a> · 上传的机器人模型。</li>
+    <li><a href="files/urdf/vega_1u_gripper.urdf" download>vega_1u_gripper.urdf</a> · 上传的夹爪模型，包含 <code>L_camera_link</code> 和 <code>R_camera_link</code>。</li>
+    <li><a href="files/urdf/custom/vega_1u_gripper.urdf" download>标定项目中的自定义夹爪 URDF</a> · 另一份包含 <code>tip_l</code>／<code>tip_r</code> 的模型，用于名义 TCP 对照。</li>
+    <li><a href="files/calibration/clean-20260924.json" download>Clean TCP＋相机标定</a> · <a href="files/calibration/adjusted-20260924.json" download>此前调整 Y 的组合</a> · <a href="files/calibration/tcp-pivot-fit.json" download>Pivot 实测拟合结果</a>。</li>
+    <li><a href="files/reference-data.json" download>全部矩阵、源文件校验值及坐标系定义（JSON）</a>。</li>
   </ul>
-  <figure class="fig hardware-media"><video controls playsinline preload="none" poster="assets/IMG_9277-poster.jpg" aria-label="IMG_9277 内部接线演示"><source src="assets/IMG_9277.mp4" type="video/mp4"><a href="assets/IMG_9277.mp4">播放 IMG_9277</a></video><figcaption>IMG_9277 · 内部接线 walkthrough，使用公母线直连。</figcaption></figure>
-  <h3>5. 更换 CAM1 排线</h3>
-  <p>拆下原来接在 <strong>Jetson CAM1</strong> 上的线，使用 kit 自带的排线连接 <strong>Jetson CAM1 ↔ 采集卡 CSI0</strong>。</p>
-  <div class="hardware-grid">
-    <figure class="fig hardware-media"><img src="assets/jetson-board.jpg" alt="Jetson 载板及相机接口区域参考图" loading="lazy"><figcaption>Jetson 载板参考图。</figcaption></figure>
-    <figure class="fig hardware-media"><img src="assets/waveshare-kit.webp" alt="Waveshare 采集卡、相机及 CSI 排线连接参考" loading="lazy"><figcaption>采集卡与 kit 连接参考。图片：Waveshare。</figcaption></figure>
-  </div>
-  <div class="note"><p><strong>保存好从机器人拆下来的所有零件，包括原装铜柱、接口和线缆，之后归还机器人时还需要使用。</strong></p></div>
+  <p>两份上传的 URDF 与 <code>dexmate_urdf 0.8.4</code> 包内文件逐字节一致，保留了原文件及相对 mesh 路径。Mesh 需在软件包的目录结构中解析；单独下载 URDF 不包含 mesh。用于对照的自定义模型单独存放。</p>
+  <h3>坐标约定</h3>
+  <p><code>T_parent_child</code> 将列向量坐标从 child 转到 parent：<code>p_parent = T_parent_child @ p_child</code>。平移单位为米，角度单位为弧度。<code>R = Rz(yaw) @ Ry(pitch) @ Rx(roll)</code>。基座轴向：X 向前、Y 向机器人左侧、Z 向上；已标定的左相机光学轴向：X 向图像右侧、Y 向图像下方、Z 向前。</p>
+  <h3>右侧 TCP：模型、实测拟合与选用值</h3>
+  <p>两份上传的软件包 URDF 定义了 <code>L_ee</code>／<code>R_ee</code>，但没有定义 <code>tip_l</code>／<code>tip_r</code> 夹持 TCP。下面的名义 tip 来自单独的自定义模型。</p>
+  <div class="tw"><table><thead><tr><th>来源</th><th>R_ee 中的 XYZ（mm）</th><th>含义</th></tr></thead><tbody>
+    <tr><td>自定义 URDF 名义 tip</td><td><code>≈ [0, -15, 198]</code></td><td>模型几何值；完整连乘变换见下方。</td></tr>
+    <tr><td>Pivot 拟合 · 9 月 19 日</td><td><code>[-1.025481, -10.438899, 196.928685]</code></td><td>实测平移；拟合 RMS 为 1.801540 mm。Pivot 拟合不确定旋转。</td></tr>
+    <tr><td>调整 Y 的组合 · 9 月 24 日 11:16</td><td><code>[-1.025481, -18, 196.928685]</code></td><td>采用实测 X／Z，Y 由用户指定；配套相机外参保存在可下载记录中。</td></tr>
+    <tr><td>恢复的 clean 组合 · 9 月 24 日 11:43</td><td><code>[-1, -15, 198]</code></td><td>引用任务最终选用的组合。</td></tr>
+  </tbody></table></div>
+  <p>最终选用值和调整 Y 的组合使用工具坐标约定 <code>rpy = [π, 0, π/2]</code>。这一旋转是名义约定，并非 pivot 实测结果。提供的实测 TCP 数据针对右夹爪。</p>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
+  [ 0.000000000,  1.000000000,  0.000000000, -0.001000000],
+  [ 1.000000000,  0.000000000,  0.000000000, -0.015000000],
+  [ 0.000000000,  0.000000000, -1.000000000,  0.198000000],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <details><summary>自定义 URDF 中的左右 TCP 变换</summary>
+    <p>以下连乘对应 EE 坐标系到 tip 之间的全部固定关节，是模型值，不是左右夹持中心的实测值。</p>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
+  [ 0.000000127,  1.000000000, -0.000000046,  0.000000193],
+  [ 1.000000000, -0.000000127,  0.000006200, -0.015001328],
+  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_L_ee_tip_l · 米</span><button type="button">复制</button></div><pre>[
+  [-0.000012680, -1.000000000,  0.000000046, -0.000000005],
+  [-1.000000000,  0.000012680, -0.000006200,  0.015001328],
+  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  </details>
+  <h3>实测头部相机外参</h3>
+  <p>Clean 相机外参使用水平棋盘约束拟合，并与 clean TCP 一起恢复。记录中的留出点 RMS 为 1.176229 mm。该组合对应以下参考头部姿态：</p>
+  <div class="cmd"><div class="cmd-head"><span>参考关节位置</span><button type="button">复制</button></div><pre>head_j1 = -0.00017453292093705386 rad
+head_j2 = -0.00017453292093705386 rad
+head_j3 = -0.5056219100952148 rad
+torso_flip = 0.22689280275926285 rad
+Lift = 0 m</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
+  [-0.001383542, -0.636266466,  0.771468126,  0.089032073],
+  [-0.999930278, -0.008166881, -0.008528878,  0.026881780],
+  [ 0.011727127, -0.771426138, -0.636210805,  1.169376372],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <p>矩阵对应上面的头部姿态；头部运动后，基座到相机的变换会变化。标定记录保存的校正左目内参为 <code>fx = fy = 734.7626953125</code>、<code>cx = 966.6296997070312</code>、<code>cy = 653.073486328125</code>，分辨率 1920×1200；这是该次标定保存的值，与 <a href="#hardware-control-reference">C5</a> 中较早记录的值分别列出。</p>
+  <details><summary>此前调整 Y 的 TCP／相机组合</summary>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
+  [ 0.000000000,  1.000000000,  0.000000000, -0.001025481],
+  [ 1.000000000,  0.000000000,  0.000000000, -0.018000000],
+  [ 0.000000000,  0.000000000, -1.000000000,  0.196928685],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
+  [-0.001383713, -0.636266468,  0.771468125,  0.089057487],
+  [-0.999930277, -0.008166772, -0.008529010,  0.023881859],
+  [ 0.011727127, -0.771426138, -0.636210805,  1.170447698],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  </details>
+  <h3>上传 URDF 中的名义外参</h3>
+  <p>每行是文件中存储的父子关节原点。两份文件均包含头部和 EE 条目；夹爪和腕部相机安装条目位于 <code>vega_1u_gripper.urdf</code>。</p>
+  <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody><tr><td><code>head_l3 → zed_depth_frame</code></td><td><code>0.025 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_left_camera</code></td><td><code>0.0365 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_right_camera</code></td><td><code>0.0365 -0.027 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 -1.57079</code></td></tr><tr><td><code>R_arm_l8 → R_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_gripper_base</code></td><td><code>0.0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>L_gripper_base → L_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr><tr><td><code>R_arm_l8 → R_gripper_base</code></td><td><code>0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>R_gripper_base → R_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr></tbody></table></div>
+  <p>在上述相同参考关节位置下，通过软件包 URDF 正运动学计算出的名义头部变换如下：</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF FK · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
+  [-0.000165524, -0.668606938,  0.743615987,  0.084498283],
+  [-0.999999986,  0.000085701, -0.000145537,  0.024989645],
+  [ 0.000033578, -0.743616000, -0.668606942,  1.144781202],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <h3>URDF 腕部相机安装变换</h3>
+  <p>上传的夹爪 URDF 包含两侧腕部相机 link。连乘固定关节后得到：</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_L_ee_L_camera_link · 米</span><button type="button">复制</button></div><pre>[
+  [ 1.000000000,  0.000009962,  0.000000872,  0.000199254],
+  [-0.000010000,  0.996194738,  0.087155282, -0.074590002],
+  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_R_ee_R_camera_link · 米</span><button type="button">复制</button></div><pre>[
+  [-1.000000000,  0.000002643,  0.000000231, -0.000200198],
+  [-0.000002654, -0.996194738, -0.087155282,  0.074589999],
+  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <p>这些是名义 <code>camera_link</code> 安装坐标系。文件没有单独定义腕部光学坐标系，也没有给出经实测确认的 ISX031 光学坐标变换。旧任务中“夹爪 URDF 没有腕部相机 link”的结论不适用于这次上传的文件。</p>
+  <details><summary>单独的自定义对照模型中的关节原点</summary>
+    <p>该模型头部父坐标系是 <code>vega_1u_head_l3</code>，软件包模型则为 <code>head_l3</code>；对比时应使用完整坐标链，不能只比较局部 XYZ／RPY。</p>
+    <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody><tr><td><code>L_ee_link_gripper_link → tip_l</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>R_ee → R_ee_link_gripper_link</code></td><td><code>0.0000001 -0.0000001 -0.0000001</code></td><td><code>0.0000062 0. 0.0000062</code></td></tr><tr><td><code>R_ee_link_gripper_link → tip_r</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_left_camera</code></td><td><code>0.0365 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_depth_frame</code></td><td><code>0.025 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_right_camera</code></td><td><code>0.0365 0.027 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr></tbody></table></div>
+  </details>
 </section>
 
 <section id="src">

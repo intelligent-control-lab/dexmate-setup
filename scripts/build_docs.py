@@ -87,8 +87,8 @@ def reference_chapters(lang):
 
 
 # Stable anchors preserve existing links while visible chapter numbers change.
-MANDATORY = ('hardware-control-reference', 'tcp-extrinsics', 'net', 'cert', 'comm', 'libs', 'verify', 'camera-setup')
-ADVANCED = ('arch', 'dof', 'gripper', 'reflash', 'gripper-hardware', 'pcb-hardware')
+MANDATORY = ('gripper-hardware', 'pcb-hardware', 'net', 'cert', 'comm', 'libs', 'verify', 'camera-setup')
+ADVANCED = ('arch', 'dof', 'gripper', 'reflash', 'hardware-control-reference', 'tcp-extrinsics')
 NUMBERS = {ident: f'{part}{n}' for part, order in [('B', MANDATORY), ('C', ADVANCED)] for n, ident in enumerate(order, 1)}
 SECTION_PATTERN = r'<section id="([^"]+)"[^>]*>.*?</section>'
 
@@ -96,7 +96,7 @@ SECTION_PATTERN = r'<section id="([^"]+)"[^>]*>.*?</section>'
 def renumber(source):
     # Change chapter labels and linked references only, never command text / image data.
     for ident, number in NUMBERS.items():
-        source = re.sub(r'(<a href="#' + re.escape(ident) + r'">)B\d+(</a>)', lambda m: m[1] + number + m[2], source)
+        source = re.sub(r'(<a href="#' + re.escape(ident) + r'">)[BC]\d+(</a>)', lambda m: m[1] + number + m[2], source)
     def section(match):
         text = match[0]
         if match[1] in NUMBERS:
@@ -115,10 +115,10 @@ def organize(source, lang):
     headings = ('Mandatory setup', 'Advanced info') if lang == 'en' else ('必读与必要设置', '进阶信息')
     descriptions = (
         ('Read B1–B8 for every new robot. Complete the applicable setup and checks; workstation configuration in B5 applies when using an external computer.',
-         'Architecture, joint limits, CAN details, reflash recovery and illustrated hardware installation references.')
+         'Architecture, joint limits, CAN details, reflash recovery, hardware/control information and TCP/extrinsics references.')
         if lang == 'en' else
         ('每台新机器人都需阅读 B1–B8，并完成适用的设置与检查；B5 中的工作站配置适用于使用外部电脑的情况。',
-         '架构、关节限位、CAN 细节、刷机恢复，以及带图片的硬件安装参考。')
+         '架构、关节限位、CAN 细节、刷机恢复、硬件与控制信息，以及 TCP／外参参考。')
     )
     nav = ''
     body = ''

@@ -77,9 +77,9 @@ and [troubleshooting](https://intelligent-control-lab.github.io/dexmate-setup/en
 ## Maintain the site
 
 The supplied original is preserved in `manual/vega1umanual.html`. The website keeps its
-layout, commands and examples. Part B contains mandatory chapters B1–B8: hardware/control,
-TCP/extrinsics, network, certificates, workstation communication, libraries, verification,
-and cameras. Part C contains advanced references and illustrated hardware setup.
+layout, commands and examples. Part B contains mandatory chapters B1–B8: gripper hardware,
+PCB/camera hardware, network, certificates, workstation communication, libraries, verification,
+and cameras. Part C contains advanced references, hardware/control information and TCP/extrinsics.
 Chinese prose for the original chapters is in `manual/zh.json`.
 
 Edit `manual/hardware.en.html` / `manual/hardware.zh.html` for hardware setup and
