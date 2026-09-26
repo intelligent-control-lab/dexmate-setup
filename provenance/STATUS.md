@@ -31,6 +31,6 @@ export. The separately requested calibration reference records are available in
 - 9 unit tests pass: target disk/fallback preservation, idempotence, unsupported boot/initrd rejection, and pose refusal paths without Robot construction.
 - 37 CPython 3.10 / Linux aarch64 wheels resolved, downloaded, and rechecked against the committed SHA256 lock; this is resolution validation, not target import/runtime validation.
 - Wrist binary adaptation reproduced the exported module byte-for-byte.
-- The bilingual pages pass local asset/fragment checks. Original English sections are checked byte-for-byte against the supplied manual; Chinese pages retain the same command blocks.
+- The bilingual pages pass local asset/fragment checks. Original English chapter bodies are checked against the supplied manual, allowing the requested renumbering, workstation badge and camera-help additions; Chinese pages retain the same command blocks.
 - Source /boot/initrd hash still matches the historical baseline; no boot files were changed.
 - Historical software README files have context banners; the arm README robot identifier was replaced by a placeholder.

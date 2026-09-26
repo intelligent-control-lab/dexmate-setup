@@ -4,6 +4,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 import re
 from urllib.parse import urlsplit, unquote
+from build_docs import renumber, MANDATORY, ADVANCED, NUMBERS
 
 ROOT = Path(__file__).resolve().parents[1] / "docs"
 
@@ -33,18 +34,28 @@ def check_original_preserved():
     english = (ROOT / "en.html").read_text()
     chinese = (ROOT / "index.html").read_text()
     pattern = r'<section id="([^"]+)"[^>]*>.*?</section>'
-    sections = {m.group(1): m.group(0) for m in re.finditer(pattern, original, re.S)}
+    sections = {m.group(1): m.group(0) for m in re.finditer(pattern, renumber(original), re.S)}
+    for lang, fragment in [("en", "english"), ("zh", "chinese")]:
+        addition = (ROOT.parent / f"manual/camera-help.{lang}.html").read_text() + "\n  "
+        if fragment == "english":
+            assert addition in english
+            english = english.replace(addition, "", 1)
+        else:
+            assert addition in chinese
+            chinese = chinese.replace(addition, "", 1)
     en_sections = {m.group(1): m.group(0) for m in re.finditer(pattern, english, re.S)}
     zh_sections = {m.group(1): m.group(0) for m in re.finditer(pattern, chinese, re.S)}
     assert set(en_sections) - set(sections) == {"gripper-hardware", "pcb-hardware", "hardware-control-reference", "tcp-extrinsics"}
     for ident, source in sections.items():
+        if ident == "comm":
+            source = source.replace("Optional · not in use", "Workstation setup")
         assert en_sections[ident] == source, f"Original chapter rewritten: {ident}"
         for tag in ("pre", "code"):
             blocks = rf'<{tag}\b[^>]*>.*?</{tag}>'
             assert re.findall(blocks, source, re.S) == re.findall(blocks, zh_sections[ident], re.S), (ident, "translated command/code changed")
     assert re.search(r'<style>.*?</style>', original, re.S).group() in english
     assert re.search(r'<style>.*?</style>', original, re.S).group() in chinese
-    print(f"PASS: all {len(sections)} original English sections unchanged; Chinese commands and original CSS preserved")
+    print(f"PASS: all {len(sections)} original chapter bodies preserved apart from chapter labels / workstation badge; Chinese commands and original CSS preserved")
 
 
 def main():
@@ -63,6 +74,15 @@ def main():
                 assert unquote(u.fragment) in pages[target].ids, (path, "missing fragment", ref)
             count += 1
     assert pages[(ROOT / "index.html").resolve()].sections == pages[(ROOT / "en.html").resolve()].sections
+    expected = ['now', 'sensor', 'control', 'poses', 'grippers', 'traps', *MANDATORY, *ADVANCED, 'src']
+    for filename in ('index.html', 'en.html'):
+        assert pages[(ROOT / filename).resolve()].sections == expected, 'Chapter order mismatch'
+        content = (ROOT / filename).read_text()
+        for ident, number in NUMBERS.items():
+            chapter = re.search(r'<section id="' + ident + r'">.*?</section>', content, re.S)[0]
+            assert f'<span class="num">{number}</span>' in chapter, (ident, number)
+            assert f'<a href="#{ident}"><span>{number}</span>' in content, ('nav', ident)
+    print('PASS: mandatory B1–B8 and advanced C1–C6 order / numbering')
     print(f"PASS: {len(pages)} pages, {count} local references, matching bilingual sections")
 
 

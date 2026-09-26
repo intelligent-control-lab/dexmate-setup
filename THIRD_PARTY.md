@@ -17,7 +17,8 @@
 - `IMG_*.jpg` and `IMG_*.mp4` are the user's installation photos/videos, converted for web use.
   EXIF/QuickTime metadata were removed; original video audio is preserved. Original files remain outside Git.
 - `manual/vega1umanual.html` preserves the supplied English field manual. The bilingual website
-  appends the requested hardware, control and calibration reference chapters.
+  includes the requested hardware, control and calibration reference chapters, organized into
+  mandatory setup and advanced information.
 - `docs/files/urdf/vega_1u.urdf` and `vega_1u_gripper.urdf` are user-supplied files matching
   `dexmate_urdf` 0.8.4. The separately labeled `urdf/custom/` model comes from the lab's
   calibration project. Their existing notices and licensing remain unchanged.

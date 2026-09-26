@@ -40,6 +40,20 @@ backs up replaced files, and does not start services, reboot, or command motors.
 Omit `--activate-camera-boot` to stage the camera boot entry without selecting it.
 The dependency installation needs Internet access; this is not an offline factory image.
 
+### Camera startup
+
+The installer enables `wrist-camera-init.service` for boot-time initialization. Wrist capture
+starts on demand through `WristCameras()`. The head uses the vendor's `dexsensor.service`;
+`--configure-head` configures it but does not enable it. After installation, enable both:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable dexsensor.service wrist-camera-init.service
+```
+
+See the manual's [camera startup](https://intelligent-control-lab.github.io/dexmate-setup/en.html#camera-autostart)
+and [troubleshooting](https://intelligent-control-lab.github.io/dexmate-setup/en.html#camera-troubleshooting) instructions.
+
 ## What is included
 
 | Path | Purpose |
@@ -64,12 +78,15 @@ The dependency installation needs Internet access; this is not an offline factor
 ## Maintain the site
 
 The supplied original is preserved in `manual/vega1umanual.html`. The website keeps its
-layout, sections, commands and examples. B10–B11 cover hardware setup; B12–B13 add
-hardware/control measurements and TCP, camera extrinsics and URDF references.
+layout, commands and examples. Part B contains mandatory chapters B1–B8: hardware/control,
+TCP/extrinsics, network, certificates, workstation communication, libraries, verification,
+and cameras. Part C contains advanced references and illustrated hardware setup.
 Chinese prose for the original chapters is in `manual/zh.json`.
 
 Edit `manual/hardware.en.html` / `manual/hardware.zh.html` for hardware setup and
-`manual/reference.en.html` / `manual/reference.zh.html` for the reference chapters, then:
+`manual/reference.en.html` / `manual/reference.zh.html` for calibration references.
+Camera startup and troubleshooting additions are in `manual/camera-help.en.html` /
+`manual/camera-help.zh.html`. Chapter order and numbering are set in `scripts/build_docs.py`. Then:
 
 ```bash
 python3 scripts/build_docs.py

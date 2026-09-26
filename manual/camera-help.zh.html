@@ -1,0 +1,38 @@
+<!-- camera-help:start -->
+  <h3 id="camera-autostart">当前仓库：开机启动</h3>
+  <p><strong>已经包含腕部初始化自启动。</strong><code>scripts/install.py --apply</code> 会安装并启用 <code>wrist-camera-init.service</code>。开机时等待两个腕部设备、完成初始化并写入就绪标记。这是一次性服务，显示 <code>active (exited)</code> 正常。它不会持续取流：应用打开 <code>WristCameras()</code> 后才启动采集和触发，关闭后停止。</p>
+  <p><strong>头部取流由厂商的 <code>dexsensor.service</code> 负责。</strong>目前 installer 没有显式启用此服务。<code>--configure-head</code> 会写入头部配置和机器人名称，但不会启用或启动服务。请用下方命令检查并启用。这里说明的是仓库行为；命令用于检查实际执行它们的机器人。</p>
+  <p>新机器人先安装匹配的厂商软件，再按仓库 <a href="https://github.com/intelligent-control-lab/dexmate-setup#quick-start">Quick start</a> 操作。<code>--camera-boot --activate-camera-boot</code> 会生成并选中 <code>DexmateSetupHeadWrists</code>，使用 <code>/boot/initrd-dexmate-setup</code> 和 <code>/boot/tegra234-dexmate-setup.dtbo</code>。不加 <code>--activate-camera-boot</code> 只会准备启动项。installer 不会启动服务或重启机器人。下方原机器人集成记录中的 <code>HeadWrists</code> 路径属于原来的安装。</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · 检查自启动</span><button type="button">复制</button></div><pre>systemctl is-enabled dexsensor.service wrist-camera-init.service
+systemctl status dexsensor.service wrist-camera-init.service --no-pager
+systemctl cat dexsensor.service wrist-camera-init.service
+cat /boot/extlinux/extlinux.conf</pre></div>
+  <p>安装完成后，启用这两个服务用于后续开机。如果提示 unit “not found”，先安装对应软件：头部需要厂商 dexsensor 包，腕部初始化需要本仓库 installer。</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · 启用自启动，不立即启动</span><button type="button">复制</button></div><pre>sudo systemctl daemon-reload
+sudo systemctl enable dexsensor.service wrist-camera-init.service</pre></div>
+  <p>检查启动项后手动重启。若只需要在本次开机中启动或重新初始化相机，先关闭腕部读取程序及独立 ZED 查看器，再执行下方命令。它们会中断相机流，不会重启机器人；新选中的内核 overlay 仍需重启后才能生效。</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · 先关闭相机读取程序</span><button type="button">复制</button></div><pre>sudo systemctl restart wrist-camera-init.service
+sudo systemctl restart dexsensor.service</pre></div>
+  <h3 id="camera-troubleshooting">相机不工作时怎么排查</h3>
+  <p>先在 Jetson 本机检查，区分硬件／服务问题和工作站通信问题。先看状态与日志：</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · 只读诊断</span><button type="button">复制</button></div><pre>uname -r
+systemctl status dexsensor.service wrist-camera-init.service --no-pager
+journalctl -u dexsensor.service -u wrist-camera-init.service -b -n 160 --no-pager
+v4l2-ctl --list-devices
+cat /run/wrist-cameras/ready.json
+cat /proc/sys/kernel/random/boot_id
+sudo journalctl -k -b --no-pager | grep -Ei 'isx031|max929|tegra.*camera|i2c|csi|vi.*error'</pre></div>
+  <div class="tw"><table><thead><tr><th>现象</th><th>检查与处理</th></tr></thead><tbody>
+    <tr><td>开机后头部和腕部都不能用</td><td>检查选中的组合启动项、overlay 和 initrd。本包要求 <code>5.15.185-tegra</code>／L4T 36.5.0 及匹配的 ZED 软件。extlinux 中有启动项不代表本次已使用它；结合开机内核日志和设备枚举检查。</td></tr>
+    <tr><td>头部服务失败，或相机被占用</td><td>查看 dexsensor 日志，检查 ZED SDK／ZED Link 安装及头部连线。关闭独立 ZED 查看器或重复发布进程，再重启 dexsensor；同一头部相机只保留一个占用者。</td></tr>
+    <tr><td>头部服务运行，但没有 RGB／深度</td><td>检查 <code>/etc/dexmate/dexsensor/default.toml</code> 的 <code>head_camera</code> 块：<code>enabled = true</code>、<code>left_rgb = true</code>、<code>right_rgb = true</code>、<code>depth = true</code>、<code>depth_mode = "NEURAL"</code>。保存后重启服务。通用 ZED X One 腕部项保持禁用。客户端使用 <code>configs.sensors["head_camera"].enabled = True</code>，并核对 <code>ROBOT_NAME</code> 和证书。本机能读但工作站不能读，查看 <a href="#comm">B5</a>。</td></tr>
+    <tr><td>腕部服务被跳过／找不到腕部设备</td><td><code>ConditionPathExists</code> 要求存在组合设备树路径 <code>/proc/device-tree/bus@0/cam_i2cmux/i2c@0/tca9546@70</code>。检查启动 overlay 和驱动日志。API 需要两个 ISX031 设备，并按名称发现它们；不要固定假设 <code>/dev/videoN</code> 编号。</td></tr>
+    <tr><td>Wrist probes not ready／串行器读取错误／GMSL 链路未锁定</td><td>断电后检查 5 V／GND 供电、CFG <code>0100</code>、CSI0 → CAM1 排线及两条 GMSL 连接，见 <a href="#pcb-hardware">C6</a>。2／4 脚为 5 V，6 脚为 GND；夹爪 24 V 电路保持独立。配套驱动要求 MAX9295／3 Gbps。先修复连线或启动配置再重试初始化，不要猜测写入 I²C 寄存器。</td></tr>
+    <tr><td>未初始化／标记来自另一次开机</td><td>将 <code>ready.json</code> 中的 <code>boot_id</code> 与上方本次开机 ID 比较。关闭腕部读取程序，重启 <code>wrist-camera-init.service</code>，查看退出状态和日志。不要手动创建或修改就绪标记。</td></tr>
+    <tr><td>Already owned／设备忙</td><td>正常关闭另一份腕部程序。可用 <code>sudo fuser -v /dev/video*</code> 找占用者，不要终止无关进程。API 用一个锁同时管理两个腕部，只允许一个读取者。</td></tr>
+    <tr><td>没有新帧／trigger worker exited</td><td>使用 <a href="#wrist-api">A2 的 WristCameras 示例</a>，它会启动软件触发进程；单独用 V4L2 拉流不会。检查异常、GStreamer／内核日志及设备权限。重新初始化前先关闭 API 上下文。</td></tr>
+    <tr><td>导入／GStreamer／权限错误</td><td>使用系统 Python 3.10 或安装好的 <code>/opt/dexmate-setup/venv</code>；用 <code>id -nG</code> 检查 <code>video</code> 和 <code>i2c</code> 组。安装后退出登录再进入。缺少 <code>gi</code>／GStreamer 或 <code>wrist_cameras</code> 通常是依赖未安装或 Python 环境不对。</td></tr>
+  </tbody></table></div>
+  <p>恢复后运行 <a href="#head-wrists-api">A2 头部＋双腕示例</a>：确认头部 RGB／深度非空，多次读取时头部源时间戳推进，两个腕部的 frame ID 持续增加。服务 active 和存在视频设备节点都不能单独证明已经出图。不要热卸载相机驱动栈；启动／驱动恢复使用保留的启动项并有序重启。</p>
+  <h3>原机器人集成记录 · 2026-09-15</h3>
+<!-- camera-help:end -->

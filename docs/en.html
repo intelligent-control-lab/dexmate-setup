@@ -300,7 +300,7 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:v
 <div class="manual-language"><a href="index.html" lang="zh-CN">中文</a><span> / </span><a href="en.html" lang="en">English</a></div>
     <p class="eyebrow">Dexmate Vega-1U · CMU · Internal</p>
     <h1>Vega-1U Field Manual</h1>
-    <p class="standfirst">Two halves. <strong>Part A is what we do every session</strong> — the robot is already configured, so this is just SSH and go. <strong>Part B is the one-time bring-up</strong>, already completed on this unit; it's here for a reflash, a second robot, or when something breaks. Sources: the four Dexmate wiki pages, support ticket #126892650, and everything we worked out ourselves that exists in no documentation.</p>
+    <p class="standfirst"><strong>Part A</strong> covers everyday operation. <strong>Part B</strong> contains the mandatory reading and setup for a new robot. <strong>Part C</strong> holds advanced information and hardware references.</p>
     <dl class="idcard">
       <div><dt>Robot name</dt><dd>dm/vg3eb20f25bb-1u<small>slash, not dash</small></dd></div>
       <div><dt>Model</dt><dd>Vega-1U<small>upper body · 17 DOF · no torso/chassis published</small></dd></div>
@@ -325,24 +325,27 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:v
     <li><a href="#grippers"><span>A5</span>Drive the grippers</a></li>
     <li><a href="#traps"><span>A6</span>Trap table</a></li>
   </ol>
-  <p class="grp">B · Reference <em>(setup done)</em></p>
+  <p class="grp">B · Mandatory setup</p>
   <ol>
-    <li><a href="#arch"><span>B0</span>Architecture</a></li>
-    <li><a href="#net"><span>B1</span>Get on the network</a></li>
-    <li><a href="#cert"><span>B2</span>Certificate &amp; firmware</a></li>
-    <li><a href="#comm"><span>B3</span>Workstation comms</a></li>
-    <li><a href="#libs"><span>B4</span>Install the libraries</a></li>
-    <li><a href="#verify"><span>B5</span>Verify &amp; diagnose</a></li>
-    <li><a href="#dof"><span>B6</span>DOF &amp; joint limits</a></li>
-    <li><a href="#gripper"><span>B7</span>CAN bus &amp; wiring</a></li>
-    <li><a href="#reflash"><span>B8</span>Recovery after reflash</a></li>
-    <li><a href="#camera-setup"><span>B9</span>Camera setup &amp; boot</a></li>
-    <li><a href="#gripper-hardware"><span>B10</span>Gripper hardware setup</a></li>
-<li><a href="#pcb-hardware"><span>B11</span>PCB / camera hardware setup</a></li>
-<li><a href="#hardware-control-reference"><span>B12</span>Hardware & control</a></li>
-<li><a href="#tcp-extrinsics"><span>B13</span>TCP, extrinsics & URDF</a></li>
-    <li><a href="#src"><span>—</span>Sources</a></li>
-  </ol>
+<li><a href="#hardware-control-reference"><span>B1</span>Hardware &amp; control</a></li>
+<li><a href="#tcp-extrinsics"><span>B2</span>TCP, extrinsics &amp; URDF</a></li>
+<li><a href="#net"><span>B3</span>Get on the network</a></li>
+<li><a href="#cert"><span>B4</span>Certificate &amp; firmware</a></li>
+<li><a href="#comm"><span>B5</span>Workstation comms</a></li>
+<li><a href="#libs"><span>B6</span>Install the libraries</a></li>
+<li><a href="#verify"><span>B7</span>Verify &amp; diagnose</a></li>
+<li><a href="#camera-setup"><span>B8</span>Camera setup &amp; boot</a></li>
+</ol>
+<p class="grp">C · Advanced info</p>
+  <ol>
+<li><a href="#arch"><span>C1</span>Architecture</a></li>
+<li><a href="#dof"><span>C2</span>DOF &amp; joint limits</a></li>
+<li><a href="#gripper"><span>C3</span>CAN bus &amp; wiring</a></li>
+<li><a href="#reflash"><span>C4</span>Recovery after reflash</a></li>
+<li><a href="#gripper-hardware"><span>C5</span>Gripper hardware</a></li>
+<li><a href="#pcb-hardware"><span>C6</span>PCB / camera hardware</a></li>
+</ol>
+<ol><li><a href="#src"><span>—</span>Where this came from</a></li></ol>
 </nav>
 
 <main>
@@ -393,7 +396,7 @@ python3 ~/py_scripts/inspect_joints.py</pre></div>
   <p>That is the whole required part. Everything below is per-task — bring up only the subsystem you are about to use.</p>
   <div class="cmd"><div class="cmd-head"><span>Optional · camera readiness · Jetson</span><button type="button">Copy</button></div><pre>systemctl status dexsensor wrist-camera-init.service --no-pager
 cat /run/wrist-cameras/ready.json</pre></div>
-  <p>The head service already runs on this unit. Subscribe with <a href="#sensor">A2</a>; the wrist API starts capture on demand. Wiring and boot configuration are in <a href="#camera-setup">B9</a>.</p>
+  <p>The head service already runs on this unit. Subscribe with <a href="#sensor">A2</a>; the wrist API starts capture on demand. Wiring and boot configuration are in <a href="#camera-setup">B8</a>.</p>
   <div class="cmd"><div class="cmd-head"><span>Optional · grippers</span><button type="button">Copy</button></div><pre>sudo modprobe gs_usb                                    <span class="c"># asks for hello-dex</span>
 sudo ip link set can1 up type can bitrate 1000000 \
      loopback off listen-only off                       <span class="c"># ip is NOPASSWD</span></pre></div>
@@ -412,12 +415,12 @@ sudo ip link set can1 up type can bitrate 1000000 \
   <div class="note warn"><span class="tag">What has <em>not</em> changed</span><p>A new IP does not mean re-running setup. The certificate, robot name, firmware and libraries all live on the robot and survive an address change — only <code>ROBOT_IP</code> (if you export it) and your SSH target need updating.</p></div>
 
   <h3>Working from a workstation instead</h3>
-  <p>We currently run everything onboard. Driving the robot from your own machine is possible but needs its own one-time setup — <code>dextop</code>, the same certificate unpacked locally, and the environment variables — described in <a href="#comm">B3</a>. It buys you a better GPU at the cost of network latency.</p>
+  <p>We currently run everything onboard. Driving the robot from your own machine is possible but needs its own one-time setup — <code>dextop</code>, the same certificate unpacked locally, and the environment variables — described in <a href="#comm">B5</a>. It buys you a better GPU at the cost of network latency.</p>
 </section>
 
 <section id="sensor">
   <div class="sechead"><span class="num">A2</span><h2>Reading sensor data</h2></div>
-  <p class="lede">The head camera is published by the existing <code>dexsensor</code> service. The two OEM wrists use the local <code>WristCameras</code> Python API. Both can be read together. Use the sensor-only examples below to obtain images without constructing <code>Robot()</code>, which homes the head. Setup: <a href="#camera-setup">B9</a>.</p>
+  <p class="lede">The head camera is published by the existing <code>dexsensor</code> service. The two OEM wrists use the local <code>WristCameras</code> Python API. Both can be read together. Use the sensor-only examples below to obtain images without constructing <code>Robot()</code>, which homes the head. Setup: <a href="#camera-setup">B8</a>.</p>
 
   <h3>Joints, current, wrench, buttons — no dexsensor needed</h3>
   <div class="cmd"><div class="cmd-head"><span>Python</span><button type="button">Copy</button></div><pre>from dexcontrol.robot import Robot
@@ -462,7 +465,7 @@ finally:
     <p><strong>The head camera streams RGB, not BGR</strong>, despite ZED's usual convention. <code>cv2.imwrite</code> and <code>cv2.VideoWriter</code> both want BGR, so frames need <code>cv2.COLOR_RGB2BGR</code> or red and blue come out swapped (a brown table renders blue). PIL assumes RGB and is correct as-is.</p>
   </div>
   <h3>Head camera resolution and intrinsics</h3>
-  <p>Current head settings: <strong>HD1200, 1920×1200, configured 30 fps, NEURAL depth</strong>. In <code>/etc/dexmate/dexsensor/default.toml</code>, locate the sensor whose <code>id = "head_camera"</code>, then its parameters and stream flags. Do not edit by line number. The generic ZED X One wrist entries must stay disabled: they do not describe these ISX031 cameras. Measured throughput is listed in <a href="#camera-setup">B9</a>.</p>
+  <p>Current head settings: <strong>HD1200, 1920×1200, configured 30 fps, NEURAL depth</strong>. In <code>/etc/dexmate/dexsensor/default.toml</code>, locate the sensor whose <code>id = "head_camera"</code>, then its parameters and stream flags. Do not edit by line number. The generic ZED X One wrist entries must stay disabled: they do not describe these ISX031 cameras. Measured throughput is listed in <a href="#camera-setup">B8</a>.</p>
   <div class="cmd"><div class="cmd-head"><span>Bash · only when changing head configuration</span><button type="button">Copy</button></div><pre>sudo cp -a /etc/dexmate/dexsensor/default.toml /etc/dexmate/dexsensor/default.toml.camera-$(date +%Y%m%d-%H%M%S).bak
 sudoedit /etc/dexmate/dexsensor/default.toml
 # After saving the intended head settings (interrupts head streaming):
@@ -677,7 +680,7 @@ python3 -c "import gripper; g=gripper.Grippers(); g.release(); g.close_bus()"</p
 
 <section id="grippers">
   <div class="sechead"><span class="num">A5</span><h2>Driving the grippers</h2><span class="pill live">This robot</span></div>
-  <p class="lede">The grippers are <strong>not</strong> part of dexcontrol — the robot reports hand type <code>UNKNOWN</code>, so <code>robot.left_hand</code> does nothing. They are two MG4005-i10 V3 servos on a shared CAN bus, wrapped by <code>/home/dexmate/gripper.py</code>, which you drive in parallel with normal arm control. Wiring, bus rates and the protocol archaeology are in <a href="#gripper">B7</a>; this section is how to use the library.</p>
+  <p class="lede">The grippers are <strong>not</strong> part of dexcontrol — the robot reports hand type <code>UNKNOWN</code>, so <code>robot.left_hand</code> does nothing. They are two MG4005-i10 V3 servos on a shared CAN bus, wrapped by <code>/home/dexmate/gripper.py</code>, which you drive in parallel with normal arm control. Wiring, bus rates and the protocol archaeology are in <a href="#gripper">C3</a>; this section is how to use the library.</p>
 
   <div class="note danger"><span class="tag">Current state — left gripper is off the bus</span><p>Since 2026-09-07 motor 1 (left) does not answer on CAN. The swap test settled it: the right gripper's known-good cable made <code>0x141</code> reply immediately, so <strong>the motor is fine and the left cable has a severed conductor</strong> — inside intact-looking jacket, caused by the <code>folded</code> arm pose crossing the two grippers. Until that cable is replaced, everything below works on the <strong>right gripper only</strong>. The library degrades gracefully: it probes both motors and drives whichever answer.</p></div>
 
@@ -864,45 +867,138 @@ g.close_bus()           <span class="c"># release the socket, leave motors energ
   </div>
 </section>
 
-<div class="partline">
-  <p class="eyebrow">Part B</p>
-  <h2>Reference and one-time setup</h2>
-  <p>Nothing here is part of a normal session. It holds the bring-up that was already done on this robot — repeat it only for a reflash or a second unit — together with the reference material you look things up in: joint limits, and the gripper bus and wiring.</p>
-</div>
+<div class="partline"><p class="eyebrow">Part B</p><h2>Mandatory setup</h2><p>Read B1–B8 for every new robot. Complete the applicable setup and checks; workstation configuration in B5 applies when using an external computer.</p></div>
+<section id="hardware-control-reference">
+  <div class="sechead"><span class="num">B1</span><h2>Hardware and control reference</h2></div>
+  <p class="lede">Measurements from “整理 DexMate 硬件与控制信息” (2026-09-14 UTC). The wrist cameras were not enabled during this measurement session.</p>
+  <div class="tw"><table><thead><tr><th>Item</th><th>Recorded configuration</th></tr></thead><tbody>
+    <tr><td>Cameras</td><td>Head: ZED X Mini stereo camera on ZED Link Duo. Left/right wrists: Sony ISX031.</td></tr>
+    <tr><td>Head outputs</td><td>Left RGB, right RGB and depth; no point-cloud output. Reconstruct points from <code>depth + K</code>.</td></tr>
+    <tr><td>Resolution / rate</td><td>Configured: 1920×1200 at 30 fps. Measured RGB and depth: approximately 24 Hz.</td></tr>
+    <tr><td>Head intrinsics</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code> pixels. Stereo baseline: <code>0.0497 m</code>.</td></tr>
+    <tr><td>Extrinsic model</td><td>Use the URDF supplied by the pip package <code>dexmate_urdf</code> for nominal robot geometry. The supplied models and measured TCP/camera transforms are in <a href="#tcp-extrinsics">B2</a>.</td></tr>
+    <tr><td>Transport</td><td>Zenoh + dexcontrol, without ROS 2. RGB was transported over <strong>Zenoh/JPEG</strong>, not RTC. Latency was not measured.</td></tr>
+    <tr><td>Computer</td><td>Jetson Orin Nano; L4T 36.5.0; kernel 5.15.185.</td></tr>
+    <tr><td>Control</td><td><code>dexcontrol 0.5.0</code>: joint-position control. With <code>wait_time=0</code>, call continuously at 100–500 Hz. No public Cartesian, joint velocity or joint current control interface. The third-party CAN grippers are controlled separately.</td></tr>
+    <tr><td>Six-axis wrench</td><td><code>get_wrench_state()</code> returns <code>[fx, fy, fz, tx, ty, tz]</code> as <code>float32</code>. Units and reference frame were not specified and require confirmation or calibration. The sensor was already active during the measurement.</td></tr>
+  </tbody></table></div>
+  <h3>Measured publication rates</h3>
+  <div class="tw"><table><thead><tr><th>Stream</th><th>Measured rate</th></tr></thead><tbody>
+    <tr><td>Both arms: joint state</td><td>91–92 Hz</td></tr><tr><td>Head: joint state</td><td>48 Hz</td></tr><tr><td>Head IMU</td><td>186–190 Hz</td></tr><tr><td>RGB / depth</td><td>≈24 Hz</td></tr><tr><td>Six-axis wrench</td><td>91–92 Hz</td></tr>
+  </tbody></table></div>
+  <h3>Depth back-projection</h3>
+  <p>For a rectified pixel <code>(u, v)</code> with valid depth <code>Z</code> in metres, use the intrinsics of that stream:</p>
+  <div class="cmd"><div class="cmd-head"><span>Optical camera coordinates · metres</span><button type="button">Copy</button></div><pre>X = (u - cx) * Z / fx
+Y = (v - cy) * Z / fy
+p_camera = [X, Y, Z, 1]
+p_base = T_base_camera @ p_camera</pre></div>
+</section>
 
-<section id="arch">
-  <div class="sechead"><span class="num">B0</span><h2>Architecture: three libraries on one Zenoh bus</h2><span class="pill done">Reference</span></div>
-  <p class="lede">Every Dexmate component talks over <strong>Zenoh</strong>, authenticated by a single encrypted certificate. Knowing which library lives on which machine is the prerequisite for everything below — installing one in the wrong place is the most common way to lose an afternoon.</p>
-  <div class="tw"><table>
-    <thead><tr><th>Component</th><th>Where it runs</th><th>How to install</th><th>What it does</th></tr></thead>
-    <tbody>
-      <tr><td><code>dextop</code></td><td>Jetson <em>and</em> workstation</td><td><code>pip install dextop --upgrade</code></td><td>Certificates, firmware, robot server, topic listing, health checks</td></tr>
-      <tr><td><code>dexcontrol</code></td><td>Wherever your control code runs</td><td><code>pip install dexcontrol</code></td><td>The <code>Robot()</code> API: arms, head, hands, torso, chassis, e-stop</td></tr>
-      <tr><td><code>dexsensor</code></td><td><strong>Jetson only</strong></td><td><code>sudo dpkg -i dexsensor_*.deb</code></td><td>Camera and LiDAR capture and streaming; depends on the ZED SDK</td></tr>
-      <tr><td><code>dexbot_utils</code></td><td>Pulled in by dexcontrol</td><td>—</td><td>Robot configs, URDFs, <code>dexbot cfg list</code></td></tr>
-      <tr><td>socbridge</td><td>The robot's SoC board</td><td><code>dextop firmware install-socbridge</code></td><td>The web portal at <code>https://192.168.50.21:57832</code></td></tr>
-    </tbody>
-  </table></div>
-  <h3>Two ways to run</h3>
+<section id="tcp-extrinsics">
+  <div class="sechead"><span class="num">B2</span><h2>TCP, camera extrinsics and URDF files</h2></div>
+  <p class="lede">Calibration records from “暂存代码并重新标定区域”. Its final selection on September 24 restored the clean <code>b90bcac</code> TCP/camera pair. The measured pivot fit and the earlier Y-adjusted pair are listed separately below.</p>
+  <h3>Files</h3>
   <ul>
-    <li><strong>Onboard</strong> — code executes on the Jetson. Lowest latency, <code>ROBOT_NAME</code> already set, and the right default for demos and real-time control.</li>
-    <li><strong>From a workstation</strong> — run AI models on a better GPU and send control over WiFi or Ethernet. You pay latency for the convenience. Both machines must sit on the same LAN, both need <code>dextop</code>, and both need the same certificate unpacked.</li>
+    <li><a href="files/urdf/vega_1u.urdf" download>vega_1u.urdf</a> · supplied robot model.</li>
+    <li><a href="files/urdf/vega_1u_gripper.urdf" download>vega_1u_gripper.urdf</a> · supplied gripper model, including <code>L_camera_link</code> and <code>R_camera_link</code>.</li>
+    <li><a href="files/urdf/custom/vega_1u_gripper.urdf" download>Custom gripper URDF from the calibration project</a> · the separate model containing <code>tip_l</code> / <code>tip_r</code>, used for the nominal TCP comparison.</li>
+    <li><a href="files/calibration/clean-20260924.json" download>Clean TCP + camera calibration</a> · <a href="files/calibration/adjusted-20260924.json" download>Earlier Y-adjusted pair</a> · <a href="files/calibration/tcp-pivot-fit.json" download>Measured pivot-fit result</a>.</li>
+    <li><a href="files/reference-data.json" download>All matrices, source file hashes and frame definitions (JSON)</a>.</li>
   </ul>
-  <h3>The environment variables</h3>
-  <div class="tw"><table>
-    <thead><tr><th>Variable</th><th>Required?</th><th>What it does</th></tr></thead>
-    <tbody>
-      <tr><td><code>ROBOT_NAME</code></td><td>Yes</td><td>Selects the robot. <code>Robot()</code> raises <code>ValueError</code> without it. Pre-set on the Jetson; export it in every workstation terminal.</td></tr>
-      <tr><td><code>ROBOT_CONFIG</code></td><td>Recommended</td><td>Tells control scripts which end effector is fitted. List the options with <code>dexbot cfg list</code> (<code>vega_1u</code>, <code>vega_1u_gripper</code>, <code>vega_1u_f5d6</code>, …).</td></tr>
-      <tr><td><code>ZENOH_CONFIG</code></td><td>Off-robot: effectively yes</td><td>Points at <code>~/.dexmate/comm/zenoh/&lt;cert&gt;/zenoh_peer_config.json5</code>. Needed in practice to pull topics from an external machine.</td></tr>
-      <tr><td><code>ROBOT_IP</code></td><td>Optional</td><td>Recent dexcomm uses it to answer queries faster.</td></tr>
-    </tbody>
-  </table></div>
-  <div class="note mine"><span class="tag">Verified on this robot</span><p>The name must be written <code>dm/vg3eb20f25bb-1u</code> — with a <strong>slash</strong>. The wiki's prose says <code>dm-&lt;serial&gt;</code>, and that form makes <code>dextop firmware info</code> time out, while the wiki's own sample output uses the slash. Note that <code>dextop topic list</code> passes with either spelling because it globs <code>dm/**</code>, so it is <strong>not</strong> a valid check that the name is right.</p></div>
+  <p>The two supplied URDFs match <code>dexmate_urdf 0.8.4</code> byte-for-byte. Their original bytes and relative mesh paths are retained. Meshes resolve within the package's directory tree; the URDF downloads alone do not include the meshes. The custom comparison model is a separate file.</p>
+  <h3>Coordinate convention</h3>
+  <p><code>T_parent_child</code> maps column-vector coordinates from child to parent: <code>p_parent = T_parent_child @ p_child</code>. Translations are in metres; angles in radians. <code>R = Rz(yaw) @ Ry(pitch) @ Rx(roll)</code>. Base axes: X forward, Y robot-left, Z up. The calibrated left-camera optical axes are X image-right, Y image-down, Z forward.</p>
+  <h3>Right TCP: model, measured fit and selected values</h3>
+  <p>The two supplied package URDFs define <code>L_ee</code> / <code>R_ee</code>, but do not define a <code>tip_l</code> / <code>tip_r</code> grasp TCP. The nominal tip below comes from the separate custom model.</p>
+  <div class="tw"><table><thead><tr><th>Source</th><th>XYZ in R_ee (mm)</th><th>Meaning</th></tr></thead><tbody>
+    <tr><td>Custom URDF nominal tip</td><td><code>≈ [0, -15, 198]</code></td><td>Model geometry; full composed transform below.</td></tr>
+    <tr><td>Pivot fit · September 19</td><td><code>[-1.025481, -10.438899, 196.928685]</code></td><td>Measured translation; fit RMS 1.801540 mm. Pivot fitting does not determine orientation.</td></tr>
+    <tr><td>Y-adjusted pair · September 24, 11:16</td><td><code>[-1.025481, -18, 196.928685]</code></td><td>Measured X/Z with user-selected Y; paired camera transform retained in the downloadable record.</td></tr>
+    <tr><td>Clean pair restored · September 24, 11:43</td><td><code>[-1, -15, 198]</code></td><td>Final selected pair in the referenced task.</td></tr>
+  </tbody></table></div>
+  <p>The selected and Y-adjusted tool-frame convention uses <code>rpy = [π, 0, π/2]</code>. This orientation is nominal, not a pivot-fit measurement. The supplied measured TCP data cover the right gripper.</p>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>[
+  [ 0.000000000,  1.000000000,  0.000000000, -0.001000000],
+  [ 1.000000000,  0.000000000,  0.000000000, -0.015000000],
+  [ 0.000000000,  0.000000000, -1.000000000,  0.198000000],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <details><summary>Custom URDF TCP transforms (left and right)</summary>
+    <p>These compose all fixed joints between the named EE frame and tip. They are model values, not measured left/right grasp centres.</p>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>[
+  [ 0.000000127,  1.000000000, -0.000000046,  0.000000193],
+  [ 1.000000000, -0.000000127,  0.000006200, -0.015001328],
+  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_L_ee_tip_l · metres</span><button type="button">Copy</button></div><pre>[
+  [-0.000012680, -1.000000000,  0.000000046, -0.000000005],
+  [-1.000000000,  0.000012680, -0.000006200,  0.015001328],
+  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  </details>
+  <h3>Measured head-camera extrinsics</h3>
+  <p>The clean camera transform was fitted with a horizontal checkerboard constraint and restored together with the clean TCP. Its recorded held-out RMS is 1.176229 mm. Use this pair at its reference head pose:</p>
+  <div class="cmd"><div class="cmd-head"><span>Reference joint positions</span><button type="button">Copy</button></div><pre>head_j1 = -0.00017453292093705386 rad
+head_j2 = -0.00017453292093705386 rad
+head_j3 = -0.5056219100952148 rad
+torso_flip = 0.22689280275926285 rad
+Lift = 0 m</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>[
+  [-0.001383542, -0.636266466,  0.771468126,  0.089032073],
+  [-0.999930278, -0.008166881, -0.008528878,  0.026881780],
+  [ 0.011727127, -0.771426138, -0.636210805,  1.169376372],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <p>This matrix is for the listed head pose. Head movement changes the base-to-camera transform. The calibration record uses rectified-left <code>fx = fy = 734.7626953125</code>, <code>cx = 966.6296997070312</code>, <code>cy = 653.073486328125</code>, at 1920×1200; these are the saved calibration values, separately from the earlier values in <a href="#hardware-control-reference">B1</a>.</p>
+  <details><summary>Earlier Y-adjusted TCP/camera pair</summary>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>[
+  [ 0.000000000,  1.000000000,  0.000000000, -0.001025481],
+  [ 1.000000000,  0.000000000,  0.000000000, -0.018000000],
+  [ 0.000000000,  0.000000000, -1.000000000,  0.196928685],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>[
+  [-0.001383713, -0.636266468,  0.771468125,  0.089057487],
+  [-0.999930277, -0.008166772, -0.008529010,  0.023881859],
+  [ 0.011727127, -0.771426138, -0.636210805,  1.170447698],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  </details>
+  <h3>Nominal extrinsics in the supplied URDFs</h3>
+  <p>Each row is the parent-to-child joint origin as stored in the file. The head and EE rows occur in both files; gripper and wrist-camera mounts occur in <code>vega_1u_gripper.urdf</code>.</p>
+  <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ (m)</th><th>RPY (rad)</th></tr></thead><tbody><tr><td><code>head_l3 → zed_depth_frame</code></td><td><code>0.025 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_left_camera</code></td><td><code>0.0365 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_right_camera</code></td><td><code>0.0365 -0.027 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 -1.57079</code></td></tr><tr><td><code>R_arm_l8 → R_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_gripper_base</code></td><td><code>0.0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>L_gripper_base → L_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr><tr><td><code>R_arm_l8 → R_gripper_base</code></td><td><code>0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>R_gripper_base → R_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr></tbody></table></div>
+  <p>Forward kinematics through the package URDF, evaluated at the same reference joint positions above, gives the following nominal head transform:</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF FK · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>[
+  [-0.000165524, -0.668606938,  0.743615987,  0.084498283],
+  [-0.999999986,  0.000085701, -0.000145537,  0.024989645],
+  [ 0.000033578, -0.743616000, -0.668606942,  1.144781202],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <h3>URDF wrist-camera mounting transforms</h3>
+  <p>The supplied gripper URDF contains both wrist-camera links. Composing its fixed joints gives:</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_L_ee_L_camera_link · metres</span><button type="button">Copy</button></div><pre>[
+  [ 1.000000000,  0.000009962,  0.000000872,  0.000199254],
+  [-0.000010000,  0.996194738,  0.087155282, -0.074590002],
+  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_R_ee_R_camera_link · metres</span><button type="button">Copy</button></div><pre>[
+  [-1.000000000,  0.000002643,  0.000000231, -0.000200198],
+  [-0.000002654, -0.996194738, -0.087155282,  0.074589999],
+  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <p>These are nominal <code>camera_link</code> mounting frames. The files do not define separate wrist optical frames or establish a measured ISX031 optical-frame transform. The older task's statement that the gripper URDF had no wrist-camera links does not apply to these supplied files.</p>
+  <details><summary>Joint origins in the separate custom comparison model</summary>
+    <p>Its head parent is <code>vega_1u_head_l3</code>, rather than the package model's <code>head_l3</code>; compare complete frame chains, not isolated XYZ/RPY values.</p>
+    <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ (m)</th><th>RPY (rad)</th></tr></thead><tbody><tr><td><code>L_ee_link_gripper_link → tip_l</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>R_ee → R_ee_link_gripper_link</code></td><td><code>0.0000001 -0.0000001 -0.0000001</code></td><td><code>0.0000062 0. 0.0000062</code></td></tr><tr><td><code>R_ee_link_gripper_link → tip_r</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_left_camera</code></td><td><code>0.0365 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_depth_frame</code></td><td><code>0.025 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_right_camera</code></td><td><code>0.0365 0.027 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr></tbody></table></div>
+  </details>
 </section>
 
 <section id="net">
-  <div class="sechead"><span class="num">B1</span><h2>Getting the robot on the network</h2><span class="pill done">Done · one-time</span></div>
+  <div class="sechead"><span class="num">B3</span><h2>Getting the robot on the network</h2><span class="pill done">Done · one-time</span></div>
   <p class="lede">A robot with no known WiFi brings up its own hotspot on boot. The rule is: <strong>no known network → hotspot; known network in range → joins it and the hotspot disappears</strong>. You only do this once per robot.</p>
   <h3>Three ways to reach a shell</h3>
   <div class="tw"><table>
@@ -944,7 +1040,7 @@ nmcli device wifi list</pre></div>
 </section>
 
 <section id="cert">
-  <div class="sechead"><span class="num">B2</span><h2>Certificate and firmware — once per robot</h2><span class="pill done">Done · one-time</span></div>
+  <div class="sechead"><span class="num">B4</span><h2>Certificate and firmware — once per robot</h2><span class="pill done">Done · one-time</span></div>
   <p class="lede">The certificate is the ticket onto the bus: install it once, it lasts until it expires. Firmware updates are optional; the certificate is not. Dexmate documents two paths, and <strong>the certificate can only go through the web portal</strong>.</p>
 
   <h3>Method 1 · Web portal (required for the certificate)</h3>
@@ -966,7 +1062,7 @@ dextop firmware update    <span class="c"># prompts for the version to install</
 </section>
 
 <section id="comm">
-  <div class="sechead"><span class="num">B3</span><h2>Workstation communication</h2><span class="pill">Optional · not in use</span></div>
+  <div class="sechead"><span class="num">B5</span><h2>Workstation communication</h2><span class="pill">Workstation setup</span></div>
   <p class="lede">Skip this section if you only ever run code onboard. To drive the robot from your own machine, the workstation has to join the same Zenoh bus.</p>
   <div class="cmd"><div class="cmd-head"><span>Terminal · workstation &amp; Jetson</span><button type="button">Copy</button></div><pre>pip install dextop --upgrade</pre></div>
   <div class="cmd"><div class="cmd-head"><span>Terminal · workstation · once</span><button type="button">Copy</button></div><pre>dextop cert unpack &lt;certificate_file&gt;.dzcfg</pre></div>
@@ -983,7 +1079,7 @@ export ROBOT_IP=172.26.161.243</pre></div>
 </section>
 
 <section id="libs">
-  <div class="sechead"><span class="num">B4</span><h2>Installing dexcontrol and dexsensor</h2><span class="pill done">Done · one-time</span></div>
+  <div class="sechead"><span class="num">B6</span><h2>Installing dexcontrol and dexsensor</h2><span class="pill done">Done · one-time</span></div>
   <h3>dexcontrol — control</h3>
   <div class="cmd"><div class="cmd-head"><span>Terminal</span><button type="button">Copy</button></div><pre>pip install dexcontrol</pre></div>
   <p>Examples are open source at <a href="https://github.com/dexmate-ai">github.com/dexmate-ai</a>. Dexmate suggests running <code>examples/advanced_examples/fold_robot.py</code> first to unfold a new robot — <strong>do not run that on this one</strong>; see the trap table.</p>
@@ -1002,7 +1098,7 @@ export ROBOT_IP=172.26.161.243</pre></div>
 </section>
 
 <section id="verify">
-  <div class="sechead"><span class="num">B5</span><h2>Verification and diagnostics</h2><span class="pill">Use any time</span></div>
+  <div class="sechead"><span class="num">B7</span><h2>Verification and diagnostics</h2><span class="pill">Use any time</span></div>
   <p class="lede">Run these before writing any code. Confirming the link works first saves a lot of "is it my script or the robot?"</p>
   <div class="cmd"><div class="cmd-head"><span>Terminal</span><button type="button">Copy</button></div><pre>dextop topic list --timeout 10</pre></div>
   <p>The first call from an external machine often returns nothing — dextop needs a moment to reach the robot. Run it again or raise the timeout.</p>
@@ -1020,123 +1116,48 @@ export ROBOT_IP=172.26.161.243</pre></div>
   <div class="note"><span class="tag">How to tell whether a component exists</span><p>Judge from the Zenoh topics in <code>dextop topic list</code>, or from <code>has_component()</code> in code — <strong>never from the <code>firmware info</code> table</strong>. That table lists firmware bundle entries, not the joints this machine actually has (see below).</p></div>
 </section>
 
-<section id="dof">
-  <div class="sechead"><span class="num">B6</span><h2>What this robot actually has</h2><span class="pill live">Reference · this robot</span></div>
-  <p class="lede"><strong>Vega-1U is the upper body of a Vega-1.</strong> Total controllable DOF is <strong>17</strong>: left arm 7 (<code>L_arm_j1..j7</code>), right arm 7 (<code>R_arm_j1..j7</code>), head 3 (<code>head_j1..j3</code>). <strong>No torso and no chassis</strong> — <code>Vega1UConfig.components</code> lists only the two arms, head, estop and heartbeat, and the 16 keys from <code>dextop topic list</code> contain no <code>state/torso</code> or <code>control/torso</code>.</p>
-  <div class="note warn"><span class="tag">Trap</span><p>The <code>dextop firmware info</code> table <strong>does list a <code>torso</code> board</strong> (hw 5, sw 123). That is a firmware-bundle entry, not a joint. Do not read it as "this robot has a waist."</p></div>
-  <h3>Arm joint limits (rad) — asymmetric between sides</h3>
-  <div class="tw"><table>
-    <thead><tr><th>Joint</th><th>Left</th><th>Right</th><th>Note</th></tr></thead>
-    <tbody>
-      <tr><td>j1</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
-      <tr><td>j2</td><td class="num-col">[−0.453, 1.553]</td><td class="num-col">[−1.553, 0.453]</td><td>Shoulder pitch — the only joint on this robot that raises anything</td></tr>
-      <tr><td>j3</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
-      <tr><td>j4</td><td class="num-col">[−3.071, 0.244]</td><td class="num-col">[−3.071, 0.244]</td><td></td></tr>
-      <tr><td>j5</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
-      <tr><td>j6</td><td class="num-col">±1.396</td><td class="num-col">±1.396</td><td></td></tr>
-      <tr><td>j7</td><td class="num-col">[−1.378, 1.117]</td><td class="num-col">[−1.117, 1.378]</td><td>Mirrored — useful as a cross-check on your mapping</td></tr>
-    </tbody>
-  </table></div>
-  <p>Arm <code>pose_pool</code>: <code>folded</code>, <code>folded_closed_hand</code>, <code>L_shape</code>, <code>lift_up</code>, <code>zero</code>. Head: <code>home</code>, <code>tucked</code>.</p>
-  <div class="note danger"><span class="tag">Never command the folded pose on this robot</span>
-    <p><code>folded</code> and <code>folded_closed_hand</code> came within a hair of damaging a gripper. <strong>Do not command them, and do not offer them as a safe stow pose.</strong></p>
-    <p>Why: those poses tuck the forearm hard against the body, and they were designed around Dexmate's own end effectors. This robot carries third-party CAN grippers that stick out well past <code>L_ee</code> / <code>R_ee</code> and <strong>do not exist in <code>vega_1u.urdf</code> at all</strong> — neither the URDF nor pinocchio's collision checking knows they are there. A pose the kinematic model calls clean can still crush a gripper.</p>
-    <p>The known-good parked pose is the one the robot was actually sitting in, recorded before the first commanded move and saved as <code>pre_move</code>: left <code>[1.7289, 0.0101, 0.0041, -0.9924, -0.2311, 0.5011, -0.0066]</code>, right <code>[-1.5683, -0.0026, 0.0031, -0.9916, 0.0908, -0.4138, -0.0018]</code>, head <code>[-0.0883, -0.0338, 0.0486]</code>. Treat every <code>pose_pool</code> entry as unvalidated on this hardware, and judge stow poses by real clearance around the wrist rather than by gravity torque or the vendor's name for the pose — a low-torque pose can still be a colliding one.</p>
-  </div>
-  <div class="note"><span class="tag">About the Lift in the URDF</span><p>The runtime facts stand: no torso component, no <code>control/torso</code> topic, nothing commandable. But <code>vega_1u.urdf</code> <strong>does model a lift</strong> — pinocchio reads 19 joints, and the two ahead of the arms are <code>Lift</code> (prismatic Z, 0–0.4 m) and <code>torso_flip</code> (revolute X, 0–1.0 rad). So "the hardware isn't there" is not established; it may be present but not enabled on this variant. Settling it needs the SoC-side config at <code>https://192.168.50.21:57832</code>.<br>Related: this identifies the head of BrickBench's 23-vector — <code>[0.2, 0.5]</code> sits mid-range in both <code>Lift</code> (0–0.4) and <code>torso_flip</code> (0–1.0), two joints for two numbers.</p></div>
-  <h3>Scripts already on the robot</h3>
-  <div class="tw"><table>
-    <thead><tr><th>Script</th><th>What it does</th></tr></thead>
-    <tbody>
-      <tr><td><code>~/py_scripts/inspect_joints.py</code></td><td>Dumps every component's DOF, joint names, limits and current position. <strong>Run this first on any mapping question.</strong></td></tr>
-      <tr><td><code>~/py_scripts/goto_home.py</code></td><td>Drives both arms and the head to a pose with stepped interpolation (0.12 rad/step) and limit clipping; <code>--dry-run</code> prints the plan only</td></tr>
-      <tr><td><code>~/py_scripts/goto_ready.py</code></td><td><code>pre_move</code> → <code>manip_init</code>, right arm first</td></tr>
-      <tr><td><code>~/py_scripts/goto_rest.py</code></td><td><code>manip_init</code> → <code>pre_move</code>, left arm first</td></tr>
-      <tr><td><code>~/py_scripts/goto_pose.py</code></td><td>The engine behind both: named poses, limit clipping, stepped motion, <code>--seq</code>, <code>--min-sep</code>, <code>--dry-run</code>, the gripper clearance guard and the <code>folded</code> ban</td></tr>
-      <tr><td><code>~/py_scripts/head_pose.py</code></td><td><code>read_head_joint_pos()</code> and <code>move_head_smooth()</code>; run directly to set <code>[0, 0, -0.5056]</code></td></tr>
-      <tr><td><code>~/py_scripts/sensor_only.py</code></td><td>Camera info and a frame with <strong>no <code>Robot()</code></strong>, so nothing moves</td></tr>
-      <tr><td><code>~/py_scripts/cam_info_capture.py</code></td><td>Set head pitch, dump <code>get_camera_info()</code>, save a full-res left RGB frame</td></tr>
-      <tr><td><code>~/py_scripts/path_compare.py</code></td><td>Offline FK: compare concurrent vs sequential schedules by minimum wrist separation</td></tr>
-      <tr><td><code>~/py_scripts/gripper_demo.py</code></td><td>Probe both motors, home whichever answer, concurrent open/close cycle</td></tr>
-      <tr><td><code>~/py_scripts/gravity_check.py</code></td><td>Static gravity torque and wrist position from the URDF. <strong>It knows nothing about the grippers.</strong></td></tr>
-    </tbody>
-  </table></div>
-  <div class="note mine"><span class="tag">Always prefix your commands</span><p>A non-interactive <code>ssh</code> does not source the interactive shell config, so <code>ROBOT_NAME</code> won't be set — pass it explicitly every time:<br><code>ROBOT_NAME="dm/vg3eb20f25bb-1u" python3 script.py</code>. Key-based SSH to <code>dexmate@172.26.161.243</code> is configured; no password needed.</p></div>
-</section>
-
-<section id="gripper">
-  <div class="sechead"><span class="num">B7</span><h2>Gripper CAN bus and wiring</h2><span class="pill live">Reference · hardware</span></div>
-  <p class="lede">Two third-party grippers hang off a shared CAN bus driven by a <strong>Jhoinrch RH-02</strong> USB-to-CAN adapter (a Canable/candleLight clone, STM32F072C8T6, USB ID <code>1d50:606f</code>). The robot reports hand type <code>UNKNOWN</code>, so <strong>they cannot be driven through <code>robot.left_hand</code></strong> — they are commanded over <code>can1</code> in parallel with arm control.</p>
-  <div class="tw"><table>
-    <thead><tr><th>Item</th><th>Value</th><th>Notes</th></tr></thead>
-    <tbody>
-      <tr><td>Bus rate</td><td class="num-col">1 Mbit/s</td><td><strong>Not 500k.</strong> Every other rate wedges the bus</td></tr>
-      <tr><td>Power</td><td class="num-col">24 V + GND</td><td>Taken from the robot</td></tr>
-      <tr><td>Wiring</td><td>Both grippers' CAN_H/CAN_L to the adapter terminal block</td><td>The adapter is T-tapped mid-bus</td></tr>
-      <tr><td>Termination</td><td><code>R120</code> <strong>must be off</strong></td><td>Both grippers carry internal 120 Ω — expect 60 Ω at the screws; R120 on makes it 40 Ω and breaks the bus</td></tr>
-      <tr><td>Polarity</td><td>Keep the original orientation</td><td>Swapping H/L gives <strong>no bus activity at all</strong> — no completions, no error frames</td></tr>
-    </tbody>
-  </table></div>
-  <div class="note warn"><span class="tag">Don't be misled while debugging</span><p>The grippers are <strong>poll-response</strong> devices: they never broadcast, so a passive <code>candump</code> is always empty and proves nothing. They also do not answer CANopen SDO reads of 0x1000 at <code>0x600+n</code> for n = 1..127.</p></div>
-  <h3>gs_usb has to be built by hand</h3>
-  <p>The L4T kernel ships no <code>gs_usb</code> (<code>CONFIG_CAN_GS_USB is not set</code>, and the whole <code>drivers/net/can/usb/</code> directory is absent), and no <code>slcan</code> either — so reflashing the adapter with slcan firmware is not a way around it. The headers are present and an out-of-tree build works:</p>
-  <div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre>mkdir -p ~/gs_usb_build &amp;&amp; cd ~/gs_usb_build
-curl -fsSLO https://raw.githubusercontent.com/gregkh/linux/v5.15.199/drivers/net/can/usb/gs_usb.c
-echo 'obj-m += gs_usb.o' &gt; Makefile
-make -C /lib/modules/$(uname -r)/build M=$PWD modules
-sudo cp gs_usb.ko /lib/modules/$(uname -r)/kernel/drivers/net/can/usb/ &amp;&amp; sudo depmod -a</pre></div>
-  <p><strong>Any kernel change wipes this</strong> — rebuild against the new version (match the source tag to the running kernel). DKMS would make it permanent.</p>
-</section>
-
-<section id="reflash">
-  <div class="sechead"><span class="num">B8</span><h2>Recovering after a Jetson reflash</h2><span class="pill">Only if reflashed</span></div>
-  <p class="lede">On 2026-08-25 this robot was reflashed to JetPack 6.2.3, which wiped the entire factory Dexmate config: ZED SDK, dexsensor, dextop, the Zenoh certificate, and the static IP on <code>enP8p1s0</code>. Dexmate documents <strong>no</strong> reflash-recovery procedure. What follows is Rahul's four steps from ticket #126892650 plus everything we had to work out to finish the job.</p>
-  <div class="step"><div class="sn">R1</div><div class="sb">
-    <h3>Install the ZED SDK</h3>
-    <p>Run <code>ZED_SDK_Tegra_L4T36.5_v5.2.3.zstd.run</code> on the Jetson. Confirm with <code>/usr/local/zed/tools/ZED_Explorer -a</code> that cameras are seen.</p>
-  </div></div>
-  <div class="step"><div class="sn">R2</div><div class="sb">
-    <h3>Install dexsensor</h3>
-    <p><code>sudo dpkg -i dexsensor_0.7.6_arm64.deb</code>.</p>
-  </div></div>
-  <div class="step"><div class="sn">R3</div><div class="sb">
-    <h3>Install dextop and set the robot name</h3>
-    <div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre>pip install dextop
-sudo -E $(which dextop) robot set_name dm/vg3eb20f25bb-1u</pre></div>
-    <p>The name comes from the sticker on the chassis name tag. If the sticker is gone, read it from socbridge or dig it out of old logs.</p>
-  </div></div>
-  <div class="step"><div class="sn">R4</div><div class="sb">
-    <h3>Unpack the certificate</h3>
-    <p><code>dextop cert unpack &lt;file&gt;.dzcfg</code> — with the filename argument.</p>
-  </div></div>
-  <div class="step"><div class="sn">R5</div><div class="sb">
-    <h3>Install socbridge</h3>
-    <p><code>dextop firmware install-socbridge</code> (this robot used <code>socbridgepkg_v0.18.8.dpsw</code>). <code>Failed to connect to SOC: timed out</code> means the route to <code>192.168.50.21</code> is gone — restore the static IP <code>192.168.50.20/24</code> on <code>enP8p1s0</code> first.</p>
-  </div></div>
-  <div class="step"><div class="sn">R6</div><div class="sb">
-    <h3>Match the kernel to the installed camera drivers</h3>
-    <p>This unit was recovered using <code>5.15.185-tegra</code>, matching the installed ZED Link package. The historical downgrade is described below; the subsequent head + ISX031 wrist setup is in <a href="#camera-setup">B9</a>.</p>
-  </div></div>
-
-  <h3>The camera problem was never a missing driver</h3>
-  <p>Stereolabs' ZED Link driver ships <strong>prebuilt</strong> kernel modules with no DKMS source, pinned to an exact kernel: <code>stereolabs-zedlink-duo_1.4.3-LI-MAX96712-L4T36.5.0</code> declares <code>Depends: nvidia-l4t-kernel (&gt;= 5.15.185), (&lt;&lt; 5.15.186)</code>. JetPack 6.2.3 / L4T <strong>36.5.2</strong> ships kernel <strong>5.15.199</strong>, so every <code>.ko</code> had the wrong vermagic.</p>
-  <div class="note danger"><span class="tag">Both are labelled "36.5"</span><p>The L4T minor version is <strong>not enough</strong> to judge compatibility — check the kernel version.<br>And never use <code>--ignore-depends</code> on this package: its postinst also overwrites <code>host1x.ko</code> and <code>tegra-drm.ko</code> (display and hardware engines) with builds for the other kernel.</p></div>
-  <p>The symptom is deceptive: the SDK's userspace libraries load fine (<code>ZED SDK available</code>) while <code>CAMERA NOT DETECTED</code> persists — because there is no <code>/dev/video*</code>, no <code>zed_x_daemon</code>, and no deserializer modules. <strong>Check those three before suspecting cables or config.</strong></p>
-  <h3>The downgrade — no reflash needed</h3>
-  <p>36.5.0 and 36.5.2 live in the same <code>r36.5</code> apt repo, so a straight package downgrade works. The critical part: <strong>enumerate every installed <code>nvidia-l4t-*</code> that has a 36.5.0 version and name them all in one command</strong>. Naming only a few makes apt <em>remove</em> the rest, including <code>nvidia-l4t-bootloader</code> and <code>nvidia-l4t-initrd</code>. The correct result is "48 downgraded, 0 to remove."</p>
-  <ul>
-    <li>Always dry-run with <code>apt-get install -s</code> first.</li>
-    <li><code>apt-mark hold</code> the lot afterwards.</li>
-    <li>It rewrites the bootloader via capsule update, so <strong>be at the console</strong>.</li>
-  </ul>
-  <div class="note ok"><span class="tag">Side effect worth knowing</span><p>The downgrade also restored the static IP <code>192.168.50.20/24</code> on <code>enP8p1s0</code> that the reflash had wiped — strong evidence that <strong>Dexmate's factory image is built on L4T 36.5.0</strong>, and that the SoC portal at 192.168.50.21 should be reachable again.</p></div>
-  <h3>Hardware confirmed on this unit</h3>
-  <p>The capture card is a <strong>ZED Link Duo</strong> on a stock Orin Nano devkit carrier (<code>p3768</code> / <code>p3767-0005</code>). The head camera is a <strong>ZED X Mini</strong> (stereo, one GMSL link, two <code>/dev/video*</code> nodes, S/N 53756133) on port 0. <code>/etc/dexmate/dexsensor/default.toml</code> is generic across Vega variants and includes ZED X One wrist, base-camera and LiDAR entries. The actual wrists on this unit are <strong>two OEM ISX031 / MAX9295 cameras on a separate Waveshare MAX9296A</strong>; the ZED X One entries do not apply. See <a href="#camera-setup">B9</a> for their wiring and driver setup.</p>
-</section>
-
 <section id="camera-setup">
-  <div class="sechead"><span class="num">B9</span><h2>Head + wrist camera setup</h2><span class="pill">Recorded 2026-09-15</span></div>
+  <div class="sechead"><span class="num">B8</span><h2>Head + wrist camera setup</h2><span class="pill">Recorded 2026-09-15</span></div>
   <p class="lede">The head stereo camera and both wrists have delivered images concurrently on <code>dm/vg3eb20f25bb-1u</code>. Hardware: Orin Nano 8 GB <code>p3767-0005</code> on the stock <code>p3768</code> carrier; L4T 36.5 with <strong>Linux 5.15.185-tegra</strong>. Daily API examples are in <a href="#sensor">A2</a>.</p>
+  <!-- camera-help:start -->
+  <h3 id="camera-autostart">Current repository: boot startup</h3>
+  <p><strong>Wrist initialization is already included.</strong> <code>scripts/install.py --apply</code> installs and enables <code>wrist-camera-init.service</code>. At boot it waits for both wrist devices, initializes them, and writes a readiness marker. <code>active (exited)</code> is normal for this oneshot service. It does not keep streaming: <code>WristCameras()</code> starts capture and triggering when your application opens it, and stops them when it closes.</p>
+  <p><strong>Head streaming uses the vendor's <code>dexsensor.service</code>.</strong> The installer does not explicitly enable this service. <code>--configure-head</code> writes the head configuration and robot name, but does not enable or start the service. Check its state and enable it using the commands below. This is the repository's behavior; the commands inspect the robot on which you run them.</p>
+  <p>For a new robot, follow the repository <a href="https://github.com/intelligent-control-lab/dexmate-setup#quick-start">Quick start</a> with the matching vendor packages installed first. <code>--camera-boot --activate-camera-boot</code> builds and selects <code>DexmateSetupHeadWrists</code>, using <code>/boot/initrd-dexmate-setup</code> and <code>/boot/tegra234-dexmate-setup.dtbo</code>. Without <code>--activate-camera-boot</code>, the entry is only staged. The installer does not start services or reboot. The older <code>HeadWrists</code> paths in the integration record below belong to the original robot setup.</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · inspect startup</span><button type="button">Copy</button></div><pre>systemctl is-enabled dexsensor.service wrist-camera-init.service
+systemctl status dexsensor.service wrist-camera-init.service --no-pager
+systemctl cat dexsensor.service wrist-camera-init.service
+cat /boot/extlinux/extlinux.conf</pre></div>
+  <p>After installation, enable both services for future boots. If a unit is reported as “not found”, install its package first: the vendor dexsensor package for the head, or this repository's installer for wrist initialization.</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · enable at boot, without starting now</span><button type="button">Copy</button></div><pre>sudo systemctl daemon-reload
+sudo systemctl enable dexsensor.service wrist-camera-init.service</pre></div>
+  <p>Then reboot manually after reviewing the selected boot entry. To start or reinitialize cameras in the current boot, first close wrist readers and any standalone ZED viewer. These commands interrupt camera streams; they do not reboot the robot. They cannot activate a newly selected kernel overlay without a reboot.</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · only after closing camera readers</span><button type="button">Copy</button></div><pre>sudo systemctl restart wrist-camera-init.service
+sudo systemctl restart dexsensor.service</pre></div>
+  <h3 id="camera-troubleshooting">If cameras do not work</h3>
+  <p>Start on the Jetson to separate hardware/service problems from workstation communication. Inspect status and logs first:</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · read-only diagnosis</span><button type="button">Copy</button></div><pre>uname -r
+systemctl status dexsensor.service wrist-camera-init.service --no-pager
+journalctl -u dexsensor.service -u wrist-camera-init.service -b -n 160 --no-pager
+v4l2-ctl --list-devices
+cat /run/wrist-cameras/ready.json
+cat /proc/sys/kernel/random/boot_id
+sudo journalctl -k -b --no-pager | grep -Ei 'isx031|max929|tegra.*camera|i2c|csi|vi.*error'</pre></div>
+  <div class="tw"><table><thead><tr><th>Symptom</th><th>Check / next step</th></tr></thead><tbody>
+    <tr><td>Neither camera path works after boot</td><td>Check the selected combined boot entry, overlay and initrd. This bundle requires <code>5.15.185-tegra</code> / L4T 36.5.0 and matching ZED packages. An entry in extlinux is not proof it is the one running. Inspect kernel logs and device discovery after boot.</td></tr>
+    <tr><td>Head service fails, or camera is busy</td><td>Read the dexsensor log; verify ZED SDK / ZED Link installation and head cabling. Close standalone ZED viewers or duplicate publishers before restarting dexsensor. Keep only one owner of the head camera.</td></tr>
+    <tr><td>Head service runs, but RGB/depth is missing</td><td>In the <code>head_camera</code> block of <code>/etc/dexmate/dexsensor/default.toml</code>, check <code>enabled = true</code>, <code>left_rgb = true</code>, <code>right_rgb = true</code>, <code>depth = true</code>, and <code>depth_mode = "NEURAL"</code>. Restart the service after saving. The generic ZED X One wrist entries remain disabled. In the client use <code>configs.sensors["head_camera"].enabled = True</code>; check <code>ROBOT_NAME</code> and the certificate. If local reads work but workstation reads fail, see <a href="#comm">B5</a>.</td></tr>
+    <tr><td>Wrist service skipped / no wrist devices</td><td><code>ConditionPathExists</code> requires the combined device-tree path <code>/proc/device-tree/bus@0/cam_i2cmux/i2c@0/tca9546@70</code>. Check the boot overlay and driver logs. The API needs both ISX031 devices and discovers them by name; do not assume fixed <code>/dev/videoN</code> numbers.</td></tr>
+    <tr><td>Wrist probes not ready / serializer read error / GMSL link unlocked</td><td>Power off before inspecting the 5 V/GND supply, CFG <code>0100</code>, CSI0 → CAM1 ribbon and both GMSL links; see <a href="#pcb-hardware">C6</a>. Pins 2/4 are 5 V; pin 6 is GND. Keep the gripper's 24 V circuit separate. The bundled driver expects MAX9295 / 3 Gbps. Fix wiring or boot configuration before retrying initialization; do not guess I²C register writes.</td></tr>
+    <tr><td>Not initialized / marker from another boot</td><td>Compare <code>ready.json</code>'s <code>boot_id</code> with the current boot ID above. Close wrist readers, restart <code>wrist-camera-init.service</code>, and inspect its exit status/log. Do not create or edit the readiness marker manually.</td></tr>
+    <tr><td>Already owned / devices busy</td><td>Close the other wrist application cleanly. Use <code>sudo fuser -v /dev/video*</code> to identify device owners; do not kill unrelated processes. The API holds both wrists under one lock, so only one reader can own them.</td></tr>
+    <tr><td>No fresh frame / trigger worker exited</td><td>Use the <a href="#wrist-api">A2 WristCameras example</a>, which starts the software trigger worker; a bare V4L2 pull does not. Check the exception, GStreamer/kernel logs and device permissions. Close the context before reinitializing.</td></tr>
+    <tr><td>Import / GStreamer / permission error</td><td>Use system Python 3.10 or the installed <code>/opt/dexmate-setup/venv</code>; check <code>id -nG</code> for <code>video</code> and <code>i2c</code>. Log out and back in after installation. Missing <code>gi</code>/GStreamer or <code>wrist_cameras</code> usually means missing dependencies or the wrong Python environment.</td></tr>
+  </tbody></table></div>
+  <p>After recovery, use the <a href="#head-wrists-api">A2 head + wrists example</a>. Confirm head RGB/depth are nonempty, head source timestamps advance across repeated reads, and both wrist frame IDs increase. Service “active” and video device nodes alone do not prove frames are arriving. Do not hot-unload the camera driver stack; use the preserved boot entries and a controlled reboot for boot/driver recovery.</p>
+  <h3>Original robot integration record · 2026-09-15</h3>
+<!-- camera-help:end -->
+
   <div class="note warn"><span class="tag">Default configured · cold boot still pending</span><p><code>DEFAULT HeadWrists</code> and automatic wrist initialization are installed. The running system at this checkpoint is the successfully tested <code>HeadWristsPatchedTest</code> boot. The new default initrd passed extraction/static checks, and its initialization service and API worked in the current boot. <strong>The complete new-default boot + automatic initialization sequence has not yet been reboot-tested.</strong></p></div>
   <h3>Physical connections</h3>
   <div class="tw"><table><thead><tr><th>Component</th><th>Connection / setting</th></tr></thead><tbody>
@@ -1197,8 +1218,154 @@ journalctl -u wrist-camera-init.service -b --no-pager</pre></div>
   </ul>
 </section>
 
+<div class="partline"><p class="eyebrow">Part C</p><h2>Advanced info</h2><p>Architecture, joint limits, CAN details, reflash recovery and illustrated hardware installation references.</p></div>
+<section id="arch">
+  <div class="sechead"><span class="num">C1</span><h2>Architecture: three libraries on one Zenoh bus</h2><span class="pill done">Reference</span></div>
+  <p class="lede">Every Dexmate component talks over <strong>Zenoh</strong>, authenticated by a single encrypted certificate. Knowing which library lives on which machine is the prerequisite for everything below — installing one in the wrong place is the most common way to lose an afternoon.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Component</th><th>Where it runs</th><th>How to install</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>dextop</code></td><td>Jetson <em>and</em> workstation</td><td><code>pip install dextop --upgrade</code></td><td>Certificates, firmware, robot server, topic listing, health checks</td></tr>
+      <tr><td><code>dexcontrol</code></td><td>Wherever your control code runs</td><td><code>pip install dexcontrol</code></td><td>The <code>Robot()</code> API: arms, head, hands, torso, chassis, e-stop</td></tr>
+      <tr><td><code>dexsensor</code></td><td><strong>Jetson only</strong></td><td><code>sudo dpkg -i dexsensor_*.deb</code></td><td>Camera and LiDAR capture and streaming; depends on the ZED SDK</td></tr>
+      <tr><td><code>dexbot_utils</code></td><td>Pulled in by dexcontrol</td><td>—</td><td>Robot configs, URDFs, <code>dexbot cfg list</code></td></tr>
+      <tr><td>socbridge</td><td>The robot's SoC board</td><td><code>dextop firmware install-socbridge</code></td><td>The web portal at <code>https://192.168.50.21:57832</code></td></tr>
+    </tbody>
+  </table></div>
+  <h3>Two ways to run</h3>
+  <ul>
+    <li><strong>Onboard</strong> — code executes on the Jetson. Lowest latency, <code>ROBOT_NAME</code> already set, and the right default for demos and real-time control.</li>
+    <li><strong>From a workstation</strong> — run AI models on a better GPU and send control over WiFi or Ethernet. You pay latency for the convenience. Both machines must sit on the same LAN, both need <code>dextop</code>, and both need the same certificate unpacked.</li>
+  </ul>
+  <h3>The environment variables</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Variable</th><th>Required?</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>ROBOT_NAME</code></td><td>Yes</td><td>Selects the robot. <code>Robot()</code> raises <code>ValueError</code> without it. Pre-set on the Jetson; export it in every workstation terminal.</td></tr>
+      <tr><td><code>ROBOT_CONFIG</code></td><td>Recommended</td><td>Tells control scripts which end effector is fitted. List the options with <code>dexbot cfg list</code> (<code>vega_1u</code>, <code>vega_1u_gripper</code>, <code>vega_1u_f5d6</code>, …).</td></tr>
+      <tr><td><code>ZENOH_CONFIG</code></td><td>Off-robot: effectively yes</td><td>Points at <code>~/.dexmate/comm/zenoh/&lt;cert&gt;/zenoh_peer_config.json5</code>. Needed in practice to pull topics from an external machine.</td></tr>
+      <tr><td><code>ROBOT_IP</code></td><td>Optional</td><td>Recent dexcomm uses it to answer queries faster.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note mine"><span class="tag">Verified on this robot</span><p>The name must be written <code>dm/vg3eb20f25bb-1u</code> — with a <strong>slash</strong>. The wiki's prose says <code>dm-&lt;serial&gt;</code>, and that form makes <code>dextop firmware info</code> time out, while the wiki's own sample output uses the slash. Note that <code>dextop topic list</code> passes with either spelling because it globs <code>dm/**</code>, so it is <strong>not</strong> a valid check that the name is right.</p></div>
+</section>
+
+<section id="dof">
+  <div class="sechead"><span class="num">C2</span><h2>What this robot actually has</h2><span class="pill live">Reference · this robot</span></div>
+  <p class="lede"><strong>Vega-1U is the upper body of a Vega-1.</strong> Total controllable DOF is <strong>17</strong>: left arm 7 (<code>L_arm_j1..j7</code>), right arm 7 (<code>R_arm_j1..j7</code>), head 3 (<code>head_j1..j3</code>). <strong>No torso and no chassis</strong> — <code>Vega1UConfig.components</code> lists only the two arms, head, estop and heartbeat, and the 16 keys from <code>dextop topic list</code> contain no <code>state/torso</code> or <code>control/torso</code>.</p>
+  <div class="note warn"><span class="tag">Trap</span><p>The <code>dextop firmware info</code> table <strong>does list a <code>torso</code> board</strong> (hw 5, sw 123). That is a firmware-bundle entry, not a joint. Do not read it as "this robot has a waist."</p></div>
+  <h3>Arm joint limits (rad) — asymmetric between sides</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Joint</th><th>Left</th><th>Right</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>j1</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
+      <tr><td>j2</td><td class="num-col">[−0.453, 1.553]</td><td class="num-col">[−1.553, 0.453]</td><td>Shoulder pitch — the only joint on this robot that raises anything</td></tr>
+      <tr><td>j3</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
+      <tr><td>j4</td><td class="num-col">[−3.071, 0.244]</td><td class="num-col">[−3.071, 0.244]</td><td></td></tr>
+      <tr><td>j5</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
+      <tr><td>j6</td><td class="num-col">±1.396</td><td class="num-col">±1.396</td><td></td></tr>
+      <tr><td>j7</td><td class="num-col">[−1.378, 1.117]</td><td class="num-col">[−1.117, 1.378]</td><td>Mirrored — useful as a cross-check on your mapping</td></tr>
+    </tbody>
+  </table></div>
+  <p>Arm <code>pose_pool</code>: <code>folded</code>, <code>folded_closed_hand</code>, <code>L_shape</code>, <code>lift_up</code>, <code>zero</code>. Head: <code>home</code>, <code>tucked</code>.</p>
+  <div class="note danger"><span class="tag">Never command the folded pose on this robot</span>
+    <p><code>folded</code> and <code>folded_closed_hand</code> came within a hair of damaging a gripper. <strong>Do not command them, and do not offer them as a safe stow pose.</strong></p>
+    <p>Why: those poses tuck the forearm hard against the body, and they were designed around Dexmate's own end effectors. This robot carries third-party CAN grippers that stick out well past <code>L_ee</code> / <code>R_ee</code> and <strong>do not exist in <code>vega_1u.urdf</code> at all</strong> — neither the URDF nor pinocchio's collision checking knows they are there. A pose the kinematic model calls clean can still crush a gripper.</p>
+    <p>The known-good parked pose is the one the robot was actually sitting in, recorded before the first commanded move and saved as <code>pre_move</code>: left <code>[1.7289, 0.0101, 0.0041, -0.9924, -0.2311, 0.5011, -0.0066]</code>, right <code>[-1.5683, -0.0026, 0.0031, -0.9916, 0.0908, -0.4138, -0.0018]</code>, head <code>[-0.0883, -0.0338, 0.0486]</code>. Treat every <code>pose_pool</code> entry as unvalidated on this hardware, and judge stow poses by real clearance around the wrist rather than by gravity torque or the vendor's name for the pose — a low-torque pose can still be a colliding one.</p>
+  </div>
+  <div class="note"><span class="tag">About the Lift in the URDF</span><p>The runtime facts stand: no torso component, no <code>control/torso</code> topic, nothing commandable. But <code>vega_1u.urdf</code> <strong>does model a lift</strong> — pinocchio reads 19 joints, and the two ahead of the arms are <code>Lift</code> (prismatic Z, 0–0.4 m) and <code>torso_flip</code> (revolute X, 0–1.0 rad). So "the hardware isn't there" is not established; it may be present but not enabled on this variant. Settling it needs the SoC-side config at <code>https://192.168.50.21:57832</code>.<br>Related: this identifies the head of BrickBench's 23-vector — <code>[0.2, 0.5]</code> sits mid-range in both <code>Lift</code> (0–0.4) and <code>torso_flip</code> (0–1.0), two joints for two numbers.</p></div>
+  <h3>Scripts already on the robot</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Script</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>~/py_scripts/inspect_joints.py</code></td><td>Dumps every component's DOF, joint names, limits and current position. <strong>Run this first on any mapping question.</strong></td></tr>
+      <tr><td><code>~/py_scripts/goto_home.py</code></td><td>Drives both arms and the head to a pose with stepped interpolation (0.12 rad/step) and limit clipping; <code>--dry-run</code> prints the plan only</td></tr>
+      <tr><td><code>~/py_scripts/goto_ready.py</code></td><td><code>pre_move</code> → <code>manip_init</code>, right arm first</td></tr>
+      <tr><td><code>~/py_scripts/goto_rest.py</code></td><td><code>manip_init</code> → <code>pre_move</code>, left arm first</td></tr>
+      <tr><td><code>~/py_scripts/goto_pose.py</code></td><td>The engine behind both: named poses, limit clipping, stepped motion, <code>--seq</code>, <code>--min-sep</code>, <code>--dry-run</code>, the gripper clearance guard and the <code>folded</code> ban</td></tr>
+      <tr><td><code>~/py_scripts/head_pose.py</code></td><td><code>read_head_joint_pos()</code> and <code>move_head_smooth()</code>; run directly to set <code>[0, 0, -0.5056]</code></td></tr>
+      <tr><td><code>~/py_scripts/sensor_only.py</code></td><td>Camera info and a frame with <strong>no <code>Robot()</code></strong>, so nothing moves</td></tr>
+      <tr><td><code>~/py_scripts/cam_info_capture.py</code></td><td>Set head pitch, dump <code>get_camera_info()</code>, save a full-res left RGB frame</td></tr>
+      <tr><td><code>~/py_scripts/path_compare.py</code></td><td>Offline FK: compare concurrent vs sequential schedules by minimum wrist separation</td></tr>
+      <tr><td><code>~/py_scripts/gripper_demo.py</code></td><td>Probe both motors, home whichever answer, concurrent open/close cycle</td></tr>
+      <tr><td><code>~/py_scripts/gravity_check.py</code></td><td>Static gravity torque and wrist position from the URDF. <strong>It knows nothing about the grippers.</strong></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note mine"><span class="tag">Always prefix your commands</span><p>A non-interactive <code>ssh</code> does not source the interactive shell config, so <code>ROBOT_NAME</code> won't be set — pass it explicitly every time:<br><code>ROBOT_NAME="dm/vg3eb20f25bb-1u" python3 script.py</code>. Key-based SSH to <code>dexmate@172.26.161.243</code> is configured; no password needed.</p></div>
+</section>
+
+<section id="gripper">
+  <div class="sechead"><span class="num">C3</span><h2>Gripper CAN bus and wiring</h2><span class="pill live">Reference · hardware</span></div>
+  <p class="lede">Two third-party grippers hang off a shared CAN bus driven by a <strong>Jhoinrch RH-02</strong> USB-to-CAN adapter (a Canable/candleLight clone, STM32F072C8T6, USB ID <code>1d50:606f</code>). The robot reports hand type <code>UNKNOWN</code>, so <strong>they cannot be driven through <code>robot.left_hand</code></strong> — they are commanded over <code>can1</code> in parallel with arm control.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Item</th><th>Value</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Bus rate</td><td class="num-col">1 Mbit/s</td><td><strong>Not 500k.</strong> Every other rate wedges the bus</td></tr>
+      <tr><td>Power</td><td class="num-col">24 V + GND</td><td>Taken from the robot</td></tr>
+      <tr><td>Wiring</td><td>Both grippers' CAN_H/CAN_L to the adapter terminal block</td><td>The adapter is T-tapped mid-bus</td></tr>
+      <tr><td>Termination</td><td><code>R120</code> <strong>must be off</strong></td><td>Both grippers carry internal 120 Ω — expect 60 Ω at the screws; R120 on makes it 40 Ω and breaks the bus</td></tr>
+      <tr><td>Polarity</td><td>Keep the original orientation</td><td>Swapping H/L gives <strong>no bus activity at all</strong> — no completions, no error frames</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn"><span class="tag">Don't be misled while debugging</span><p>The grippers are <strong>poll-response</strong> devices: they never broadcast, so a passive <code>candump</code> is always empty and proves nothing. They also do not answer CANopen SDO reads of 0x1000 at <code>0x600+n</code> for n = 1..127.</p></div>
+  <h3>gs_usb has to be built by hand</h3>
+  <p>The L4T kernel ships no <code>gs_usb</code> (<code>CONFIG_CAN_GS_USB is not set</code>, and the whole <code>drivers/net/can/usb/</code> directory is absent), and no <code>slcan</code> either — so reflashing the adapter with slcan firmware is not a way around it. The headers are present and an out-of-tree build works:</p>
+  <div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre>mkdir -p ~/gs_usb_build &amp;&amp; cd ~/gs_usb_build
+curl -fsSLO https://raw.githubusercontent.com/gregkh/linux/v5.15.199/drivers/net/can/usb/gs_usb.c
+echo 'obj-m += gs_usb.o' &gt; Makefile
+make -C /lib/modules/$(uname -r)/build M=$PWD modules
+sudo cp gs_usb.ko /lib/modules/$(uname -r)/kernel/drivers/net/can/usb/ &amp;&amp; sudo depmod -a</pre></div>
+  <p><strong>Any kernel change wipes this</strong> — rebuild against the new version (match the source tag to the running kernel). DKMS would make it permanent.</p>
+</section>
+
+<section id="reflash">
+  <div class="sechead"><span class="num">C4</span><h2>Recovering after a Jetson reflash</h2><span class="pill">Only if reflashed</span></div>
+  <p class="lede">On 2026-08-25 this robot was reflashed to JetPack 6.2.3, which wiped the entire factory Dexmate config: ZED SDK, dexsensor, dextop, the Zenoh certificate, and the static IP on <code>enP8p1s0</code>. Dexmate documents <strong>no</strong> reflash-recovery procedure. What follows is Rahul's four steps from ticket #126892650 plus everything we had to work out to finish the job.</p>
+  <div class="step"><div class="sn">R1</div><div class="sb">
+    <h3>Install the ZED SDK</h3>
+    <p>Run <code>ZED_SDK_Tegra_L4T36.5_v5.2.3.zstd.run</code> on the Jetson. Confirm with <code>/usr/local/zed/tools/ZED_Explorer -a</code> that cameras are seen.</p>
+  </div></div>
+  <div class="step"><div class="sn">R2</div><div class="sb">
+    <h3>Install dexsensor</h3>
+    <p><code>sudo dpkg -i dexsensor_0.7.6_arm64.deb</code>.</p>
+  </div></div>
+  <div class="step"><div class="sn">R3</div><div class="sb">
+    <h3>Install dextop and set the robot name</h3>
+    <div class="cmd"><div class="cmd-head"><span>Terminal · Jetson</span><button type="button">Copy</button></div><pre>pip install dextop
+sudo -E $(which dextop) robot set_name dm/vg3eb20f25bb-1u</pre></div>
+    <p>The name comes from the sticker on the chassis name tag. If the sticker is gone, read it from socbridge or dig it out of old logs.</p>
+  </div></div>
+  <div class="step"><div class="sn">R4</div><div class="sb">
+    <h3>Unpack the certificate</h3>
+    <p><code>dextop cert unpack &lt;file&gt;.dzcfg</code> — with the filename argument.</p>
+  </div></div>
+  <div class="step"><div class="sn">R5</div><div class="sb">
+    <h3>Install socbridge</h3>
+    <p><code>dextop firmware install-socbridge</code> (this robot used <code>socbridgepkg_v0.18.8.dpsw</code>). <code>Failed to connect to SOC: timed out</code> means the route to <code>192.168.50.21</code> is gone — restore the static IP <code>192.168.50.20/24</code> on <code>enP8p1s0</code> first.</p>
+  </div></div>
+  <div class="step"><div class="sn">R6</div><div class="sb">
+    <h3>Match the kernel to the installed camera drivers</h3>
+    <p>This unit was recovered using <code>5.15.185-tegra</code>, matching the installed ZED Link package. The historical downgrade is described below; the subsequent head + ISX031 wrist setup is in <a href="#camera-setup">B8</a>.</p>
+  </div></div>
+
+  <h3>The camera problem was never a missing driver</h3>
+  <p>Stereolabs' ZED Link driver ships <strong>prebuilt</strong> kernel modules with no DKMS source, pinned to an exact kernel: <code>stereolabs-zedlink-duo_1.4.3-LI-MAX96712-L4T36.5.0</code> declares <code>Depends: nvidia-l4t-kernel (&gt;= 5.15.185), (&lt;&lt; 5.15.186)</code>. JetPack 6.2.3 / L4T <strong>36.5.2</strong> ships kernel <strong>5.15.199</strong>, so every <code>.ko</code> had the wrong vermagic.</p>
+  <div class="note danger"><span class="tag">Both are labelled "36.5"</span><p>The L4T minor version is <strong>not enough</strong> to judge compatibility — check the kernel version.<br>And never use <code>--ignore-depends</code> on this package: its postinst also overwrites <code>host1x.ko</code> and <code>tegra-drm.ko</code> (display and hardware engines) with builds for the other kernel.</p></div>
+  <p>The symptom is deceptive: the SDK's userspace libraries load fine (<code>ZED SDK available</code>) while <code>CAMERA NOT DETECTED</code> persists — because there is no <code>/dev/video*</code>, no <code>zed_x_daemon</code>, and no deserializer modules. <strong>Check those three before suspecting cables or config.</strong></p>
+  <h3>The downgrade — no reflash needed</h3>
+  <p>36.5.0 and 36.5.2 live in the same <code>r36.5</code> apt repo, so a straight package downgrade works. The critical part: <strong>enumerate every installed <code>nvidia-l4t-*</code> that has a 36.5.0 version and name them all in one command</strong>. Naming only a few makes apt <em>remove</em> the rest, including <code>nvidia-l4t-bootloader</code> and <code>nvidia-l4t-initrd</code>. The correct result is "48 downgraded, 0 to remove."</p>
+  <ul>
+    <li>Always dry-run with <code>apt-get install -s</code> first.</li>
+    <li><code>apt-mark hold</code> the lot afterwards.</li>
+    <li>It rewrites the bootloader via capsule update, so <strong>be at the console</strong>.</li>
+  </ul>
+  <div class="note ok"><span class="tag">Side effect worth knowing</span><p>The downgrade also restored the static IP <code>192.168.50.20/24</code> on <code>enP8p1s0</code> that the reflash had wiped — strong evidence that <strong>Dexmate's factory image is built on L4T 36.5.0</strong>, and that the SoC portal at 192.168.50.21 should be reachable again.</p></div>
+  <h3>Hardware confirmed on this unit</h3>
+  <p>The capture card is a <strong>ZED Link Duo</strong> on a stock Orin Nano devkit carrier (<code>p3768</code> / <code>p3767-0005</code>). The head camera is a <strong>ZED X Mini</strong> (stereo, one GMSL link, two <code>/dev/video*</code> nodes, S/N 53756133) on port 0. <code>/etc/dexmate/dexsensor/default.toml</code> is generic across Vega variants and includes ZED X One wrist, base-camera and LiDAR entries. The actual wrists on this unit are <strong>two OEM ISX031 / MAX9295 cameras on a separate Waveshare MAX9296A</strong>; the ZED X One entries do not apply. See <a href="#camera-setup">B8</a> for their wiring and driver setup.</p>
+</section>
+
 <section id="gripper-hardware">
-  <div class="sechead"><span class="num">B10</span><h2>Gripper hardware setup</h2><span class="pill">One-time setup</span></div>
+  <div class="sechead"><span class="num">C5</span><h2>Gripper hardware setup</h2><span class="pill">One-time setup</span></div>
   <h3>1. Connect the assembled harness</h3>
   <p>The assembled harness has a CAN adapter at one end and a 4-pin / 6-pin pair on each of its two branches. Connect each <strong>6-pin plug to the gripper</strong> and each <strong>4-pin plug to the robot</strong>.</p>
   <h3>2. Connect the wrist camera cable</h3>
@@ -1213,7 +1380,7 @@ journalctl -u wrist-camera-init.service -b --no-pager</pre></div>
 </section>
 
 <section id="pcb-hardware">
-  <div class="sechead"><span class="num">B11</span><h2>PCB and camera hardware setup</h2><span class="pill">One-time setup</span></div>
+  <div class="sechead"><span class="num">C6</span><h2>PCB and camera hardware setup</h2><span class="pill">One-time setup</span></div>
   <p>Reference: <a href="https://docs.waveshare.com/MAX9296-GMSL-Deser-Module/Jetson-Orin">Waveshare MAX9296-GMSL-Deser-Module · Jetson Orin</a>. Power off before changing connections.</p>
   <h3>1. Mount the capture board and connect power</h3>
   <p>Use the brass standoffs supplied in the kit to connect the capture board and PCB, then connect the power cable. Connect the red wires to <strong>header pins 2 and 4 (5 V)</strong>, and ground to <strong>pin 6 (GND)</strong>. These Jetson header pins are 5 V; the grippers' 24 V supply must not be connected here.</p>
@@ -1240,134 +1407,6 @@ journalctl -u wrist-camera-init.service -b --no-pager</pre></div>
     <figure class="fig hardware-media"><img src="assets/waveshare-kit.webp" alt="Waveshare board and camera kit with CSI ribbon connection" loading="lazy"><figcaption>Capture board and kit connection reference. Image: Waveshare.</figcaption></figure>
   </div>
   <div class="note"><p><strong>Keep every part removed from the robot, including the original standoffs, connectors and cables. They will be needed when the robot is returned.</strong></p></div>
-</section>
-<section id="hardware-control-reference">
-  <div class="sechead"><span class="num">B12</span><h2>Hardware and control reference</h2></div>
-  <p class="lede">Measurements from “整理 DexMate 硬件与控制信息” (2026-09-14 UTC). The wrist cameras were not enabled during this measurement session.</p>
-  <div class="tw"><table><thead><tr><th>Item</th><th>Recorded configuration</th></tr></thead><tbody>
-    <tr><td>Cameras</td><td>Head: ZED X Mini stereo camera on ZED Link Duo. Left/right wrists: Sony ISX031.</td></tr>
-    <tr><td>Head outputs</td><td>Left RGB, right RGB and depth; no point-cloud output. Reconstruct points from <code>depth + K</code>.</td></tr>
-    <tr><td>Resolution / rate</td><td>Configured: 1920×1200 at 30 fps. Measured RGB and depth: approximately 24 Hz.</td></tr>
-    <tr><td>Head intrinsics</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code> pixels. Stereo baseline: <code>0.0497 m</code>.</td></tr>
-    <tr><td>Extrinsic model</td><td>Use the URDF supplied by the pip package <code>dexmate_urdf</code> for nominal robot geometry. The supplied models and measured TCP/camera transforms are in <a href="#tcp-extrinsics">B13</a>.</td></tr>
-    <tr><td>Transport</td><td>Zenoh + dexcontrol, without ROS 2. RGB was transported over <strong>Zenoh/JPEG</strong>, not RTC. Latency was not measured.</td></tr>
-    <tr><td>Computer</td><td>Jetson Orin Nano; L4T 36.5.0; kernel 5.15.185.</td></tr>
-    <tr><td>Control</td><td><code>dexcontrol 0.5.0</code>: joint-position control. With <code>wait_time=0</code>, call continuously at 100–500 Hz. No public Cartesian, joint velocity or joint current control interface. The third-party CAN grippers are controlled separately.</td></tr>
-    <tr><td>Six-axis wrench</td><td><code>get_wrench_state()</code> returns <code>[fx, fy, fz, tx, ty, tz]</code> as <code>float32</code>. Units and reference frame were not specified and require confirmation or calibration. The sensor was already active during the measurement.</td></tr>
-  </tbody></table></div>
-  <h3>Measured publication rates</h3>
-  <div class="tw"><table><thead><tr><th>Stream</th><th>Measured rate</th></tr></thead><tbody>
-    <tr><td>Both arms: joint state</td><td>91–92 Hz</td></tr><tr><td>Head: joint state</td><td>48 Hz</td></tr><tr><td>Head IMU</td><td>186–190 Hz</td></tr><tr><td>RGB / depth</td><td>≈24 Hz</td></tr><tr><td>Six-axis wrench</td><td>91–92 Hz</td></tr>
-  </tbody></table></div>
-  <h3>Depth back-projection</h3>
-  <p>For a rectified pixel <code>(u, v)</code> with valid depth <code>Z</code> in metres, use the intrinsics of that stream:</p>
-  <div class="cmd"><div class="cmd-head"><span>Optical camera coordinates · metres</span><button type="button">Copy</button></div><pre>X = (u - cx) * Z / fx
-Y = (v - cy) * Z / fy
-p_camera = [X, Y, Z, 1]
-p_base = T_base_camera @ p_camera</pre></div>
-</section>
-
-<section id="tcp-extrinsics">
-  <div class="sechead"><span class="num">B13</span><h2>TCP, camera extrinsics and URDF files</h2></div>
-  <p class="lede">Calibration records from “暂存代码并重新标定区域”. Its final selection on September 24 restored the clean <code>b90bcac</code> TCP/camera pair. The measured pivot fit and the earlier Y-adjusted pair are listed separately below.</p>
-  <h3>Files</h3>
-  <ul>
-    <li><a href="files/urdf/vega_1u.urdf" download>vega_1u.urdf</a> · supplied robot model.</li>
-    <li><a href="files/urdf/vega_1u_gripper.urdf" download>vega_1u_gripper.urdf</a> · supplied gripper model, including <code>L_camera_link</code> and <code>R_camera_link</code>.</li>
-    <li><a href="files/urdf/custom/vega_1u_gripper.urdf" download>Custom gripper URDF from the calibration project</a> · the separate model containing <code>tip_l</code> / <code>tip_r</code>, used for the nominal TCP comparison.</li>
-    <li><a href="files/calibration/clean-20260924.json" download>Clean TCP + camera calibration</a> · <a href="files/calibration/adjusted-20260924.json" download>Earlier Y-adjusted pair</a> · <a href="files/calibration/tcp-pivot-fit.json" download>Measured pivot-fit result</a>.</li>
-    <li><a href="files/reference-data.json" download>All matrices, source file hashes and frame definitions (JSON)</a>.</li>
-  </ul>
-  <p>The two supplied URDFs match <code>dexmate_urdf 0.8.4</code> byte-for-byte. Their original bytes and relative mesh paths are retained. Meshes resolve within the package's directory tree; the URDF downloads alone do not include the meshes. The custom comparison model is a separate file.</p>
-  <h3>Coordinate convention</h3>
-  <p><code>T_parent_child</code> maps column-vector coordinates from child to parent: <code>p_parent = T_parent_child @ p_child</code>. Translations are in metres; angles in radians. <code>R = Rz(yaw) @ Ry(pitch) @ Rx(roll)</code>. Base axes: X forward, Y robot-left, Z up. The calibrated left-camera optical axes are X image-right, Y image-down, Z forward.</p>
-  <h3>Right TCP: model, measured fit and selected values</h3>
-  <p>The two supplied package URDFs define <code>L_ee</code> / <code>R_ee</code>, but do not define a <code>tip_l</code> / <code>tip_r</code> grasp TCP. The nominal tip below comes from the separate custom model.</p>
-  <div class="tw"><table><thead><tr><th>Source</th><th>XYZ in R_ee (mm)</th><th>Meaning</th></tr></thead><tbody>
-    <tr><td>Custom URDF nominal tip</td><td><code>≈ [0, -15, 198]</code></td><td>Model geometry; full composed transform below.</td></tr>
-    <tr><td>Pivot fit · September 19</td><td><code>[-1.025481, -10.438899, 196.928685]</code></td><td>Measured translation; fit RMS 1.801540 mm. Pivot fitting does not determine orientation.</td></tr>
-    <tr><td>Y-adjusted pair · September 24, 11:16</td><td><code>[-1.025481, -18, 196.928685]</code></td><td>Measured X/Z with user-selected Y; paired camera transform retained in the downloadable record.</td></tr>
-    <tr><td>Clean pair restored · September 24, 11:43</td><td><code>[-1, -15, 198]</code></td><td>Final selected pair in the referenced task.</td></tr>
-  </tbody></table></div>
-  <p>The selected and Y-adjusted tool-frame convention uses <code>rpy = [π, 0, π/2]</code>. This orientation is nominal, not a pivot-fit measurement. The supplied measured TCP data cover the right gripper.</p>
-  <div class="cmd"><div class="cmd-head"><span>Clean · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>[
-  [ 0.000000000,  1.000000000,  0.000000000, -0.001000000],
-  [ 1.000000000,  0.000000000,  0.000000000, -0.015000000],
-  [ 0.000000000,  0.000000000, -1.000000000,  0.198000000],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <details><summary>Custom URDF TCP transforms (left and right)</summary>
-    <p>These compose all fixed joints between the named EE frame and tip. They are model values, not measured left/right grasp centres.</p>
-    <div class="cmd"><div class="cmd-head"><span>Custom · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>[
-  [ 0.000000127,  1.000000000, -0.000000046,  0.000000193],
-  [ 1.000000000, -0.000000127,  0.000006200, -0.015001328],
-  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-    <div class="cmd"><div class="cmd-head"><span>Custom · T_L_ee_tip_l · metres</span><button type="button">Copy</button></div><pre>[
-  [-0.000012680, -1.000000000,  0.000000046, -0.000000005],
-  [-1.000000000,  0.000012680, -0.000006200,  0.015001328],
-  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  </details>
-  <h3>Measured head-camera extrinsics</h3>
-  <p>The clean camera transform was fitted with a horizontal checkerboard constraint and restored together with the clean TCP. Its recorded held-out RMS is 1.176229 mm. Use this pair at its reference head pose:</p>
-  <div class="cmd"><div class="cmd-head"><span>Reference joint positions</span><button type="button">Copy</button></div><pre>head_j1 = -0.00017453292093705386 rad
-head_j2 = -0.00017453292093705386 rad
-head_j3 = -0.5056219100952148 rad
-torso_flip = 0.22689280275926285 rad
-Lift = 0 m</pre></div>
-  <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>[
-  [-0.001383542, -0.636266466,  0.771468126,  0.089032073],
-  [-0.999930278, -0.008166881, -0.008528878,  0.026881780],
-  [ 0.011727127, -0.771426138, -0.636210805,  1.169376372],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <p>This matrix is for the listed head pose. Head movement changes the base-to-camera transform. The calibration record uses rectified-left <code>fx = fy = 734.7626953125</code>, <code>cx = 966.6296997070312</code>, <code>cy = 653.073486328125</code>, at 1920×1200; these are the saved calibration values, separately from the earlier values in B12.</p>
-  <details><summary>Earlier Y-adjusted TCP/camera pair</summary>
-    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>[
-  [ 0.000000000,  1.000000000,  0.000000000, -0.001025481],
-  [ 1.000000000,  0.000000000,  0.000000000, -0.018000000],
-  [ 0.000000000,  0.000000000, -1.000000000,  0.196928685],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>[
-  [-0.001383713, -0.636266468,  0.771468125,  0.089057487],
-  [-0.999930277, -0.008166772, -0.008529010,  0.023881859],
-  [ 0.011727127, -0.771426138, -0.636210805,  1.170447698],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  </details>
-  <h3>Nominal extrinsics in the supplied URDFs</h3>
-  <p>Each row is the parent-to-child joint origin as stored in the file. The head and EE rows occur in both files; gripper and wrist-camera mounts occur in <code>vega_1u_gripper.urdf</code>.</p>
-  <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ (m)</th><th>RPY (rad)</th></tr></thead><tbody><tr><td><code>head_l3 → zed_depth_frame</code></td><td><code>0.025 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_left_camera</code></td><td><code>0.0365 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_right_camera</code></td><td><code>0.0365 -0.027 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 -1.57079</code></td></tr><tr><td><code>R_arm_l8 → R_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_gripper_base</code></td><td><code>0.0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>L_gripper_base → L_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr><tr><td><code>R_arm_l8 → R_gripper_base</code></td><td><code>0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>R_gripper_base → R_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr></tbody></table></div>
-  <p>Forward kinematics through the package URDF, evaluated at the same reference joint positions above, gives the following nominal head transform:</p>
-  <div class="cmd"><div class="cmd-head"><span>URDF FK · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>[
-  [-0.000165524, -0.668606938,  0.743615987,  0.084498283],
-  [-0.999999986,  0.000085701, -0.000145537,  0.024989645],
-  [ 0.000033578, -0.743616000, -0.668606942,  1.144781202],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <h3>URDF wrist-camera mounting transforms</h3>
-  <p>The supplied gripper URDF contains both wrist-camera links. Composing its fixed joints gives:</p>
-  <div class="cmd"><div class="cmd-head"><span>URDF · T_L_ee_L_camera_link · metres</span><button type="button">Copy</button></div><pre>[
-  [ 1.000000000,  0.000009962,  0.000000872,  0.000199254],
-  [-0.000010000,  0.996194738,  0.087155282, -0.074590002],
-  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <div class="cmd"><div class="cmd-head"><span>URDF · T_R_ee_R_camera_link · metres</span><button type="button">Copy</button></div><pre>[
-  [-1.000000000,  0.000002643,  0.000000231, -0.000200198],
-  [-0.000002654, -0.996194738, -0.087155282,  0.074589999],
-  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <p>These are nominal <code>camera_link</code> mounting frames. The files do not define separate wrist optical frames or establish a measured ISX031 optical-frame transform. The older task's statement that the gripper URDF had no wrist-camera links does not apply to these supplied files.</p>
-  <details><summary>Joint origins in the separate custom comparison model</summary>
-    <p>Its head parent is <code>vega_1u_head_l3</code>, rather than the package model's <code>head_l3</code>; compare complete frame chains, not isolated XYZ/RPY values.</p>
-    <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ (m)</th><th>RPY (rad)</th></tr></thead><tbody><tr><td><code>L_ee_link_gripper_link → tip_l</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>R_ee → R_ee_link_gripper_link</code></td><td><code>0.0000001 -0.0000001 -0.0000001</code></td><td><code>0.0000062 0. 0.0000062</code></td></tr><tr><td><code>R_ee_link_gripper_link → tip_r</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_left_camera</code></td><td><code>0.0365 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_depth_frame</code></td><td><code>0.025 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_right_camera</code></td><td><code>0.0365 0.027 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr></tbody></table></div>
-  </details>
 </section>
 
 <section id="src">

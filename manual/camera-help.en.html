@@ -1,0 +1,38 @@
+<!-- camera-help:start -->
+  <h3 id="camera-autostart">Current repository: boot startup</h3>
+  <p><strong>Wrist initialization is already included.</strong> <code>scripts/install.py --apply</code> installs and enables <code>wrist-camera-init.service</code>. At boot it waits for both wrist devices, initializes them, and writes a readiness marker. <code>active (exited)</code> is normal for this oneshot service. It does not keep streaming: <code>WristCameras()</code> starts capture and triggering when your application opens it, and stops them when it closes.</p>
+  <p><strong>Head streaming uses the vendor's <code>dexsensor.service</code>.</strong> The installer does not explicitly enable this service. <code>--configure-head</code> writes the head configuration and robot name, but does not enable or start the service. Check its state and enable it using the commands below. This is the repository's behavior; the commands inspect the robot on which you run them.</p>
+  <p>For a new robot, follow the repository <a href="https://github.com/intelligent-control-lab/dexmate-setup#quick-start">Quick start</a> with the matching vendor packages installed first. <code>--camera-boot --activate-camera-boot</code> builds and selects <code>DexmateSetupHeadWrists</code>, using <code>/boot/initrd-dexmate-setup</code> and <code>/boot/tegra234-dexmate-setup.dtbo</code>. Without <code>--activate-camera-boot</code>, the entry is only staged. The installer does not start services or reboot. The older <code>HeadWrists</code> paths in the integration record below belong to the original robot setup.</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · inspect startup</span><button type="button">Copy</button></div><pre>systemctl is-enabled dexsensor.service wrist-camera-init.service
+systemctl status dexsensor.service wrist-camera-init.service --no-pager
+systemctl cat dexsensor.service wrist-camera-init.service
+cat /boot/extlinux/extlinux.conf</pre></div>
+  <p>After installation, enable both services for future boots. If a unit is reported as “not found”, install its package first: the vendor dexsensor package for the head, or this repository's installer for wrist initialization.</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · enable at boot, without starting now</span><button type="button">Copy</button></div><pre>sudo systemctl daemon-reload
+sudo systemctl enable dexsensor.service wrist-camera-init.service</pre></div>
+  <p>Then reboot manually after reviewing the selected boot entry. To start or reinitialize cameras in the current boot, first close wrist readers and any standalone ZED viewer. These commands interrupt camera streams; they do not reboot the robot. They cannot activate a newly selected kernel overlay without a reboot.</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · only after closing camera readers</span><button type="button">Copy</button></div><pre>sudo systemctl restart wrist-camera-init.service
+sudo systemctl restart dexsensor.service</pre></div>
+  <h3 id="camera-troubleshooting">If cameras do not work</h3>
+  <p>Start on the Jetson to separate hardware/service problems from workstation communication. Inspect status and logs first:</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · read-only diagnosis</span><button type="button">Copy</button></div><pre>uname -r
+systemctl status dexsensor.service wrist-camera-init.service --no-pager
+journalctl -u dexsensor.service -u wrist-camera-init.service -b -n 160 --no-pager
+v4l2-ctl --list-devices
+cat /run/wrist-cameras/ready.json
+cat /proc/sys/kernel/random/boot_id
+sudo journalctl -k -b --no-pager | grep -Ei 'isx031|max929|tegra.*camera|i2c|csi|vi.*error'</pre></div>
+  <div class="tw"><table><thead><tr><th>Symptom</th><th>Check / next step</th></tr></thead><tbody>
+    <tr><td>Neither camera path works after boot</td><td>Check the selected combined boot entry, overlay and initrd. This bundle requires <code>5.15.185-tegra</code> / L4T 36.5.0 and matching ZED packages. An entry in extlinux is not proof it is the one running. Inspect kernel logs and device discovery after boot.</td></tr>
+    <tr><td>Head service fails, or camera is busy</td><td>Read the dexsensor log; verify ZED SDK / ZED Link installation and head cabling. Close standalone ZED viewers or duplicate publishers before restarting dexsensor. Keep only one owner of the head camera.</td></tr>
+    <tr><td>Head service runs, but RGB/depth is missing</td><td>In the <code>head_camera</code> block of <code>/etc/dexmate/dexsensor/default.toml</code>, check <code>enabled = true</code>, <code>left_rgb = true</code>, <code>right_rgb = true</code>, <code>depth = true</code>, and <code>depth_mode = "NEURAL"</code>. Restart the service after saving. The generic ZED X One wrist entries remain disabled. In the client use <code>configs.sensors["head_camera"].enabled = True</code>; check <code>ROBOT_NAME</code> and the certificate. If local reads work but workstation reads fail, see <a href="#comm">B5</a>.</td></tr>
+    <tr><td>Wrist service skipped / no wrist devices</td><td><code>ConditionPathExists</code> requires the combined device-tree path <code>/proc/device-tree/bus@0/cam_i2cmux/i2c@0/tca9546@70</code>. Check the boot overlay and driver logs. The API needs both ISX031 devices and discovers them by name; do not assume fixed <code>/dev/videoN</code> numbers.</td></tr>
+    <tr><td>Wrist probes not ready / serializer read error / GMSL link unlocked</td><td>Power off before inspecting the 5 V/GND supply, CFG <code>0100</code>, CSI0 → CAM1 ribbon and both GMSL links; see <a href="#pcb-hardware">C6</a>. Pins 2/4 are 5 V; pin 6 is GND. Keep the gripper's 24 V circuit separate. The bundled driver expects MAX9295 / 3 Gbps. Fix wiring or boot configuration before retrying initialization; do not guess I²C register writes.</td></tr>
+    <tr><td>Not initialized / marker from another boot</td><td>Compare <code>ready.json</code>'s <code>boot_id</code> with the current boot ID above. Close wrist readers, restart <code>wrist-camera-init.service</code>, and inspect its exit status/log. Do not create or edit the readiness marker manually.</td></tr>
+    <tr><td>Already owned / devices busy</td><td>Close the other wrist application cleanly. Use <code>sudo fuser -v /dev/video*</code> to identify device owners; do not kill unrelated processes. The API holds both wrists under one lock, so only one reader can own them.</td></tr>
+    <tr><td>No fresh frame / trigger worker exited</td><td>Use the <a href="#wrist-api">A2 WristCameras example</a>, which starts the software trigger worker; a bare V4L2 pull does not. Check the exception, GStreamer/kernel logs and device permissions. Close the context before reinitializing.</td></tr>
+    <tr><td>Import / GStreamer / permission error</td><td>Use system Python 3.10 or the installed <code>/opt/dexmate-setup/venv</code>; check <code>id -nG</code> for <code>video</code> and <code>i2c</code>. Log out and back in after installation. Missing <code>gi</code>/GStreamer or <code>wrist_cameras</code> usually means missing dependencies or the wrong Python environment.</td></tr>
+  </tbody></table></div>
+  <p>After recovery, use the <a href="#head-wrists-api">A2 head + wrists example</a>. Confirm head RGB/depth are nonempty, head source timestamps advance across repeated reads, and both wrist frame IDs increase. Service “active” and video device nodes alone do not prove frames are arriving. Do not hot-unload the camera driver stack; use the preserved boot entries and a controlled reboot for boot/driver recovery.</p>
+  <h3>Original robot integration record · 2026-09-15</h3>
+<!-- camera-help:end -->

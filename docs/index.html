@@ -300,7 +300,7 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:v
 <div class="manual-language"><a href="index.html" lang="zh-CN">中文</a><span> / </span><a href="en.html" lang="en">English</a></div>
     <p class="eyebrow">Dexmate Vega-1U · CMU · 内部</p>
     <h1>Vega-1U 操作手册</h1>
-    <p class="standfirst">本手册分为两部分。 <strong>A 部分是每次使用时的操作</strong> ——机器人已经配置完成，SSH 登录后即可开始。 <strong>B 部分是一次性初始化</strong>，本机已经完成；保留这些步骤用于重刷系统、配置第二台机器人或排查故障。资料来自四篇 Dexmate wiki、支持工单 #126892650，以及我们自行摸索、其他文档中没有记录的经验。</p>
+    <p class="standfirst"><strong>Part A</strong> 是日常操作；<strong>Part B</strong> 是新机器人的必读信息与必要设置；<strong>Part C</strong> 是进阶信息及硬件参考。</p>
     <dl class="idcard">
       <div><dt>机器人名称</dt><dd>dm/vg3eb20f25bb-1u<small>用斜杠，不是短横线</small></dd></div>
       <div><dt>型号</dt><dd>Vega-1U<small>上半身 · 17 自由度 · 不发布躯干／底盘</small></dd></div>
@@ -325,24 +325,27 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:v
     <li><a href="#grippers"><span>A5</span>控制夹爪</a></li>
     <li><a href="#traps"><span>A6</span>常见问题对照表</a></li>
   </ol>
-  <p class="grp">B · 参考 <em>（已完成配置）</em></p>
+  <p class="grp">B · 必读与必要设置</p>
   <ol>
-    <li><a href="#arch"><span>B0</span>架构</a></li>
-    <li><a href="#net"><span>B1</span>连接网络</a></li>
-    <li><a href="#cert"><span>B2</span>证书与固件</a></li>
-    <li><a href="#comm"><span>B3</span>工作站通信</a></li>
-    <li><a href="#libs"><span>B4</span>安装库</a></li>
-    <li><a href="#verify"><span>B5</span>验证与诊断</a></li>
-    <li><a href="#dof"><span>B6</span>自由度与关节限位</a></li>
-    <li><a href="#gripper"><span>B7</span>CAN 总线与接线</a></li>
-    <li><a href="#reflash"><span>B8</span>重刷系统后的恢复</a></li>
-    <li><a href="#camera-setup"><span>B9</span>相机配置与启动</a></li>
-    <li><a href="#gripper-hardware"><span>B10</span>夹爪硬件连接</a></li>
-<li><a href="#pcb-hardware"><span>B11</span>PCB／相机硬件安装</a></li>
-<li><a href="#hardware-control-reference"><span>B12</span>硬件与控制信息</a></li>
-<li><a href="#tcp-extrinsics"><span>B13</span>TCP、外参与 URDF</a></li>
-    <li><a href="#src"><span>—</span>资料来源</a></li>
-  </ol>
+<li><a href="#hardware-control-reference"><span>B1</span>硬件与控制信息</a></li>
+<li><a href="#tcp-extrinsics"><span>B2</span>TCP、外参与 URDF</a></li>
+<li><a href="#net"><span>B3</span>连接网络</a></li>
+<li><a href="#cert"><span>B4</span>证书与固件</a></li>
+<li><a href="#comm"><span>B5</span>工作站通信</a></li>
+<li><a href="#libs"><span>B6</span>安装库</a></li>
+<li><a href="#verify"><span>B7</span>验证与诊断</a></li>
+<li><a href="#camera-setup"><span>B8</span>相机配置与启动</a></li>
+</ol>
+<p class="grp">C · 进阶信息</p>
+  <ol>
+<li><a href="#arch"><span>C1</span>架构</a></li>
+<li><a href="#dof"><span>C2</span>自由度与关节限位</a></li>
+<li><a href="#gripper"><span>C3</span>CAN 总线与接线</a></li>
+<li><a href="#reflash"><span>C4</span>重刷系统后的恢复</a></li>
+<li><a href="#gripper-hardware"><span>C5</span>夹爪硬件连接</a></li>
+<li><a href="#pcb-hardware"><span>C6</span>PCB／相机硬件安装</a></li>
+</ol>
+<ol><li><a href="#src"><span>—</span>资料来源</a></li></ol>
 </nav>
 
 <main>
@@ -393,7 +396,7 @@ python3 ~/py_scripts/inspect_joints.py</pre></div>
   <p>以上就是全部必需步骤。下面按任务选择——只启用即将使用的子系统。</p>
   <div class="cmd"><div class="cmd-head"><span>可选 · 检查相机就绪状态 · Jetson</span><button type="button">复制</button></div><pre>systemctl status dexsensor wrist-camera-init.service --no-pager
 cat /run/wrist-cameras/ready.json</pre></div>
-  <p>本机的头部相机服务已经运行。通过 <a href="#sensor">A2</a>订阅；腕部 API 按需启动采集。接线和启动配置见 <a href="#camera-setup">B9</a>.</p>
+  <p>本机的头部相机服务已经运行。通过 <a href="#sensor">A2</a>订阅；腕部 API 按需启动采集。接线和启动配置见 <a href="#camera-setup">B8</a>.</p>
   <div class="cmd"><div class="cmd-head"><span>可选 · 夹爪</span><button type="button">复制</button></div><pre>sudo modprobe gs_usb                                    <span class="c"># asks for hello-dex</span>
 sudo ip link set can1 up type can bitrate 1000000 \
      loopback off listen-only off                       <span class="c"># ip is NOPASSWD</span></pre></div>
@@ -412,12 +415,12 @@ sudo ip link set can1 up type can bitrate 1000000 \
   <div class="note warn"><span class="tag">哪些内容保持 <em>不</em> 变</span><p>IP 变化不代表需要重新配置。证书、机器人名称、固件和库都保存在机器人上，不受地址变化影响——只需更新 <code>ROBOT_IP</code> （如果导出了该变量）以及 SSH 连接目标。</p></div>
 
   <h3>改用工作站运行</h3>
-  <p>目前所有代码都在机载计算机运行。也可以从自己的电脑控制机器人，但需要单独完成一次配置—— <code>dextop</code>、在本地解压同一份证书，并设置环境变量——详见 <a href="#comm">B3</a>。这样能使用更好的 GPU，代价是增加网络延迟。</p>
+  <p>目前所有代码都在机载计算机运行。也可以从自己的电脑控制机器人，但需要单独完成一次配置—— <code>dextop</code>、在本地解压同一份证书，并设置环境变量——详见 <a href="#comm">B5</a>。这样能使用更好的 GPU，代价是增加网络延迟。</p>
 </section>
 
 <section id="sensor">
   <div class="sechead"><span class="num">A2</span><h2>读取传感器数据</h2></div>
-  <p class="lede">头部相机由现有的 <code>dexsensor</code> 服务发布。两路原装腕部相机使用本地 <code>WristCameras</code> Python API，可以同时读取。下面的纯传感器示例不构造 <code>Robot()</code>，避免触发头部归位。配置见： <a href="#camera-setup">B9</a>.</p>
+  <p class="lede">头部相机由现有的 <code>dexsensor</code> 服务发布。两路原装腕部相机使用本地 <code>WristCameras</code> Python API，可以同时读取。下面的纯传感器示例不构造 <code>Robot()</code>，避免触发头部归位。配置见： <a href="#camera-setup">B8</a>.</p>
 
   <h3>关节、电流、力矩、按钮——不需要 dexsensor</h3>
   <div class="cmd"><div class="cmd-head"><span>Python</span><button type="button">复制</button></div><pre>from dexcontrol.robot import Robot
@@ -462,7 +465,7 @@ finally:
     <p><strong>头部相机输出 RGB，不是 BGR</strong>，这与 ZED 通常的约定不同。 <code>cv2.imwrite</code> 和 <code>cv2.VideoWriter</code> 都需要 BGR，因此图像需要经过 <code>cv2.COLOR_RGB2BGR</code> ，否则红蓝会互换（棕色桌子变成蓝色）。PIL 默认按 RGB 解释，无需转换。</p>
   </div>
   <h3>头部相机分辨率与内参</h3>
-  <p>当前头部配置： <strong>HD1200、1920×1200、配置帧率 30 fps、NEURAL 深度</strong>。在 <code>/etc/dexmate/dexsensor/default.toml</code>中找到 <code>id = "head_camera"</code>对应的传感器，再查看其参数和流开关。不要按行号修改。通用的 ZED X One 腕部条目必须保持禁用：它们并不描述这些 ISX031 相机。实测吞吐率见 <a href="#camera-setup">B9</a>.</p>
+  <p>当前头部配置： <strong>HD1200、1920×1200、配置帧率 30 fps、NEURAL 深度</strong>。在 <code>/etc/dexmate/dexsensor/default.toml</code>中找到 <code>id = "head_camera"</code>对应的传感器，再查看其参数和流开关。不要按行号修改。通用的 ZED X One 腕部条目必须保持禁用：它们并不描述这些 ISX031 相机。实测吞吐率见 <a href="#camera-setup">B8</a>.</p>
   <div class="cmd"><div class="cmd-head"><span>Bash · 仅在修改头部配置时执行</span><button type="button">复制</button></div><pre>sudo cp -a /etc/dexmate/dexsensor/default.toml /etc/dexmate/dexsensor/default.toml.camera-$(date +%Y%m%d-%H%M%S).bak
 sudoedit /etc/dexmate/dexsensor/default.toml
 # After saving the intended head settings (interrupts head streaming):
@@ -677,7 +680,7 @@ python3 -c "import gripper; g=gripper.Grippers(); g.release(); g.close_bus()"</p
 
 <section id="grippers">
   <div class="sechead"><span class="num">A5</span><h2>控制夹爪</h2><span class="pill live">本机</span></div>
-  <p class="lede">夹爪 <strong>不</strong> 属于 dexcontrol——机器人报告的手类型为 <code>UNKNOWN</code>，因此 <code>robot.left_hand</code> 不起作用。它们是共享 CAN 总线的两台 MG4005-i10 V3 伺服电机，由 <code>/home/dexmate/gripper.py</code>封装，与普通机械臂控制并行使用。接线、总线速率和协议考证见 <a href="#gripper">B7</a>；本节介绍库的使用方式。</p>
+  <p class="lede">夹爪 <strong>不</strong> 属于 dexcontrol——机器人报告的手类型为 <code>UNKNOWN</code>，因此 <code>robot.left_hand</code> 不起作用。它们是共享 CAN 总线的两台 MG4005-i10 V3 伺服电机，由 <code>/home/dexmate/gripper.py</code>封装，与普通机械臂控制并行使用。接线、总线速率和协议考证见 <a href="#gripper">C3</a>；本节介绍库的使用方式。</p>
 
   <div class="note danger"><span class="tag">当前状态——左夹爪不在总线上</span><p>自 2026-09-07 起，电机 1（左）不响应 CAN。换线测试已确认：使用右夹爪的正常线缆后， <code>0x141</code> 立即响应，因此 <strong>电机正常，左侧线缆内部有导体断裂</strong> ——外皮看起来完好，原因是 <code>folded</code> 机械臂位姿让两个夹爪交叉。在更换线缆前，下述操作仅适用于 <strong>右夹爪</strong>。库支持降级运行：探测两台电机，只驱动有响应的电机。</p></div>
 
@@ -864,45 +867,138 @@ g.close_bus()           <span class="c"># release the socket, leave motors energ
   </div>
 </section>
 
-<div class="partline">
-  <p class="eyebrow">B 部分</p>
-  <h2>参考与一次性配置</h2>
-  <p>这里的内容不属于日常操作。它记录本机已经完成的初始化——只在重刷系统或配置第二台机器时重复——以及查询用的参考资料：关节限位、夹爪总线和接线。</p>
-</div>
+<div class="partline"><p class="eyebrow">Part B</p><h2>必读与必要设置</h2><p>每台新机器人都需阅读 B1–B8，并完成适用的设置与检查；B5 中的工作站配置适用于使用外部电脑的情况。</p></div>
+<section id="hardware-control-reference">
+  <div class="sechead"><span class="num">B1</span><h2>硬件与控制信息</h2></div>
+  <p class="lede">来自「整理 DexMate 硬件与控制信息」任务的测量记录（2026-09-14 UTC）。该次测量时，左右腕部相机均未启用。</p>
+  <div class="tw"><table><thead><tr><th>项目</th><th>记录配置</th></tr></thead><tbody>
+    <tr><td>相机</td><td>头部为 ZED X Mini 双目相机，接 ZED Link Duo；左右腕为 Sony ISX031。</td></tr>
+    <tr><td>头部输出</td><td>提供左右 RGB 和深度，无点云输出；需用 <code>depth + K</code> 反投影。</td></tr>
+    <tr><td>分辨率／频率</td><td>配置为 1920×1200、30 fps；实测 RGB 和深度约 24 Hz。</td></tr>
+    <tr><td>头部内参</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code>，单位为像素。双目基线：<code>0.0497 m</code>。</td></tr>
+    <tr><td>外参模型</td><td>名义机器人几何以 pip 包 <code>dexmate_urdf</code> 内的 URDF 为准。上传的模型及实测 TCP／相机变换见 <a href="#tcp-extrinsics">B2</a>。</td></tr>
+    <tr><td>通信</td><td>纯 Zenoh + dexcontrol，无 ROS 2。该次 RGB 实际走 <strong>Zenoh/JPEG</strong>，不是 RTC。延迟未测。</td></tr>
+    <tr><td>计算机</td><td>Jetson Orin Nano；L4T 36.5.0；kernel 5.15.185。</td></tr>
+    <tr><td>控制</td><td><code>dexcontrol 0.5.0</code>，仅支持关节位置控制；<code>wait_time=0</code> 时需以 100–500 Hz 循环调用。无公开笛卡尔、关节 velocity／current 控制接口。第三方 CAN 夹爪单独控制。</td></tr>
+    <tr><td>六维力</td><td><code>get_wrench_state()</code> 返回 <code>[fx, fy, fz, tx, ty, tz]</code>，类型为 <code>float32</code>。单位和参考坐标系未注明，需要确认或标定。传感器在该次测量时已激活。</td></tr>
+  </tbody></table></div>
+  <h3>实测发布频率</h3>
+  <div class="tw"><table><thead><tr><th>数据流</th><th>实测频率</th></tr></thead><tbody>
+    <tr><td>双臂关节状态</td><td>91–92 Hz</td></tr><tr><td>头部关节状态</td><td>48 Hz</td></tr><tr><td>头部 IMU</td><td>186–190 Hz</td></tr><tr><td>RGB／深度</td><td>≈24 Hz</td></tr><tr><td>六维力</td><td>91–92 Hz</td></tr>
+  </tbody></table></div>
+  <h3>深度反投影</h3>
+  <p>对校正后的像素 <code>(u, v)</code>，深度 <code>Z</code> 有效且单位为米时，使用对应图像流的内参：</p>
+  <div class="cmd"><div class="cmd-head"><span>相机光学坐标 · 米</span><button type="button">复制</button></div><pre>X = (u - cx) * Z / fx
+Y = (v - cy) * Z / fy
+p_camera = [X, Y, Z, 1]
+p_base = T_base_camera @ p_camera</pre></div>
+</section>
 
-<section id="arch">
-  <div class="sechead"><span class="num">B0</span><h2>架构：一条 Zenoh 总线上的三个库</h2><span class="pill done">参考</span></div>
-  <p class="lede">每个 Dexmate 组件都通过 <strong>Zenoh</strong>通信，使用同一份加密证书认证。了解各库应该运行在哪台机器上，是后续步骤的前提——装错位置最容易白费半天。</p>
-  <div class="tw"><table>
-    <thead><tr><th>组件</th><th>运行位置</th><th>安装方式</th><th>作用</th></tr></thead>
-    <tbody>
-      <tr><td><code>dextop</code></td><td>Jetson <em>和</em> 工作站</td><td><code>pip install dextop --upgrade</code></td><td>证书、固件、机器人服务器、话题列表、健康检查</td></tr>
-      <tr><td><code>dexcontrol</code></td><td>控制代码所在的机器</td><td><code>pip install dexcontrol</code></td><td> <code>Robot()</code> API：机械臂、头部、手、躯干、底盘、急停</td></tr>
-      <tr><td><code>dexsensor</code></td><td><strong>仅 Jetson</strong></td><td><code>sudo dpkg -i dexsensor_*.deb</code></td><td>相机和 LiDAR 采集与推流；依赖 ZED SDK</td></tr>
-      <tr><td><code>dexbot_utils</code></td><td>随 dexcontrol 安装</td><td>—</td><td>机器人配置、URDF、 <code>dexbot cfg list</code></td></tr>
-      <tr><td>socbridge</td><td>机器人的 SoC 板</td><td><code>dextop firmware install-socbridge</code></td><td>Web 管理页面位于 <code>https://192.168.50.21:57832</code></td></tr>
-    </tbody>
-  </table></div>
-  <h3>两种运行方式</h3>
+<section id="tcp-extrinsics">
+  <div class="sechead"><span class="num">B2</span><h2>TCP、相机外参与 URDF 文件</h2></div>
+  <p class="lede">标定记录来自「暂存代码并重新标定区域」任务。该任务在 9 月 24 日最终恢复了 clean 提交 <code>b90bcac</code> 的 TCP／相机组合。原始 pivot 实测拟合值和此前调整 Y 后的组合在下方分别列出。</p>
+  <h3>文件</h3>
   <ul>
-    <li><strong>机载计算机</strong> ——代码在 Jetson 上执行。延迟最低， <code>ROBOT_NAME</code> 已设置，是演示和实时控制的默认选择。</li>
-    <li><strong>从工作站运行</strong> ——使用更好的 GPU 运行 AI 模型，经 WiFi 或以太网发送控制。便利的代价是延迟。两台机器必须在同一局域网，均需安装 <code>dextop</code>，并解压同一份证书。</li>
+    <li><a href="files/urdf/vega_1u.urdf" download>vega_1u.urdf</a> · 上传的机器人模型。</li>
+    <li><a href="files/urdf/vega_1u_gripper.urdf" download>vega_1u_gripper.urdf</a> · 上传的夹爪模型，包含 <code>L_camera_link</code> 和 <code>R_camera_link</code>。</li>
+    <li><a href="files/urdf/custom/vega_1u_gripper.urdf" download>标定项目中的自定义夹爪 URDF</a> · 另一份包含 <code>tip_l</code>／<code>tip_r</code> 的模型，用于名义 TCP 对照。</li>
+    <li><a href="files/calibration/clean-20260924.json" download>Clean TCP＋相机标定</a> · <a href="files/calibration/adjusted-20260924.json" download>此前调整 Y 的组合</a> · <a href="files/calibration/tcp-pivot-fit.json" download>Pivot 实测拟合结果</a>。</li>
+    <li><a href="files/reference-data.json" download>全部矩阵、源文件校验值及坐标系定义（JSON）</a>。</li>
   </ul>
-  <h3>环境变量</h3>
-  <div class="tw"><table>
-    <thead><tr><th>变量</th><th>是否必需？</th><th>作用</th></tr></thead>
-    <tbody>
-      <tr><td><code>ROBOT_NAME</code></td><td>是</td><td>选择机器人。 <code>Robot()</code> 缺少它时会抛出 <code>ValueError</code> 。Jetson 上已预设；在工作站的每个终端中导出。</td></tr>
-      <tr><td><code>ROBOT_CONFIG</code></td><td>建议设置</td><td>告诉控制脚本安装了哪种末端执行器。使用以下命令列出选项： <code>dexbot cfg list</code> (<code>vega_1u</code>, <code>vega_1u_gripper</code>, <code>vega_1u_f5d6</code>，……）。</td></tr>
-      <tr><td><code>ZENOH_CONFIG</code></td><td>机器人外部：实际需要</td><td>指向 <code>~/.dexmate/comm/zenoh/&lt;cert&gt;/zenoh_peer_config.json5</code>。实际从外部电脑拉取话题时需要。</td></tr>
-      <tr><td><code>ROBOT_IP</code></td><td>可选</td><td>新版 dexcomm 用它加快查询响应。</td></tr>
-    </tbody>
-  </table></div>
-  <div class="note mine"><span class="tag">本机已验证</span><p>名称必须写成 <code>dm/vg3eb20f25bb-1u</code> ——使用 <strong>斜杠</strong>。wiki 正文写成了 <code>dm-&lt;serial&gt;</code>，这种写法会使 <code>dextop firmware info</code> 超时，但 wiki 自己的示例输出用的是斜杠。注意 <code>dextop topic list</code> 两种写法都会通过，因为它使用通配匹配 <code>dm/**</code>，因此它 <strong>不</strong> 能作为名称正确性的有效检查。</p></div>
+  <p>两份上传的 URDF 与 <code>dexmate_urdf 0.8.4</code> 包内文件逐字节一致，保留了原文件及相对 mesh 路径。Mesh 需在软件包的目录结构中解析；单独下载 URDF 不包含 mesh。用于对照的自定义模型单独存放。</p>
+  <h3>坐标约定</h3>
+  <p><code>T_parent_child</code> 将列向量坐标从 child 转到 parent：<code>p_parent = T_parent_child @ p_child</code>。平移单位为米，角度单位为弧度。<code>R = Rz(yaw) @ Ry(pitch) @ Rx(roll)</code>。基座轴向：X 向前、Y 向机器人左侧、Z 向上；已标定的左相机光学轴向：X 向图像右侧、Y 向图像下方、Z 向前。</p>
+  <h3>右侧 TCP：模型、实测拟合与选用值</h3>
+  <p>两份上传的软件包 URDF 定义了 <code>L_ee</code>／<code>R_ee</code>，但没有定义 <code>tip_l</code>／<code>tip_r</code> 夹持 TCP。下面的名义 tip 来自单独的自定义模型。</p>
+  <div class="tw"><table><thead><tr><th>来源</th><th>R_ee 中的 XYZ（mm）</th><th>含义</th></tr></thead><tbody>
+    <tr><td>自定义 URDF 名义 tip</td><td><code>≈ [0, -15, 198]</code></td><td>模型几何值；完整连乘变换见下方。</td></tr>
+    <tr><td>Pivot 拟合 · 9 月 19 日</td><td><code>[-1.025481, -10.438899, 196.928685]</code></td><td>实测平移；拟合 RMS 为 1.801540 mm。Pivot 拟合不确定旋转。</td></tr>
+    <tr><td>调整 Y 的组合 · 9 月 24 日 11:16</td><td><code>[-1.025481, -18, 196.928685]</code></td><td>采用实测 X／Z，Y 由用户指定；配套相机外参保存在可下载记录中。</td></tr>
+    <tr><td>恢复的 clean 组合 · 9 月 24 日 11:43</td><td><code>[-1, -15, 198]</code></td><td>引用任务最终选用的组合。</td></tr>
+  </tbody></table></div>
+  <p>最终选用值和调整 Y 的组合使用工具坐标约定 <code>rpy = [π, 0, π/2]</code>。这一旋转是名义约定，并非 pivot 实测结果。提供的实测 TCP 数据针对右夹爪。</p>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
+  [ 0.000000000,  1.000000000,  0.000000000, -0.001000000],
+  [ 1.000000000,  0.000000000,  0.000000000, -0.015000000],
+  [ 0.000000000,  0.000000000, -1.000000000,  0.198000000],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <details><summary>自定义 URDF 中的左右 TCP 变换</summary>
+    <p>以下连乘对应 EE 坐标系到 tip 之间的全部固定关节，是模型值，不是左右夹持中心的实测值。</p>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
+  [ 0.000000127,  1.000000000, -0.000000046,  0.000000193],
+  [ 1.000000000, -0.000000127,  0.000006200, -0.015001328],
+  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_L_ee_tip_l · 米</span><button type="button">复制</button></div><pre>[
+  [-0.000012680, -1.000000000,  0.000000046, -0.000000005],
+  [-1.000000000,  0.000012680, -0.000006200,  0.015001328],
+  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  </details>
+  <h3>实测头部相机外参</h3>
+  <p>Clean 相机外参使用水平棋盘约束拟合，并与 clean TCP 一起恢复。记录中的留出点 RMS 为 1.176229 mm。该组合对应以下参考头部姿态：</p>
+  <div class="cmd"><div class="cmd-head"><span>参考关节位置</span><button type="button">复制</button></div><pre>head_j1 = -0.00017453292093705386 rad
+head_j2 = -0.00017453292093705386 rad
+head_j3 = -0.5056219100952148 rad
+torso_flip = 0.22689280275926285 rad
+Lift = 0 m</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
+  [-0.001383542, -0.636266466,  0.771468126,  0.089032073],
+  [-0.999930278, -0.008166881, -0.008528878,  0.026881780],
+  [ 0.011727127, -0.771426138, -0.636210805,  1.169376372],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <p>矩阵对应上面的头部姿态；头部运动后，基座到相机的变换会变化。标定记录保存的校正左目内参为 <code>fx = fy = 734.7626953125</code>、<code>cx = 966.6296997070312</code>、<code>cy = 653.073486328125</code>，分辨率 1920×1200；这是该次标定保存的值，与 <a href="#hardware-control-reference">B1</a> 中较早记录的值分别列出。</p>
+  <details><summary>此前调整 Y 的 TCP／相机组合</summary>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
+  [ 0.000000000,  1.000000000,  0.000000000, -0.001025481],
+  [ 1.000000000,  0.000000000,  0.000000000, -0.018000000],
+  [ 0.000000000,  0.000000000, -1.000000000,  0.196928685],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
+  [-0.001383713, -0.636266468,  0.771468125,  0.089057487],
+  [-0.999930277, -0.008166772, -0.008529010,  0.023881859],
+  [ 0.011727127, -0.771426138, -0.636210805,  1.170447698],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  </details>
+  <h3>上传 URDF 中的名义外参</h3>
+  <p>每行是文件中存储的父子关节原点。两份文件均包含头部和 EE 条目；夹爪和腕部相机安装条目位于 <code>vega_1u_gripper.urdf</code>。</p>
+  <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody><tr><td><code>head_l3 → zed_depth_frame</code></td><td><code>0.025 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_left_camera</code></td><td><code>0.0365 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_right_camera</code></td><td><code>0.0365 -0.027 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 -1.57079</code></td></tr><tr><td><code>R_arm_l8 → R_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_gripper_base</code></td><td><code>0.0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>L_gripper_base → L_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr><tr><td><code>R_arm_l8 → R_gripper_base</code></td><td><code>0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>R_gripper_base → R_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr></tbody></table></div>
+  <p>在上述相同参考关节位置下，通过软件包 URDF 正运动学计算出的名义头部变换如下：</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF FK · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
+  [-0.000165524, -0.668606938,  0.743615987,  0.084498283],
+  [-0.999999986,  0.000085701, -0.000145537,  0.024989645],
+  [ 0.000033578, -0.743616000, -0.668606942,  1.144781202],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <h3>URDF 腕部相机安装变换</h3>
+  <p>上传的夹爪 URDF 包含两侧腕部相机 link。连乘固定关节后得到：</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_L_ee_L_camera_link · 米</span><button type="button">复制</button></div><pre>[
+  [ 1.000000000,  0.000009962,  0.000000872,  0.000199254],
+  [-0.000010000,  0.996194738,  0.087155282, -0.074590002],
+  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_R_ee_R_camera_link · 米</span><button type="button">复制</button></div><pre>[
+  [-1.000000000,  0.000002643,  0.000000231, -0.000200198],
+  [-0.000002654, -0.996194738, -0.087155282,  0.074589999],
+  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
+  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
+]</pre></div>
+  <p>这些是名义 <code>camera_link</code> 安装坐标系。文件没有单独定义腕部光学坐标系，也没有给出经实测确认的 ISX031 光学坐标变换。旧任务中“夹爪 URDF 没有腕部相机 link”的结论不适用于这次上传的文件。</p>
+  <details><summary>单独的自定义对照模型中的关节原点</summary>
+    <p>该模型头部父坐标系是 <code>vega_1u_head_l3</code>，软件包模型则为 <code>head_l3</code>；对比时应使用完整坐标链，不能只比较局部 XYZ／RPY。</p>
+    <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody><tr><td><code>L_ee_link_gripper_link → tip_l</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>R_ee → R_ee_link_gripper_link</code></td><td><code>0.0000001 -0.0000001 -0.0000001</code></td><td><code>0.0000062 0. 0.0000062</code></td></tr><tr><td><code>R_ee_link_gripper_link → tip_r</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_left_camera</code></td><td><code>0.0365 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_depth_frame</code></td><td><code>0.025 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_right_camera</code></td><td><code>0.0365 0.027 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr></tbody></table></div>
+  </details>
 </section>
 
 <section id="net">
-  <div class="sechead"><span class="num">B1</span><h2>让机器人连接网络</h2><span class="pill done">已完成 · 一次性</span></div>
+  <div class="sechead"><span class="num">B3</span><h2>让机器人连接网络</h2><span class="pill done">已完成 · 一次性</span></div>
   <p class="lede">没有已知 WiFi 的机器人会在开机时启动自己的热点。规则是： <strong>没有已知网络 → 热点；已知网络在范围内 → 自动加入，热点消失</strong>。每台机器人只需配置一次。</p>
   <h3>三种进入 shell 的方式</h3>
   <div class="tw"><table>
@@ -944,7 +1040,7 @@ nmcli device wifi list</pre></div>
 </section>
 
 <section id="cert">
-  <div class="sechead"><span class="num">B2</span><h2>证书与固件——每台机器人一次</h2><span class="pill done">已完成 · 一次性</span></div>
+  <div class="sechead"><span class="num">B4</span><h2>证书与固件——每台机器人一次</h2><span class="pill done">已完成 · 一次性</span></div>
   <p class="lede">证书是接入总线的凭证：安装一次，直到过期前都有效。固件更新可选，证书不可省略。Dexmate 提供两条路径，而 <strong>证书只能通过 Web 管理页面安装</strong>.</p>
 
   <h3>方式 1 · Web 管理页面（证书必需）</h3>
@@ -966,7 +1062,7 @@ dextop firmware update    <span class="c"># prompts for the version to install</
 </section>
 
 <section id="comm">
-  <div class="sechead"><span class="num">B3</span><h2>工作站通信</h2><span class="pill">可选 · 目前未使用</span></div>
+  <div class="sechead"><span class="num">B5</span><h2>工作站通信</h2><span class="pill">工作站设置</span></div>
   <p class="lede">如果只在机载计算机运行代码，可跳过本节。从自己的电脑控制机器人时，工作站必须加入同一 Zenoh 总线。</p>
   <div class="cmd"><div class="cmd-head"><span>终端 · 工作站和 Jetson</span><button type="button">复制</button></div><pre>pip install dextop --upgrade</pre></div>
   <div class="cmd"><div class="cmd-head"><span>终端 · 工作站 · 一次性</span><button type="button">复制</button></div><pre>dextop cert unpack &lt;certificate_file&gt;.dzcfg</pre></div>
@@ -983,7 +1079,7 @@ export ROBOT_IP=172.26.161.243</pre></div>
 </section>
 
 <section id="libs">
-  <div class="sechead"><span class="num">B4</span><h2>安装 dexcontrol 和 dexsensor</h2><span class="pill done">已完成 · 一次性</span></div>
+  <div class="sechead"><span class="num">B6</span><h2>安装 dexcontrol 和 dexsensor</h2><span class="pill done">已完成 · 一次性</span></div>
   <h3>dexcontrol——控制</h3>
   <div class="cmd"><div class="cmd-head"><span>终端</span><button type="button">复制</button></div><pre>pip install dexcontrol</pre></div>
   <p>开源示例位于 <a href="https://github.com/dexmate-ai">github.com/dexmate-ai</a>。Dexmate 建议先运行 <code>examples/advanced_examples/fold_robot.py</code> 来展开新机器人—— <strong>不要在本机运行它</strong>；见常见问题对照表。</p>
@@ -1002,7 +1098,7 @@ export ROBOT_IP=172.26.161.243</pre></div>
 </section>
 
 <section id="verify">
-  <div class="sechead"><span class="num">B5</span><h2>验证与诊断</h2><span class="pill">随时可用</span></div>
+  <div class="sechead"><span class="num">B7</span><h2>验证与诊断</h2><span class="pill">随时可用</span></div>
   <p class="lede">编写代码前先运行这些检查。先确认连接正常，能避免反复猜测“是脚本还是机器人出了问题”。</p>
   <div class="cmd"><div class="cmd-head"><span>终端</span><button type="button">复制</button></div><pre>dextop topic list --timeout 10</pre></div>
   <p>外部电脑首次调用常常没有返回——dextop 需要一些时间连接机器人。再运行一次或增加超时。</p>
@@ -1020,123 +1116,48 @@ export ROBOT_IP=172.26.161.243</pre></div>
   <div class="note"><span class="tag">如何判断某个组件是否存在</span><p>根据 <code>dextop topic list</code>中的 Zenoh 话题，或代码中的 <code>has_component()</code> 判断—— <strong>绝不能根据 <code>firmware info</code> 表格</strong>。该表列出固件包条目，并非本机实际具有的关节（见下文）。</p></div>
 </section>
 
-<section id="dof">
-  <div class="sechead"><span class="num">B6</span><h2>这台机器人实际具有的组件</h2><span class="pill live">参考 · 本机</span></div>
-  <p class="lede"><strong>Vega-1U 是 Vega-1 的上半身。</strong> 可控自由度总数为 <strong>17</strong>：左臂 7（<code>L_arm_j1..j7</code>），右臂 7（<code>R_arm_j1..j7</code>），头部 3（<code>head_j1..j3</code>). <strong>没有躯干，也没有底盘</strong> — <code>Vega1UConfig.components</code> 只列出双臂、头部、急停和心跳，而 <code>dextop topic list</code> 返回的 16 个 key 不包含 <code>state/torso</code> 或 <code>control/torso</code>.</p>
-  <div class="note warn"><span class="tag">陷阱</span><p> <code>dextop firmware info</code> 表格 <strong>确实列出一块 <code>torso</code> 板</strong> （hw 5，sw 123）。这是固件包条目，不是关节。不要解读成“这台机器人有腰”。</p></div>
-  <h3>机械臂关节限位（rad）——左右不对称</h3>
-  <div class="tw"><table>
-    <thead><tr><th>关节</th><th>左</th><th>右</th><th>说明</th></tr></thead>
-    <tbody>
-      <tr><td>j1</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
-      <tr><td>j2</td><td class="num-col">[−0.453, 1.553]</td><td class="num-col">[−1.553, 0.453]</td><td>肩部俯仰——本机唯一能抬升的关节</td></tr>
-      <tr><td>j3</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
-      <tr><td>j4</td><td class="num-col">[−3.071, 0.244]</td><td class="num-col">[−3.071, 0.244]</td><td></td></tr>
-      <tr><td>j5</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
-      <tr><td>j6</td><td class="num-col">±1.396</td><td class="num-col">±1.396</td><td></td></tr>
-      <tr><td>j7</td><td class="num-col">[−1.378, 1.117]</td><td class="num-col">[−1.117, 1.378]</td><td>镜像关系——可用于交叉检查映射</td></tr>
-    </tbody>
-  </table></div>
-  <p>机械臂 <code>pose_pool</code>： <code>folded</code>, <code>folded_closed_hand</code>, <code>L_shape</code>, <code>lift_up</code>, <code>zero</code>。头部： <code>home</code>, <code>tucked</code>.</p>
-  <div class="note danger"><span class="tag">绝不要在本机执行 folded 位姿</span>
-    <p><code>folded</code> 和 <code>folded_closed_hand</code> 曾险些损坏夹爪。 <strong>不要执行，也不要把它们当作安全收纳位姿。</strong></p>
-    <p>原因：这些位姿把前臂紧贴机身，是围绕 Dexmate 自有末端执行器设计的。本机使用的第三方 CAN 夹爪远远伸出 <code>L_ee</code> / <code>R_ee</code> 和 <strong>未被建模在 <code>vega_1u.urdf</code> 之中</strong> ——URDF 和 pinocchio 碰撞检测都不知道它们存在。运动学模型认为无碰撞的位姿仍可能挤坏夹爪。</p>
-    <p>已知安全的停放位姿来自机器人实际停放状态，在首次命令运动前记录并保存为 <code>pre_move</code>：左臂 <code>[1.7289, 0.0101, 0.0041, -0.9924, -0.2311, 0.5011, -0.0066]</code>，右臂 <code>[-1.5683, -0.0026, 0.0031, -0.9916, 0.0908, -0.4138, -0.0018]</code>，头部 <code>[-0.0883, -0.0338, 0.0486]</code>。应把每个 <code>pose_pool</code> 条目都视为未经本硬件验证；根据腕部周围的真实间隙判断收纳位姿，而不是重力力矩或厂商给位姿起的名字——低力矩位姿仍可能碰撞。</p>
-  </div>
-  <div class="note"><span class="tag">关于 URDF 中的升降机构</span><p>运行时事实不变：没有躯干组件，没有 <code>control/torso</code> 话题，也无法控制。但 <code>vega_1u.urdf</code> <strong>确实建模了升降机构</strong> ——pinocchio 读到 19 个关节，机械臂之前的两个是 <code>Lift</code> （Z 向移动关节，0–0.4 m）和 <code>torso_flip</code> （X 向转动关节，0–1.0 rad）。所以“硬件不存在”尚未得到证实；它可能存在，只是在该型号未启用。需查看 SoC 端配置才能确定： <code>https://192.168.50.21:57832</code>.<br>由此也可识别 BrickBench 23 维向量的开头—— <code>[0.2, 0.5]</code> 处于 <code>Lift</code> （0–0.4）和 <code>torso_flip</code> （0–1.0）的中间范围，两个数对应两个关节。</p></div>
-  <h3>机器人上已有的脚本</h3>
-  <div class="tw"><table>
-    <thead><tr><th>脚本</th><th>作用</th></tr></thead>
-    <tbody>
-      <tr><td><code>~/py_scripts/inspect_joints.py</code></td><td>输出每个组件的自由度、关节名称、限位和当前位置。 <strong>遇到任何映射问题时先运行它。</strong></td></tr>
-      <tr><td><code>~/py_scripts/goto_home.py</code></td><td>通过分步插值（0.12 rad／步）和限位裁剪，将双臂和头部移动到指定位姿； <code>--dry-run</code> 只打印计划</td></tr>
-      <tr><td><code>~/py_scripts/goto_ready.py</code></td><td><code>pre_move</code> → <code>manip_init</code>，右臂先动</td></tr>
-      <tr><td><code>~/py_scripts/goto_rest.py</code></td><td><code>manip_init</code> → <code>pre_move</code>，左臂先动</td></tr>
-      <tr><td><code>~/py_scripts/goto_pose.py</code></td><td>两者共用的执行引擎：命名位姿、限位裁剪、分步运动、 <code>--seq</code>, <code>--min-sep</code>, <code>--dry-run</code>、夹爪间隙保护，以及对 <code>folded</code> 的禁用</td></tr>
-      <tr><td><code>~/py_scripts/head_pose.py</code></td><td><code>read_head_joint_pos()</code> 和 <code>move_head_smooth()</code>；直接运行可设置 <code>[0, 0, -0.5056]</code></td></tr>
-      <tr><td><code>~/py_scripts/sensor_only.py</code></td><td>读取相机信息和单帧， <strong>没有 <code>Robot()</code></strong>，因此不会运动</td></tr>
-      <tr><td><code>~/py_scripts/cam_info_capture.py</code></td><td>设置头部俯仰、输出 <code>get_camera_info()</code>、保存全分辨率左侧 RGB 图像</td></tr>
-      <tr><td><code>~/py_scripts/path_compare.py</code></td><td>离线 FK：按最小腕间距比较同时运动和顺序运动</td></tr>
-      <tr><td><code>~/py_scripts/gripper_demo.py</code></td><td>探测两台电机，对有响应的电机归零，并行执行开合循环</td></tr>
-      <tr><td><code>~/py_scripts/gravity_check.py</code></td><td>根据 URDF 计算静态重力力矩和腕部位置。 <strong>它不知道夹爪的存在。</strong></td></tr>
-    </tbody>
-  </table></div>
-  <div class="note mine"><span class="tag">始终为命令添加前缀</span><p>非交互式 <code>ssh</code> 不会加载交互式 shell 配置，因此 <code>ROBOT_NAME</code> 不会设置——每次都要显式传入：<br><code>ROBOT_NAME="dm/vg3eb20f25bb-1u" python3 script.py</code>。已配置到 <code>dexmate@172.26.161.243</code> 的密钥 SSH；无需密码。</p></div>
-</section>
-
-<section id="gripper">
-  <div class="sechead"><span class="num">B7</span><h2>夹爪 CAN 总线与接线</h2><span class="pill live">参考 · 硬件</span></div>
-  <p class="lede">两只第三方夹爪挂在同一条 CAN 总线上，由 <strong>Jhoinrch RH-02</strong> USB 转 CAN 适配器驱动（Canable／candleLight 克隆，STM32F072C8T6，USB ID <code>1d50:606f</code>）。机器人报告的手类型为 <code>UNKNOWN</code>，因此 <strong>不能通过 <code>robot.left_hand</code></strong> 控制——而是通过 <code>can1</code> 下发命令，与机械臂控制并行使用。</p>
-  <div class="tw"><table>
-    <thead><tr><th>项目</th><th>值</th><th>说明</th></tr></thead>
-    <tbody>
-      <tr><td>总线速率</td><td class="num-col">1 Mbit/s</td><td><strong>不是 500k。</strong> 其他速率都会使总线卡住</td></tr>
-      <tr><td>供电</td><td class="num-col">24 V + GND</td><td>从机器人取电</td></tr>
-      <tr><td>接线</td><td>两只夹爪的 CAN_H／CAN_L 接到适配器接线端子</td><td>适配器在总线中段以 T 形支路接入</td></tr>
-      <tr><td>终端电阻</td><td><code>R120</code> <strong>必须关闭</strong></td><td>两只夹爪内部均有 120 Ω——端子处应测到 60 Ω；开启 R120 会变成 40 Ω，导致总线异常</td></tr>
-      <tr><td>极性</td><td>保持原接线方向</td><td>H／L 对调会造成 <strong>总线完全没有活动</strong> ——没有完成帧，也没有错误帧</td></tr>
-    </tbody>
-  </table></div>
-  <div class="note warn"><span class="tag">调试时不要被误导</span><p>夹爪 <strong>是查询应答式的</strong> 设备：从不主动广播，因此被动运行 <code>candump</code> 总是空的，不能证明任何问题。它们也不响应地址 <code>0x600+n</code> 上的 CANopen SDO 0x1000 读取（n = 1..127）。</p></div>
-  <h3>gs_usb 必须手动编译</h3>
-  <p>L4T 内核没有提供 <code>gs_usb</code> (<code>CONFIG_CAN_GS_USB is not set</code>，而且整个 <code>drivers/net/can/usb/</code> 目录都不存在），也没有 <code>slcan</code> ——所以给适配器刷 slcan 固件无法绕过这个问题。内核头文件存在，可以进行树外编译：</p>
-  <div class="cmd"><div class="cmd-head"><span>终端 · Jetson</span><button type="button">复制</button></div><pre>mkdir -p ~/gs_usb_build &amp;&amp; cd ~/gs_usb_build
-curl -fsSLO https://raw.githubusercontent.com/gregkh/linux/v5.15.199/drivers/net/can/usb/gs_usb.c
-echo 'obj-m += gs_usb.o' &gt; Makefile
-make -C /lib/modules/$(uname -r)/build M=$PWD modules
-sudo cp gs_usb.ko /lib/modules/$(uname -r)/kernel/drivers/net/can/usb/ &amp;&amp; sudo depmod -a</pre></div>
-  <p><strong>任何内核变更都会使其失效</strong> ——针对新版本重新编译（源码 tag 必须匹配运行中的内核）。DKMS 可使其自动持续生效。</p>
-</section>
-
-<section id="reflash">
-  <div class="sechead"><span class="num">B8</span><h2>Jetson 重刷系统后的恢复</h2><span class="pill">仅在重刷系统后</span></div>
-  <p class="lede">2026-08-25，本机重刷为 JetPack 6.2.3，清除了全部 Dexmate 出厂配置：ZED SDK、dexsensor、dextop、Zenoh 证书以及 <code>enP8p1s0</code>上的静态 IP。Dexmate <strong>没有</strong> 提供重刷后的恢复流程。下面是工单 #126892650 中 Rahul 给出的四个步骤，以及我们为完成恢复自行摸索的内容。</p>
-  <div class="step"><div class="sn">R1</div><div class="sb">
-    <h3>安装 ZED SDK</h3>
-    <p>运行 <code>ZED_SDK_Tegra_L4T36.5_v5.2.3.zstd.run</code> （在 Jetson 上）。使用 <code>/usr/local/zed/tools/ZED_Explorer -a</code> 确认能看到相机。</p>
-  </div></div>
-  <div class="step"><div class="sn">R2</div><div class="sb">
-    <h3>安装 dexsensor</h3>
-    <p><code>sudo dpkg -i dexsensor_0.7.6_arm64.deb</code>.</p>
-  </div></div>
-  <div class="step"><div class="sn">R3</div><div class="sb">
-    <h3>安装 dextop 并设置机器人名称</h3>
-    <div class="cmd"><div class="cmd-head"><span>终端 · Jetson</span><button type="button">复制</button></div><pre>pip install dextop
-sudo -E $(which dextop) robot set_name dm/vg3eb20f25bb-1u</pre></div>
-    <p>名称来自底盘铭牌贴纸。贴纸不在时，从 socbridge 读取或从旧日志查找。</p>
-  </div></div>
-  <div class="step"><div class="sn">R4</div><div class="sb">
-    <h3>解压证书</h3>
-    <p><code>dextop cert unpack &lt;file&gt;.dzcfg</code> ——必须带文件名参数。</p>
-  </div></div>
-  <div class="step"><div class="sn">R5</div><div class="sb">
-    <h3>安装 socbridge</h3>
-    <p><code>dextop firmware install-socbridge</code> （本机使用了 <code>socbridgepkg_v0.18.8.dpsw</code>). <code>Failed to connect to SOC: timed out</code> 表示到 <code>192.168.50.21</code> 的路由丢失——恢复静态 IP <code>192.168.50.20/24</code> 在 <code>enP8p1s0</code> ，先完成这一步。</p>
-  </div></div>
-  <div class="step"><div class="sn">R6</div><div class="sb">
-    <h3>使内核与已安装的相机驱动匹配</h3>
-    <p>本机使用 <code>5.15.185-tegra</code>恢复，与已安装的 ZED Link 包匹配。下文记录当时的降级过程；后续头部＋ISX031 腕部配置见 <a href="#camera-setup">B9</a>.</p>
-  </div></div>
-
-  <h3>相机问题从来不是缺少驱动</h3>
-  <p>Stereolabs 的 ZED Link 驱动提供 <strong>预编译</strong> 内核模块，没有 DKMS 源码，且绑定精确内核版本： <code>stereolabs-zedlink-duo_1.4.3-LI-MAX96712-L4T36.5.0</code> 声明 <code>Depends: nvidia-l4t-kernel (&gt;= 5.15.185), (&lt;&lt; 5.15.186)</code>。JetPack 6.2.3／L4T <strong>36.5.2</strong> 附带内核 <strong>5.15.199</strong>，因此每个 <code>.ko</code> 的 vermagic 都不匹配。</p>
-  <div class="note danger"><span class="tag">两者都标为“36.5”</span><p>L4T 小版本 <strong>不足以</strong> 判断兼容性——请检查内核版本。<br>而且绝不要对该包使用 <code>--ignore-depends</code> ：它的 postinst 还会用另一内核的构建覆盖 <code>host1x.ko</code> 和 <code>tegra-drm.ko</code> （显示和硬件引擎）。</p></div>
-  <p>症状很容易误导：SDK 用户态库正常加载（<code>ZED SDK available</code>），但 <code>CAMERA NOT DETECTED</code> 仍然存在——因为没有 <code>/dev/video*</code>、没有 <code>zed_x_daemon</code>，也没有解串器模块。 <strong>怀疑线缆或配置前，先检查这三项。</strong></p>
-  <h3>降级——无需重刷</h3>
-  <p>36.5.0 和 36.5.2 位于同一个 <code>r36.5</code> apt 仓库，因此可以直接降级软件包。关键是： <strong>枚举所有已安装的 <code>nvidia-l4t-*</code> 中具有 36.5.0 版本的包，并在一条命令中列出全部</strong>。只列几个会让 apt <em>删除</em> 其余包，包括 <code>nvidia-l4t-bootloader</code> 和 <code>nvidia-l4t-initrd</code>。正确结果应为“48 downgraded, 0 to remove”。</p>
-  <ul>
-    <li>始终先用以下选项试运行： <code>apt-get install -s</code> ，先完成这一步。</li>
-    <li><code>apt-mark hold</code> 随后锁定全部包。</li>
-    <li>它会通过 capsule update 重写引导程序，因此 <strong>务必守在控制台前</strong>.</li>
-  </ul>
-  <div class="note ok"><span class="tag">需要知道的副作用</span><p>降级还恢复了重刷时清除的静态 IP <code>192.168.50.20/24</code> 在 <code>enP8p1s0</code> ——这有力表明 <strong>Dexmate 出厂镜像基于 L4T 36.5.0</strong>，而且应当可以再次访问 192.168.50.21 上的 SoC 管理页面。</p></div>
-  <h3>本机已确认的硬件</h3>
-  <p>采集卡为 <strong>ZED Link Duo</strong> ，安装在原装 Orin Nano 开发套件载板上（<code>p3768</code> / <code>p3767-0005</code>）。头部相机为 <strong>ZED X Mini</strong> （双目、一条 GMSL 链路、两个 <code>/dev/video*</code> 节点、S/N 53756133），接端口 0。 <code>/etc/dexmate/dexsensor/default.toml</code> 是多个 Vega 型号共用的通用配置，包含 ZED X One 腕部、底部相机和 LiDAR 条目。本机实际腕部为 <strong>两只原装 ISX031／MAX9295 相机，连接独立 Waveshare MAX9296A</strong>；ZED X One 条目不适用。接线和驱动配置见 <a href="#camera-setup">B9</a> 。</p>
-</section>
-
 <section id="camera-setup">
-  <div class="sechead"><span class="num">B9</span><h2>头部＋腕部相机配置</h2><span class="pill">记录于 2026-09-15</span></div>
+  <div class="sechead"><span class="num">B8</span><h2>头部＋腕部相机配置</h2><span class="pill">记录于 2026-09-15</span></div>
   <p class="lede">头部双目和两路腕部相机已在 <code>dm/vg3eb20f25bb-1u</code>上同时输出图像。硬件：Orin Nano 8 GB <code>p3767-0005</code> 配原装 <code>p3768</code> 载板；L4T 36.5，内核为 <strong>Linux 5.15.185-tegra</strong>。日常 API 示例见 <a href="#sensor">A2</a>.</p>
+  <!-- camera-help:start -->
+  <h3 id="camera-autostart">当前仓库：开机启动</h3>
+  <p><strong>已经包含腕部初始化自启动。</strong><code>scripts/install.py --apply</code> 会安装并启用 <code>wrist-camera-init.service</code>。开机时等待两个腕部设备、完成初始化并写入就绪标记。这是一次性服务，显示 <code>active (exited)</code> 正常。它不会持续取流：应用打开 <code>WristCameras()</code> 后才启动采集和触发，关闭后停止。</p>
+  <p><strong>头部取流由厂商的 <code>dexsensor.service</code> 负责。</strong>目前 installer 没有显式启用此服务。<code>--configure-head</code> 会写入头部配置和机器人名称，但不会启用或启动服务。请用下方命令检查并启用。这里说明的是仓库行为；命令用于检查实际执行它们的机器人。</p>
+  <p>新机器人先安装匹配的厂商软件，再按仓库 <a href="https://github.com/intelligent-control-lab/dexmate-setup#quick-start">Quick start</a> 操作。<code>--camera-boot --activate-camera-boot</code> 会生成并选中 <code>DexmateSetupHeadWrists</code>，使用 <code>/boot/initrd-dexmate-setup</code> 和 <code>/boot/tegra234-dexmate-setup.dtbo</code>。不加 <code>--activate-camera-boot</code> 只会准备启动项。installer 不会启动服务或重启机器人。下方原机器人集成记录中的 <code>HeadWrists</code> 路径属于原来的安装。</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · 检查自启动</span><button type="button">复制</button></div><pre>systemctl is-enabled dexsensor.service wrist-camera-init.service
+systemctl status dexsensor.service wrist-camera-init.service --no-pager
+systemctl cat dexsensor.service wrist-camera-init.service
+cat /boot/extlinux/extlinux.conf</pre></div>
+  <p>安装完成后，启用这两个服务用于后续开机。如果提示 unit “not found”，先安装对应软件：头部需要厂商 dexsensor 包，腕部初始化需要本仓库 installer。</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · 启用自启动，不立即启动</span><button type="button">复制</button></div><pre>sudo systemctl daemon-reload
+sudo systemctl enable dexsensor.service wrist-camera-init.service</pre></div>
+  <p>检查启动项后手动重启。若只需要在本次开机中启动或重新初始化相机，先关闭腕部读取程序及独立 ZED 查看器，再执行下方命令。它们会中断相机流，不会重启机器人；新选中的内核 overlay 仍需重启后才能生效。</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · 先关闭相机读取程序</span><button type="button">复制</button></div><pre>sudo systemctl restart wrist-camera-init.service
+sudo systemctl restart dexsensor.service</pre></div>
+  <h3 id="camera-troubleshooting">相机不工作时怎么排查</h3>
+  <p>先在 Jetson 本机检查，区分硬件／服务问题和工作站通信问题。先看状态与日志：</p>
+  <div class="cmd"><div class="cmd-head"><span>Bash · Jetson · 只读诊断</span><button type="button">复制</button></div><pre>uname -r
+systemctl status dexsensor.service wrist-camera-init.service --no-pager
+journalctl -u dexsensor.service -u wrist-camera-init.service -b -n 160 --no-pager
+v4l2-ctl --list-devices
+cat /run/wrist-cameras/ready.json
+cat /proc/sys/kernel/random/boot_id
+sudo journalctl -k -b --no-pager | grep -Ei 'isx031|max929|tegra.*camera|i2c|csi|vi.*error'</pre></div>
+  <div class="tw"><table><thead><tr><th>现象</th><th>检查与处理</th></tr></thead><tbody>
+    <tr><td>开机后头部和腕部都不能用</td><td>检查选中的组合启动项、overlay 和 initrd。本包要求 <code>5.15.185-tegra</code>／L4T 36.5.0 及匹配的 ZED 软件。extlinux 中有启动项不代表本次已使用它；结合开机内核日志和设备枚举检查。</td></tr>
+    <tr><td>头部服务失败，或相机被占用</td><td>查看 dexsensor 日志，检查 ZED SDK／ZED Link 安装及头部连线。关闭独立 ZED 查看器或重复发布进程，再重启 dexsensor；同一头部相机只保留一个占用者。</td></tr>
+    <tr><td>头部服务运行，但没有 RGB／深度</td><td>检查 <code>/etc/dexmate/dexsensor/default.toml</code> 的 <code>head_camera</code> 块：<code>enabled = true</code>、<code>left_rgb = true</code>、<code>right_rgb = true</code>、<code>depth = true</code>、<code>depth_mode = "NEURAL"</code>。保存后重启服务。通用 ZED X One 腕部项保持禁用。客户端使用 <code>configs.sensors["head_camera"].enabled = True</code>，并核对 <code>ROBOT_NAME</code> 和证书。本机能读但工作站不能读，查看 <a href="#comm">B5</a>。</td></tr>
+    <tr><td>腕部服务被跳过／找不到腕部设备</td><td><code>ConditionPathExists</code> 要求存在组合设备树路径 <code>/proc/device-tree/bus@0/cam_i2cmux/i2c@0/tca9546@70</code>。检查启动 overlay 和驱动日志。API 需要两个 ISX031 设备，并按名称发现它们；不要固定假设 <code>/dev/videoN</code> 编号。</td></tr>
+    <tr><td>Wrist probes not ready／串行器读取错误／GMSL 链路未锁定</td><td>断电后检查 5 V／GND 供电、CFG <code>0100</code>、CSI0 → CAM1 排线及两条 GMSL 连接，见 <a href="#pcb-hardware">C6</a>。2／4 脚为 5 V，6 脚为 GND；夹爪 24 V 电路保持独立。配套驱动要求 MAX9295／3 Gbps。先修复连线或启动配置再重试初始化，不要猜测写入 I²C 寄存器。</td></tr>
+    <tr><td>未初始化／标记来自另一次开机</td><td>将 <code>ready.json</code> 中的 <code>boot_id</code> 与上方本次开机 ID 比较。关闭腕部读取程序，重启 <code>wrist-camera-init.service</code>，查看退出状态和日志。不要手动创建或修改就绪标记。</td></tr>
+    <tr><td>Already owned／设备忙</td><td>正常关闭另一份腕部程序。可用 <code>sudo fuser -v /dev/video*</code> 找占用者，不要终止无关进程。API 用一个锁同时管理两个腕部，只允许一个读取者。</td></tr>
+    <tr><td>没有新帧／trigger worker exited</td><td>使用 <a href="#wrist-api">A2 的 WristCameras 示例</a>，它会启动软件触发进程；单独用 V4L2 拉流不会。检查异常、GStreamer／内核日志及设备权限。重新初始化前先关闭 API 上下文。</td></tr>
+    <tr><td>导入／GStreamer／权限错误</td><td>使用系统 Python 3.10 或安装好的 <code>/opt/dexmate-setup/venv</code>；用 <code>id -nG</code> 检查 <code>video</code> 和 <code>i2c</code> 组。安装后退出登录再进入。缺少 <code>gi</code>／GStreamer 或 <code>wrist_cameras</code> 通常是依赖未安装或 Python 环境不对。</td></tr>
+  </tbody></table></div>
+  <p>恢复后运行 <a href="#head-wrists-api">A2 头部＋双腕示例</a>：确认头部 RGB／深度非空，多次读取时头部源时间戳推进，两个腕部的 frame ID 持续增加。服务 active 和存在视频设备节点都不能单独证明已经出图。不要热卸载相机驱动栈；启动／驱动恢复使用保留的启动项并有序重启。</p>
+  <h3>原机器人集成记录 · 2026-09-15</h3>
+<!-- camera-help:end -->
+
   <div class="note warn"><span class="tag">默认配置已设置 · 冷启动仍待测试</span><p><code>DEFAULT HeadWrists</code> 及自动腕部初始化已安装。此检查点上运行的系统是已成功测试的 <code>HeadWristsPatchedTest</code> 启动项。新默认 initrd 通过了解包和静态检查，其初始化服务和 API 也在当前启动中正常工作。 <strong>尚未通过重启测试完整的新默认启动＋自动初始化流程。</strong></p></div>
   <h3>物理连接</h3>
   <div class="tw"><table><thead><tr><th>组件</th><th>连接／设置</th></tr></thead><tbody>
@@ -1197,8 +1218,154 @@ journalctl -u wrist-camera-init.service -b --no-pager</pre></div>
   </ul>
 </section>
 
+<div class="partline"><p class="eyebrow">Part C</p><h2>进阶信息</h2><p>架构、关节限位、CAN 细节、刷机恢复，以及带图片的硬件安装参考。</p></div>
+<section id="arch">
+  <div class="sechead"><span class="num">C1</span><h2>架构：一条 Zenoh 总线上的三个库</h2><span class="pill done">参考</span></div>
+  <p class="lede">每个 Dexmate 组件都通过 <strong>Zenoh</strong>通信，使用同一份加密证书认证。了解各库应该运行在哪台机器上，是后续步骤的前提——装错位置最容易白费半天。</p>
+  <div class="tw"><table>
+    <thead><tr><th>组件</th><th>运行位置</th><th>安装方式</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td><code>dextop</code></td><td>Jetson <em>和</em> 工作站</td><td><code>pip install dextop --upgrade</code></td><td>证书、固件、机器人服务器、话题列表、健康检查</td></tr>
+      <tr><td><code>dexcontrol</code></td><td>控制代码所在的机器</td><td><code>pip install dexcontrol</code></td><td> <code>Robot()</code> API：机械臂、头部、手、躯干、底盘、急停</td></tr>
+      <tr><td><code>dexsensor</code></td><td><strong>仅 Jetson</strong></td><td><code>sudo dpkg -i dexsensor_*.deb</code></td><td>相机和 LiDAR 采集与推流；依赖 ZED SDK</td></tr>
+      <tr><td><code>dexbot_utils</code></td><td>随 dexcontrol 安装</td><td>—</td><td>机器人配置、URDF、 <code>dexbot cfg list</code></td></tr>
+      <tr><td>socbridge</td><td>机器人的 SoC 板</td><td><code>dextop firmware install-socbridge</code></td><td>Web 管理页面位于 <code>https://192.168.50.21:57832</code></td></tr>
+    </tbody>
+  </table></div>
+  <h3>两种运行方式</h3>
+  <ul>
+    <li><strong>机载计算机</strong> ——代码在 Jetson 上执行。延迟最低， <code>ROBOT_NAME</code> 已设置，是演示和实时控制的默认选择。</li>
+    <li><strong>从工作站运行</strong> ——使用更好的 GPU 运行 AI 模型，经 WiFi 或以太网发送控制。便利的代价是延迟。两台机器必须在同一局域网，均需安装 <code>dextop</code>，并解压同一份证书。</li>
+  </ul>
+  <h3>环境变量</h3>
+  <div class="tw"><table>
+    <thead><tr><th>变量</th><th>是否必需？</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td><code>ROBOT_NAME</code></td><td>是</td><td>选择机器人。 <code>Robot()</code> 缺少它时会抛出 <code>ValueError</code> 。Jetson 上已预设；在工作站的每个终端中导出。</td></tr>
+      <tr><td><code>ROBOT_CONFIG</code></td><td>建议设置</td><td>告诉控制脚本安装了哪种末端执行器。使用以下命令列出选项： <code>dexbot cfg list</code> (<code>vega_1u</code>, <code>vega_1u_gripper</code>, <code>vega_1u_f5d6</code>，……）。</td></tr>
+      <tr><td><code>ZENOH_CONFIG</code></td><td>机器人外部：实际需要</td><td>指向 <code>~/.dexmate/comm/zenoh/&lt;cert&gt;/zenoh_peer_config.json5</code>。实际从外部电脑拉取话题时需要。</td></tr>
+      <tr><td><code>ROBOT_IP</code></td><td>可选</td><td>新版 dexcomm 用它加快查询响应。</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note mine"><span class="tag">本机已验证</span><p>名称必须写成 <code>dm/vg3eb20f25bb-1u</code> ——使用 <strong>斜杠</strong>。wiki 正文写成了 <code>dm-&lt;serial&gt;</code>，这种写法会使 <code>dextop firmware info</code> 超时，但 wiki 自己的示例输出用的是斜杠。注意 <code>dextop topic list</code> 两种写法都会通过，因为它使用通配匹配 <code>dm/**</code>，因此它 <strong>不</strong> 能作为名称正确性的有效检查。</p></div>
+</section>
+
+<section id="dof">
+  <div class="sechead"><span class="num">C2</span><h2>这台机器人实际具有的组件</h2><span class="pill live">参考 · 本机</span></div>
+  <p class="lede"><strong>Vega-1U 是 Vega-1 的上半身。</strong> 可控自由度总数为 <strong>17</strong>：左臂 7（<code>L_arm_j1..j7</code>），右臂 7（<code>R_arm_j1..j7</code>），头部 3（<code>head_j1..j3</code>). <strong>没有躯干，也没有底盘</strong> — <code>Vega1UConfig.components</code> 只列出双臂、头部、急停和心跳，而 <code>dextop topic list</code> 返回的 16 个 key 不包含 <code>state/torso</code> 或 <code>control/torso</code>.</p>
+  <div class="note warn"><span class="tag">陷阱</span><p> <code>dextop firmware info</code> 表格 <strong>确实列出一块 <code>torso</code> 板</strong> （hw 5，sw 123）。这是固件包条目，不是关节。不要解读成“这台机器人有腰”。</p></div>
+  <h3>机械臂关节限位（rad）——左右不对称</h3>
+  <div class="tw"><table>
+    <thead><tr><th>关节</th><th>左</th><th>右</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>j1</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
+      <tr><td>j2</td><td class="num-col">[−0.453, 1.553]</td><td class="num-col">[−1.553, 0.453]</td><td>肩部俯仰——本机唯一能抬升的关节</td></tr>
+      <tr><td>j3</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
+      <tr><td>j4</td><td class="num-col">[−3.071, 0.244]</td><td class="num-col">[−3.071, 0.244]</td><td></td></tr>
+      <tr><td>j5</td><td class="num-col">±3.071</td><td class="num-col">±3.071</td><td></td></tr>
+      <tr><td>j6</td><td class="num-col">±1.396</td><td class="num-col">±1.396</td><td></td></tr>
+      <tr><td>j7</td><td class="num-col">[−1.378, 1.117]</td><td class="num-col">[−1.117, 1.378]</td><td>镜像关系——可用于交叉检查映射</td></tr>
+    </tbody>
+  </table></div>
+  <p>机械臂 <code>pose_pool</code>： <code>folded</code>, <code>folded_closed_hand</code>, <code>L_shape</code>, <code>lift_up</code>, <code>zero</code>。头部： <code>home</code>, <code>tucked</code>.</p>
+  <div class="note danger"><span class="tag">绝不要在本机执行 folded 位姿</span>
+    <p><code>folded</code> 和 <code>folded_closed_hand</code> 曾险些损坏夹爪。 <strong>不要执行，也不要把它们当作安全收纳位姿。</strong></p>
+    <p>原因：这些位姿把前臂紧贴机身，是围绕 Dexmate 自有末端执行器设计的。本机使用的第三方 CAN 夹爪远远伸出 <code>L_ee</code> / <code>R_ee</code> 和 <strong>未被建模在 <code>vega_1u.urdf</code> 之中</strong> ——URDF 和 pinocchio 碰撞检测都不知道它们存在。运动学模型认为无碰撞的位姿仍可能挤坏夹爪。</p>
+    <p>已知安全的停放位姿来自机器人实际停放状态，在首次命令运动前记录并保存为 <code>pre_move</code>：左臂 <code>[1.7289, 0.0101, 0.0041, -0.9924, -0.2311, 0.5011, -0.0066]</code>，右臂 <code>[-1.5683, -0.0026, 0.0031, -0.9916, 0.0908, -0.4138, -0.0018]</code>，头部 <code>[-0.0883, -0.0338, 0.0486]</code>。应把每个 <code>pose_pool</code> 条目都视为未经本硬件验证；根据腕部周围的真实间隙判断收纳位姿，而不是重力力矩或厂商给位姿起的名字——低力矩位姿仍可能碰撞。</p>
+  </div>
+  <div class="note"><span class="tag">关于 URDF 中的升降机构</span><p>运行时事实不变：没有躯干组件，没有 <code>control/torso</code> 话题，也无法控制。但 <code>vega_1u.urdf</code> <strong>确实建模了升降机构</strong> ——pinocchio 读到 19 个关节，机械臂之前的两个是 <code>Lift</code> （Z 向移动关节，0–0.4 m）和 <code>torso_flip</code> （X 向转动关节，0–1.0 rad）。所以“硬件不存在”尚未得到证实；它可能存在，只是在该型号未启用。需查看 SoC 端配置才能确定： <code>https://192.168.50.21:57832</code>.<br>由此也可识别 BrickBench 23 维向量的开头—— <code>[0.2, 0.5]</code> 处于 <code>Lift</code> （0–0.4）和 <code>torso_flip</code> （0–1.0）的中间范围，两个数对应两个关节。</p></div>
+  <h3>机器人上已有的脚本</h3>
+  <div class="tw"><table>
+    <thead><tr><th>脚本</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td><code>~/py_scripts/inspect_joints.py</code></td><td>输出每个组件的自由度、关节名称、限位和当前位置。 <strong>遇到任何映射问题时先运行它。</strong></td></tr>
+      <tr><td><code>~/py_scripts/goto_home.py</code></td><td>通过分步插值（0.12 rad／步）和限位裁剪，将双臂和头部移动到指定位姿； <code>--dry-run</code> 只打印计划</td></tr>
+      <tr><td><code>~/py_scripts/goto_ready.py</code></td><td><code>pre_move</code> → <code>manip_init</code>，右臂先动</td></tr>
+      <tr><td><code>~/py_scripts/goto_rest.py</code></td><td><code>manip_init</code> → <code>pre_move</code>，左臂先动</td></tr>
+      <tr><td><code>~/py_scripts/goto_pose.py</code></td><td>两者共用的执行引擎：命名位姿、限位裁剪、分步运动、 <code>--seq</code>, <code>--min-sep</code>, <code>--dry-run</code>、夹爪间隙保护，以及对 <code>folded</code> 的禁用</td></tr>
+      <tr><td><code>~/py_scripts/head_pose.py</code></td><td><code>read_head_joint_pos()</code> 和 <code>move_head_smooth()</code>；直接运行可设置 <code>[0, 0, -0.5056]</code></td></tr>
+      <tr><td><code>~/py_scripts/sensor_only.py</code></td><td>读取相机信息和单帧， <strong>没有 <code>Robot()</code></strong>，因此不会运动</td></tr>
+      <tr><td><code>~/py_scripts/cam_info_capture.py</code></td><td>设置头部俯仰、输出 <code>get_camera_info()</code>、保存全分辨率左侧 RGB 图像</td></tr>
+      <tr><td><code>~/py_scripts/path_compare.py</code></td><td>离线 FK：按最小腕间距比较同时运动和顺序运动</td></tr>
+      <tr><td><code>~/py_scripts/gripper_demo.py</code></td><td>探测两台电机，对有响应的电机归零，并行执行开合循环</td></tr>
+      <tr><td><code>~/py_scripts/gravity_check.py</code></td><td>根据 URDF 计算静态重力力矩和腕部位置。 <strong>它不知道夹爪的存在。</strong></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note mine"><span class="tag">始终为命令添加前缀</span><p>非交互式 <code>ssh</code> 不会加载交互式 shell 配置，因此 <code>ROBOT_NAME</code> 不会设置——每次都要显式传入：<br><code>ROBOT_NAME="dm/vg3eb20f25bb-1u" python3 script.py</code>。已配置到 <code>dexmate@172.26.161.243</code> 的密钥 SSH；无需密码。</p></div>
+</section>
+
+<section id="gripper">
+  <div class="sechead"><span class="num">C3</span><h2>夹爪 CAN 总线与接线</h2><span class="pill live">参考 · 硬件</span></div>
+  <p class="lede">两只第三方夹爪挂在同一条 CAN 总线上，由 <strong>Jhoinrch RH-02</strong> USB 转 CAN 适配器驱动（Canable／candleLight 克隆，STM32F072C8T6，USB ID <code>1d50:606f</code>）。机器人报告的手类型为 <code>UNKNOWN</code>，因此 <strong>不能通过 <code>robot.left_hand</code></strong> 控制——而是通过 <code>can1</code> 下发命令，与机械臂控制并行使用。</p>
+  <div class="tw"><table>
+    <thead><tr><th>项目</th><th>值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>总线速率</td><td class="num-col">1 Mbit/s</td><td><strong>不是 500k。</strong> 其他速率都会使总线卡住</td></tr>
+      <tr><td>供电</td><td class="num-col">24 V + GND</td><td>从机器人取电</td></tr>
+      <tr><td>接线</td><td>两只夹爪的 CAN_H／CAN_L 接到适配器接线端子</td><td>适配器在总线中段以 T 形支路接入</td></tr>
+      <tr><td>终端电阻</td><td><code>R120</code> <strong>必须关闭</strong></td><td>两只夹爪内部均有 120 Ω——端子处应测到 60 Ω；开启 R120 会变成 40 Ω，导致总线异常</td></tr>
+      <tr><td>极性</td><td>保持原接线方向</td><td>H／L 对调会造成 <strong>总线完全没有活动</strong> ——没有完成帧，也没有错误帧</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn"><span class="tag">调试时不要被误导</span><p>夹爪 <strong>是查询应答式的</strong> 设备：从不主动广播，因此被动运行 <code>candump</code> 总是空的，不能证明任何问题。它们也不响应地址 <code>0x600+n</code> 上的 CANopen SDO 0x1000 读取（n = 1..127）。</p></div>
+  <h3>gs_usb 必须手动编译</h3>
+  <p>L4T 内核没有提供 <code>gs_usb</code> (<code>CONFIG_CAN_GS_USB is not set</code>，而且整个 <code>drivers/net/can/usb/</code> 目录都不存在），也没有 <code>slcan</code> ——所以给适配器刷 slcan 固件无法绕过这个问题。内核头文件存在，可以进行树外编译：</p>
+  <div class="cmd"><div class="cmd-head"><span>终端 · Jetson</span><button type="button">复制</button></div><pre>mkdir -p ~/gs_usb_build &amp;&amp; cd ~/gs_usb_build
+curl -fsSLO https://raw.githubusercontent.com/gregkh/linux/v5.15.199/drivers/net/can/usb/gs_usb.c
+echo 'obj-m += gs_usb.o' &gt; Makefile
+make -C /lib/modules/$(uname -r)/build M=$PWD modules
+sudo cp gs_usb.ko /lib/modules/$(uname -r)/kernel/drivers/net/can/usb/ &amp;&amp; sudo depmod -a</pre></div>
+  <p><strong>任何内核变更都会使其失效</strong> ——针对新版本重新编译（源码 tag 必须匹配运行中的内核）。DKMS 可使其自动持续生效。</p>
+</section>
+
+<section id="reflash">
+  <div class="sechead"><span class="num">C4</span><h2>Jetson 重刷系统后的恢复</h2><span class="pill">仅在重刷系统后</span></div>
+  <p class="lede">2026-08-25，本机重刷为 JetPack 6.2.3，清除了全部 Dexmate 出厂配置：ZED SDK、dexsensor、dextop、Zenoh 证书以及 <code>enP8p1s0</code>上的静态 IP。Dexmate <strong>没有</strong> 提供重刷后的恢复流程。下面是工单 #126892650 中 Rahul 给出的四个步骤，以及我们为完成恢复自行摸索的内容。</p>
+  <div class="step"><div class="sn">R1</div><div class="sb">
+    <h3>安装 ZED SDK</h3>
+    <p>运行 <code>ZED_SDK_Tegra_L4T36.5_v5.2.3.zstd.run</code> （在 Jetson 上）。使用 <code>/usr/local/zed/tools/ZED_Explorer -a</code> 确认能看到相机。</p>
+  </div></div>
+  <div class="step"><div class="sn">R2</div><div class="sb">
+    <h3>安装 dexsensor</h3>
+    <p><code>sudo dpkg -i dexsensor_0.7.6_arm64.deb</code>.</p>
+  </div></div>
+  <div class="step"><div class="sn">R3</div><div class="sb">
+    <h3>安装 dextop 并设置机器人名称</h3>
+    <div class="cmd"><div class="cmd-head"><span>终端 · Jetson</span><button type="button">复制</button></div><pre>pip install dextop
+sudo -E $(which dextop) robot set_name dm/vg3eb20f25bb-1u</pre></div>
+    <p>名称来自底盘铭牌贴纸。贴纸不在时，从 socbridge 读取或从旧日志查找。</p>
+  </div></div>
+  <div class="step"><div class="sn">R4</div><div class="sb">
+    <h3>解压证书</h3>
+    <p><code>dextop cert unpack &lt;file&gt;.dzcfg</code> ——必须带文件名参数。</p>
+  </div></div>
+  <div class="step"><div class="sn">R5</div><div class="sb">
+    <h3>安装 socbridge</h3>
+    <p><code>dextop firmware install-socbridge</code> （本机使用了 <code>socbridgepkg_v0.18.8.dpsw</code>). <code>Failed to connect to SOC: timed out</code> 表示到 <code>192.168.50.21</code> 的路由丢失——恢复静态 IP <code>192.168.50.20/24</code> 在 <code>enP8p1s0</code> ，先完成这一步。</p>
+  </div></div>
+  <div class="step"><div class="sn">R6</div><div class="sb">
+    <h3>使内核与已安装的相机驱动匹配</h3>
+    <p>本机使用 <code>5.15.185-tegra</code>恢复，与已安装的 ZED Link 包匹配。下文记录当时的降级过程；后续头部＋ISX031 腕部配置见 <a href="#camera-setup">B8</a>.</p>
+  </div></div>
+
+  <h3>相机问题从来不是缺少驱动</h3>
+  <p>Stereolabs 的 ZED Link 驱动提供 <strong>预编译</strong> 内核模块，没有 DKMS 源码，且绑定精确内核版本： <code>stereolabs-zedlink-duo_1.4.3-LI-MAX96712-L4T36.5.0</code> 声明 <code>Depends: nvidia-l4t-kernel (&gt;= 5.15.185), (&lt;&lt; 5.15.186)</code>。JetPack 6.2.3／L4T <strong>36.5.2</strong> 附带内核 <strong>5.15.199</strong>，因此每个 <code>.ko</code> 的 vermagic 都不匹配。</p>
+  <div class="note danger"><span class="tag">两者都标为“36.5”</span><p>L4T 小版本 <strong>不足以</strong> 判断兼容性——请检查内核版本。<br>而且绝不要对该包使用 <code>--ignore-depends</code> ：它的 postinst 还会用另一内核的构建覆盖 <code>host1x.ko</code> 和 <code>tegra-drm.ko</code> （显示和硬件引擎）。</p></div>
+  <p>症状很容易误导：SDK 用户态库正常加载（<code>ZED SDK available</code>），但 <code>CAMERA NOT DETECTED</code> 仍然存在——因为没有 <code>/dev/video*</code>、没有 <code>zed_x_daemon</code>，也没有解串器模块。 <strong>怀疑线缆或配置前，先检查这三项。</strong></p>
+  <h3>降级——无需重刷</h3>
+  <p>36.5.0 和 36.5.2 位于同一个 <code>r36.5</code> apt 仓库，因此可以直接降级软件包。关键是： <strong>枚举所有已安装的 <code>nvidia-l4t-*</code> 中具有 36.5.0 版本的包，并在一条命令中列出全部</strong>。只列几个会让 apt <em>删除</em> 其余包，包括 <code>nvidia-l4t-bootloader</code> 和 <code>nvidia-l4t-initrd</code>。正确结果应为“48 downgraded, 0 to remove”。</p>
+  <ul>
+    <li>始终先用以下选项试运行： <code>apt-get install -s</code> ，先完成这一步。</li>
+    <li><code>apt-mark hold</code> 随后锁定全部包。</li>
+    <li>它会通过 capsule update 重写引导程序，因此 <strong>务必守在控制台前</strong>.</li>
+  </ul>
+  <div class="note ok"><span class="tag">需要知道的副作用</span><p>降级还恢复了重刷时清除的静态 IP <code>192.168.50.20/24</code> 在 <code>enP8p1s0</code> ——这有力表明 <strong>Dexmate 出厂镜像基于 L4T 36.5.0</strong>，而且应当可以再次访问 192.168.50.21 上的 SoC 管理页面。</p></div>
+  <h3>本机已确认的硬件</h3>
+  <p>采集卡为 <strong>ZED Link Duo</strong> ，安装在原装 Orin Nano 开发套件载板上（<code>p3768</code> / <code>p3767-0005</code>）。头部相机为 <strong>ZED X Mini</strong> （双目、一条 GMSL 链路、两个 <code>/dev/video*</code> 节点、S/N 53756133），接端口 0。 <code>/etc/dexmate/dexsensor/default.toml</code> 是多个 Vega 型号共用的通用配置，包含 ZED X One 腕部、底部相机和 LiDAR 条目。本机实际腕部为 <strong>两只原装 ISX031／MAX9295 相机，连接独立 Waveshare MAX9296A</strong>；ZED X One 条目不适用。接线和驱动配置见 <a href="#camera-setup">B8</a> 。</p>
+</section>
+
 <section id="gripper-hardware">
-  <div class="sechead"><span class="num">B10</span><h2>夹爪硬件连接</h2><span class="pill">一次性配置</span></div>
+  <div class="sechead"><span class="num">C5</span><h2>夹爪硬件连接</h2><span class="pill">一次性配置</span></div>
   <h3>1. 连接 assembled 线束</h3>
   <p>组装好的线束一头是 CAN adapter，两侧分支各有一组 4-pin／6-pin 接口。两侧均将 <strong>6-pin 接夹爪</strong>，<strong>4-pin 接机器人</strong>。</p>
   <h3>2. 连接腕部相机线</h3>
@@ -1213,7 +1380,7 @@ journalctl -u wrist-camera-init.service -b --no-pager</pre></div>
 </section>
 
 <section id="pcb-hardware">
-  <div class="sechead"><span class="num">B11</span><h2>PCB 与相机硬件安装</h2><span class="pill">一次性配置</span></div>
+  <div class="sechead"><span class="num">C6</span><h2>PCB 与相机硬件安装</h2><span class="pill">一次性配置</span></div>
   <p>参考：<a href="https://docs.waveshare.com/MAX9296-GMSL-Deser-Module/Jetson-Orin">Waveshare MAX9296-GMSL-Deser-Module · Jetson Orin</a>。改线前先断电。</p>
   <h3>1. 安装采集卡并连接电源</h3>
   <p>用 kit 自带的铜柱连接采集卡和 PCB，然后接电。红线接 <strong>排针 2、4（5 V）</strong>，地线接 <strong>6（GND）</strong>。这里是 Jetson 的 5 V 排针，不能接夹爪的 24 V 电源。</p>
@@ -1240,134 +1407,6 @@ journalctl -u wrist-camera-init.service -b --no-pager</pre></div>
     <figure class="fig hardware-media"><img src="assets/waveshare-kit.webp" alt="Waveshare 采集卡、相机及 CSI 排线连接参考" loading="lazy"><figcaption>采集卡与 kit 连接参考。图片：Waveshare。</figcaption></figure>
   </div>
   <div class="note"><p><strong>保存好从机器人拆下来的所有零件，包括原装铜柱、接口和线缆，之后归还机器人时还需要使用。</strong></p></div>
-</section>
-<section id="hardware-control-reference">
-  <div class="sechead"><span class="num">B12</span><h2>硬件与控制信息</h2></div>
-  <p class="lede">来自「整理 DexMate 硬件与控制信息」任务的测量记录（2026-09-14 UTC）。该次测量时，左右腕部相机均未启用。</p>
-  <div class="tw"><table><thead><tr><th>项目</th><th>记录配置</th></tr></thead><tbody>
-    <tr><td>相机</td><td>头部为 ZED X Mini 双目相机，接 ZED Link Duo；左右腕为 Sony ISX031。</td></tr>
-    <tr><td>头部输出</td><td>提供左右 RGB 和深度，无点云输出；需用 <code>depth + K</code> 反投影。</td></tr>
-    <tr><td>分辨率／频率</td><td>配置为 1920×1200、30 fps；实测 RGB 和深度约 24 Hz。</td></tr>
-    <tr><td>头部内参</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code>，单位为像素。双目基线：<code>0.0497 m</code>。</td></tr>
-    <tr><td>外参模型</td><td>名义机器人几何以 pip 包 <code>dexmate_urdf</code> 内的 URDF 为准。上传的模型及实测 TCP／相机变换见 <a href="#tcp-extrinsics">B13</a>。</td></tr>
-    <tr><td>通信</td><td>纯 Zenoh + dexcontrol，无 ROS 2。该次 RGB 实际走 <strong>Zenoh/JPEG</strong>，不是 RTC。延迟未测。</td></tr>
-    <tr><td>计算机</td><td>Jetson Orin Nano；L4T 36.5.0；kernel 5.15.185。</td></tr>
-    <tr><td>控制</td><td><code>dexcontrol 0.5.0</code>，仅支持关节位置控制；<code>wait_time=0</code> 时需以 100–500 Hz 循环调用。无公开笛卡尔、关节 velocity／current 控制接口。第三方 CAN 夹爪单独控制。</td></tr>
-    <tr><td>六维力</td><td><code>get_wrench_state()</code> 返回 <code>[fx, fy, fz, tx, ty, tz]</code>，类型为 <code>float32</code>。单位和参考坐标系未注明，需要确认或标定。传感器在该次测量时已激活。</td></tr>
-  </tbody></table></div>
-  <h3>实测发布频率</h3>
-  <div class="tw"><table><thead><tr><th>数据流</th><th>实测频率</th></tr></thead><tbody>
-    <tr><td>双臂关节状态</td><td>91–92 Hz</td></tr><tr><td>头部关节状态</td><td>48 Hz</td></tr><tr><td>头部 IMU</td><td>186–190 Hz</td></tr><tr><td>RGB／深度</td><td>≈24 Hz</td></tr><tr><td>六维力</td><td>91–92 Hz</td></tr>
-  </tbody></table></div>
-  <h3>深度反投影</h3>
-  <p>对校正后的像素 <code>(u, v)</code>，深度 <code>Z</code> 有效且单位为米时，使用对应图像流的内参：</p>
-  <div class="cmd"><div class="cmd-head"><span>相机光学坐标 · 米</span><button type="button">复制</button></div><pre>X = (u - cx) * Z / fx
-Y = (v - cy) * Z / fy
-p_camera = [X, Y, Z, 1]
-p_base = T_base_camera @ p_camera</pre></div>
-</section>
-
-<section id="tcp-extrinsics">
-  <div class="sechead"><span class="num">B13</span><h2>TCP、相机外参与 URDF 文件</h2></div>
-  <p class="lede">标定记录来自「暂存代码并重新标定区域」任务。该任务在 9 月 24 日最终恢复了 clean 提交 <code>b90bcac</code> 的 TCP／相机组合。原始 pivot 实测拟合值和此前调整 Y 后的组合在下方分别列出。</p>
-  <h3>文件</h3>
-  <ul>
-    <li><a href="files/urdf/vega_1u.urdf" download>vega_1u.urdf</a> · 上传的机器人模型。</li>
-    <li><a href="files/urdf/vega_1u_gripper.urdf" download>vega_1u_gripper.urdf</a> · 上传的夹爪模型，包含 <code>L_camera_link</code> 和 <code>R_camera_link</code>。</li>
-    <li><a href="files/urdf/custom/vega_1u_gripper.urdf" download>标定项目中的自定义夹爪 URDF</a> · 另一份包含 <code>tip_l</code>／<code>tip_r</code> 的模型，用于名义 TCP 对照。</li>
-    <li><a href="files/calibration/clean-20260924.json" download>Clean TCP＋相机标定</a> · <a href="files/calibration/adjusted-20260924.json" download>此前调整 Y 的组合</a> · <a href="files/calibration/tcp-pivot-fit.json" download>Pivot 实测拟合结果</a>。</li>
-    <li><a href="files/reference-data.json" download>全部矩阵、源文件校验值及坐标系定义（JSON）</a>。</li>
-  </ul>
-  <p>两份上传的 URDF 与 <code>dexmate_urdf 0.8.4</code> 包内文件逐字节一致，保留了原文件及相对 mesh 路径。Mesh 需在软件包的目录结构中解析；单独下载 URDF 不包含 mesh。用于对照的自定义模型单独存放。</p>
-  <h3>坐标约定</h3>
-  <p><code>T_parent_child</code> 将列向量坐标从 child 转到 parent：<code>p_parent = T_parent_child @ p_child</code>。平移单位为米，角度单位为弧度。<code>R = Rz(yaw) @ Ry(pitch) @ Rx(roll)</code>。基座轴向：X 向前、Y 向机器人左侧、Z 向上；已标定的左相机光学轴向：X 向图像右侧、Y 向图像下方、Z 向前。</p>
-  <h3>右侧 TCP：模型、实测拟合与选用值</h3>
-  <p>两份上传的软件包 URDF 定义了 <code>L_ee</code>／<code>R_ee</code>，但没有定义 <code>tip_l</code>／<code>tip_r</code> 夹持 TCP。下面的名义 tip 来自单独的自定义模型。</p>
-  <div class="tw"><table><thead><tr><th>来源</th><th>R_ee 中的 XYZ（mm）</th><th>含义</th></tr></thead><tbody>
-    <tr><td>自定义 URDF 名义 tip</td><td><code>≈ [0, -15, 198]</code></td><td>模型几何值；完整连乘变换见下方。</td></tr>
-    <tr><td>Pivot 拟合 · 9 月 19 日</td><td><code>[-1.025481, -10.438899, 196.928685]</code></td><td>实测平移；拟合 RMS 为 1.801540 mm。Pivot 拟合不确定旋转。</td></tr>
-    <tr><td>调整 Y 的组合 · 9 月 24 日 11:16</td><td><code>[-1.025481, -18, 196.928685]</code></td><td>采用实测 X／Z，Y 由用户指定；配套相机外参保存在可下载记录中。</td></tr>
-    <tr><td>恢复的 clean 组合 · 9 月 24 日 11:43</td><td><code>[-1, -15, 198]</code></td><td>引用任务最终选用的组合。</td></tr>
-  </tbody></table></div>
-  <p>最终选用值和调整 Y 的组合使用工具坐标约定 <code>rpy = [π, 0, π/2]</code>。这一旋转是名义约定，并非 pivot 实测结果。提供的实测 TCP 数据针对右夹爪。</p>
-  <div class="cmd"><div class="cmd-head"><span>Clean · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
-  [ 0.000000000,  1.000000000,  0.000000000, -0.001000000],
-  [ 1.000000000,  0.000000000,  0.000000000, -0.015000000],
-  [ 0.000000000,  0.000000000, -1.000000000,  0.198000000],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <details><summary>自定义 URDF 中的左右 TCP 变换</summary>
-    <p>以下连乘对应 EE 坐标系到 tip 之间的全部固定关节，是模型值，不是左右夹持中心的实测值。</p>
-    <div class="cmd"><div class="cmd-head"><span>Custom · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
-  [ 0.000000127,  1.000000000, -0.000000046,  0.000000193],
-  [ 1.000000000, -0.000000127,  0.000006200, -0.015001328],
-  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-    <div class="cmd"><div class="cmd-head"><span>Custom · T_L_ee_tip_l · 米</span><button type="button">复制</button></div><pre>[
-  [-0.000012680, -1.000000000,  0.000000046, -0.000000005],
-  [-1.000000000,  0.000012680, -0.000006200,  0.015001328],
-  [ 0.000006200, -0.000000046, -1.000000000,  0.197999807],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  </details>
-  <h3>实测头部相机外参</h3>
-  <p>Clean 相机外参使用水平棋盘约束拟合，并与 clean TCP 一起恢复。记录中的留出点 RMS 为 1.176229 mm。该组合对应以下参考头部姿态：</p>
-  <div class="cmd"><div class="cmd-head"><span>参考关节位置</span><button type="button">复制</button></div><pre>head_j1 = -0.00017453292093705386 rad
-head_j2 = -0.00017453292093705386 rad
-head_j3 = -0.5056219100952148 rad
-torso_flip = 0.22689280275926285 rad
-Lift = 0 m</pre></div>
-  <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
-  [-0.001383542, -0.636266466,  0.771468126,  0.089032073],
-  [-0.999930278, -0.008166881, -0.008528878,  0.026881780],
-  [ 0.011727127, -0.771426138, -0.636210805,  1.169376372],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <p>矩阵对应上面的头部姿态；头部运动后，基座到相机的变换会变化。标定记录保存的校正左目内参为 <code>fx = fy = 734.7626953125</code>、<code>cx = 966.6296997070312</code>、<code>cy = 653.073486328125</code>，分辨率 1920×1200；这是该次标定保存的值，与 B12 中较早记录的值分别列出。</p>
-  <details><summary>此前调整 Y 的 TCP／相机组合</summary>
-    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>[
-  [ 0.000000000,  1.000000000,  0.000000000, -0.001025481],
-  [ 1.000000000,  0.000000000,  0.000000000, -0.018000000],
-  [ 0.000000000,  0.000000000, -1.000000000,  0.196928685],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
-  [-0.001383713, -0.636266468,  0.771468125,  0.089057487],
-  [-0.999930277, -0.008166772, -0.008529010,  0.023881859],
-  [ 0.011727127, -0.771426138, -0.636210805,  1.170447698],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  </details>
-  <h3>上传 URDF 中的名义外参</h3>
-  <p>每行是文件中存储的父子关节原点。两份文件均包含头部和 EE 条目；夹爪和腕部相机安装条目位于 <code>vega_1u_gripper.urdf</code>。</p>
-  <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody><tr><td><code>head_l3 → zed_depth_frame</code></td><td><code>0.025 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_left_camera</code></td><td><code>0.0365 0.023 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>head_l3 → zed_right_camera</code></td><td><code>0.0365 -0.027 0.0489</code></td><td><code>-1.57079 0 -1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 -1.57079</code></td></tr><tr><td><code>R_arm_l8 → R_ee</code></td><td><code>0 0 0</code></td><td><code>0 0 1.57079</code></td></tr><tr><td><code>L_arm_l8 → L_gripper_base</code></td><td><code>0.0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>L_gripper_base → L_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr><tr><td><code>R_arm_l8 → R_gripper_base</code></td><td><code>0 0 0.0825</code></td><td><code>0 0 -1.5708</code></td></tr><tr><td><code>R_gripper_base → R_camera_link</code></td><td><code>0.0002 -0.07459 0.0017504</code></td><td><code>-0.087266 0 0</code></td></tr></tbody></table></div>
-  <p>在上述相同参考关节位置下，通过软件包 URDF 正运动学计算出的名义头部变换如下：</p>
-  <div class="cmd"><div class="cmd-head"><span>URDF FK · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>[
-  [-0.000165524, -0.668606938,  0.743615987,  0.084498283],
-  [-0.999999986,  0.000085701, -0.000145537,  0.024989645],
-  [ 0.000033578, -0.743616000, -0.668606942,  1.144781202],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <h3>URDF 腕部相机安装变换</h3>
-  <p>上传的夹爪 URDF 包含两侧腕部相机 link。连乘固定关节后得到：</p>
-  <div class="cmd"><div class="cmd-head"><span>URDF · T_L_ee_L_camera_link · 米</span><button type="button">复制</button></div><pre>[
-  [ 1.000000000,  0.000009962,  0.000000872,  0.000199254],
-  [-0.000010000,  0.996194738,  0.087155282, -0.074590002],
-  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <div class="cmd"><div class="cmd-head"><span>URDF · T_R_ee_R_camera_link · 米</span><button type="button">复制</button></div><pre>[
-  [-1.000000000,  0.000002643,  0.000000231, -0.000200198],
-  [-0.000002654, -0.996194738, -0.087155282,  0.074589999],
-  [ 0.000000000, -0.087155282,  0.996194738,  0.084250400],
-  [ 0.000000000,  0.000000000,  0.000000000,  1.000000000]
-]</pre></div>
-  <p>这些是名义 <code>camera_link</code> 安装坐标系。文件没有单独定义腕部光学坐标系，也没有给出经实测确认的 ISX031 光学坐标变换。旧任务中“夹爪 URDF 没有腕部相机 link”的结论不适用于这次上传的文件。</p>
-  <details><summary>单独的自定义对照模型中的关节原点</summary>
-    <p>该模型头部父坐标系是 <code>vega_1u_head_l3</code>，软件包模型则为 <code>head_l3</code>；对比时应使用完整坐标链，不能只比较局部 XYZ／RPY。</p>
-    <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody><tr><td><code>L_ee_link_gripper_link → tip_l</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>R_ee → R_ee_link_gripper_link</code></td><td><code>0.0000001 -0.0000001 -0.0000001</code></td><td><code>0.0000062 0. 0.0000062</code></td></tr><tr><td><code>R_ee_link_gripper_link → tip_r</code></td><td><code>0 -0.015 0.198</code></td><td><code>3.1415927 -0. 1.57079</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_left_camera</code></td><td><code>0.0365 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_depth_frame</code></td><td><code>0.025 -0.023 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr><tr><td><code>vega_1u_head_l3 → zed_right_camera</code></td><td><code>0.0365 0.027 -0.0489</code></td><td><code>1.5707963 -0.0000062 3.1415863</code></td></tr></tbody></table></div>
-  </details>
 </section>
 
 <section id="src">

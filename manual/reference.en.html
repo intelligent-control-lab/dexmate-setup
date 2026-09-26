@@ -1,12 +1,12 @@
 <section id="hardware-control-reference">
-  <div class="sechead"><span class="num">B12</span><h2>Hardware and control reference</h2></div>
+  <div class="sechead"><span class="num">B1</span><h2>Hardware and control reference</h2></div>
   <p class="lede">Measurements from “整理 DexMate 硬件与控制信息” (2026-09-14 UTC). The wrist cameras were not enabled during this measurement session.</p>
   <div class="tw"><table><thead><tr><th>Item</th><th>Recorded configuration</th></tr></thead><tbody>
     <tr><td>Cameras</td><td>Head: ZED X Mini stereo camera on ZED Link Duo. Left/right wrists: Sony ISX031.</td></tr>
     <tr><td>Head outputs</td><td>Left RGB, right RGB and depth; no point-cloud output. Reconstruct points from <code>depth + K</code>.</td></tr>
     <tr><td>Resolution / rate</td><td>Configured: 1920×1200 at 30 fps. Measured RGB and depth: approximately 24 Hz.</td></tr>
     <tr><td>Head intrinsics</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code> pixels. Stereo baseline: <code>0.0497 m</code>.</td></tr>
-    <tr><td>Extrinsic model</td><td>Use the URDF supplied by the pip package <code>dexmate_urdf</code> for nominal robot geometry. The supplied models and measured TCP/camera transforms are in <a href="#tcp-extrinsics">B13</a>.</td></tr>
+    <tr><td>Extrinsic model</td><td>Use the URDF supplied by the pip package <code>dexmate_urdf</code> for nominal robot geometry. The supplied models and measured TCP/camera transforms are in <a href="#tcp-extrinsics">B2</a>.</td></tr>
     <tr><td>Transport</td><td>Zenoh + dexcontrol, without ROS 2. RGB was transported over <strong>Zenoh/JPEG</strong>, not RTC. Latency was not measured.</td></tr>
     <tr><td>Computer</td><td>Jetson Orin Nano; L4T 36.5.0; kernel 5.15.185.</td></tr>
     <tr><td>Control</td><td><code>dexcontrol 0.5.0</code>: joint-position control. With <code>wait_time=0</code>, call continuously at 100–500 Hz. No public Cartesian, joint velocity or joint current control interface. The third-party CAN grippers are controlled separately.</td></tr>
@@ -25,7 +25,7 @@ p_base = T_base_camera @ p_camera</pre></div>
 </section>
 
 <section id="tcp-extrinsics">
-  <div class="sechead"><span class="num">B13</span><h2>TCP, camera extrinsics and URDF files</h2></div>
+  <div class="sechead"><span class="num">B2</span><h2>TCP, camera extrinsics and URDF files</h2></div>
   <p class="lede">Calibration records from “暂存代码并重新标定区域”. Its final selection on September 24 restored the clean <code>b90bcac</code> TCP/camera pair. The measured pivot fit and the earlier Y-adjusted pair are listed separately below.</p>
   <h3>Files</h3>
   <ul>
@@ -61,7 +61,7 @@ head_j3 = -0.5056219100952148 rad
 torso_flip = 0.22689280275926285 rad
 Lift = 0 m</pre></div>
   <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>{{CLEAN_CAMERA}}</pre></div>
-  <p>This matrix is for the listed head pose. Head movement changes the base-to-camera transform. The calibration record uses rectified-left <code>fx = fy = 734.7626953125</code>, <code>cx = 966.6296997070312</code>, <code>cy = 653.073486328125</code>, at 1920×1200; these are the saved calibration values, separately from the earlier values in B12.</p>
+  <p>This matrix is for the listed head pose. Head movement changes the base-to-camera transform. The calibration record uses rectified-left <code>fx = fy = 734.7626953125</code>, <code>cx = 966.6296997070312</code>, <code>cy = 653.073486328125</code>, at 1920×1200; these are the saved calibration values, separately from the earlier values in <a href="#hardware-control-reference">B1</a>.</p>
   <details><summary>Earlier Y-adjusted TCP/camera pair</summary>
     <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>{{ADJUSTED_TCP}}</pre></div>
     <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>{{ADJUSTED_CAMERA}}</pre></div>
