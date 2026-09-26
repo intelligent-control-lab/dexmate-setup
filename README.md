@@ -1,5 +1,7 @@
 # dexmate-setup
 
+[Official Dexmate manual](https://platform.dexmate.ai/) — For this setup, you generally only need the **Network** and **Software Setup** sections.
+
 [Chinese manual](https://intelligent-control-lab.github.io/dexmate-setup/) · [English manual](https://intelligent-control-lab.github.io/dexmate-setup/en.html)
 
 Vega-1U setup kit: robot-exported gripper library, dual-wrist camera initialization/API,
