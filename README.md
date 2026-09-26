@@ -50,21 +50,32 @@ The dependency installation needs Internet access; this is not an offline factor
 | `drivers/` | Exact-kernel modules, overlay, checksums and rebuild inputs |
 | `config/` | CAN/wrist services, tmpfiles and captured dexsensor template |
 | `scripts/` | Installer, initrd builder, read-only doctor, site generator |
-| `docs/` | Original manual with two added hardware chapters, Chinese translation, photos and videos |
+| `docs/` | Original manual, hardware setup, calibration/URDF reference, Chinese translation, photos and videos |
 | `provenance/` | Original source hashes, package versions and validation limits |
+
+## Calibration and URDF reference
+
+[Hardware and control measurements](https://intelligent-control-lab.github.io/dexmate-setup/en.html#hardware-control-reference) · [TCP and camera extrinsics](https://intelligent-control-lab.github.io/dexmate-setup/en.html#tcp-extrinsics)
+
+- Supplied package models: [vega_1u.urdf](docs/files/urdf/vega_1u.urdf) and [vega_1u_gripper.urdf](docs/files/urdf/vega_1u_gripper.urdf).
+- [Clean calibration pair](docs/files/calibration/clean-20260924.json), [pivot-fit result](docs/files/calibration/tcp-pivot-fit.json), and [earlier Y-adjusted pair](docs/files/calibration/adjusted-20260924.json).
+- [Reference matrices and file hashes](docs/files/reference-data.json), including the separate custom URDF nominal TCP.
 
 ## Maintain the site
 
 The supplied original is preserved in `manual/vega1umanual.html`. The website keeps its
-layout, sections, commands and examples. Only B10 (gripper hardware) and B11 (PCB/camera
-hardware) are added. Chinese prose is in `manual/zh.json`.
+layout, sections, commands and examples. B10–B11 cover hardware setup; B12–B13 add
+hardware/control measurements and TCP, camera extrinsics and URDF references.
+Chinese prose for the original chapters is in `manual/zh.json`.
 
-Edit `manual/hardware.en.html` and `manual/hardware.zh.html` for the two added chapters, then:
+Edit `manual/hardware.en.html` / `manual/hardware.zh.html` for hardware setup and
+`manual/reference.en.html` / `manual/reference.zh.html` for the reference chapters, then:
 
 ```bash
 python3 scripts/build_docs.py
 python3 -m unittest discover -s tests -v
 python3 scripts/check_site.py
+python3 scripts/check_reference.py
 python3 -m http.server 8000 --directory docs
 ```
 

@@ -1,0 +1,83 @@
+<section id="hardware-control-reference">
+  <div class="sechead"><span class="num">B12</span><h2>Hardware and control reference</h2></div>
+  <p class="lede">Measurements from “整理 DexMate 硬件与控制信息” (2026-09-14 UTC). The wrist cameras were not enabled during this measurement session.</p>
+  <div class="tw"><table><thead><tr><th>Item</th><th>Recorded configuration</th></tr></thead><tbody>
+    <tr><td>Cameras</td><td>Head: ZED X Mini stereo camera on ZED Link Duo. Left/right wrists: Sony ISX031.</td></tr>
+    <tr><td>Head outputs</td><td>Left RGB, right RGB and depth; no point-cloud output. Reconstruct points from <code>depth + K</code>.</td></tr>
+    <tr><td>Resolution / rate</td><td>Configured: 1920×1200 at 30 fps. Measured RGB and depth: approximately 24 Hz.</td></tr>
+    <tr><td>Head intrinsics</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code> pixels. Stereo baseline: <code>0.0497 m</code>.</td></tr>
+    <tr><td>Extrinsic model</td><td>Use the URDF supplied by the pip package <code>dexmate_urdf</code> for nominal robot geometry. The supplied models and measured TCP/camera transforms are in <a href="#tcp-extrinsics">B13</a>.</td></tr>
+    <tr><td>Transport</td><td>Zenoh + dexcontrol, without ROS 2. RGB was transported over <strong>Zenoh/JPEG</strong>, not RTC. Latency was not measured.</td></tr>
+    <tr><td>Computer</td><td>Jetson Orin Nano; L4T 36.5.0; kernel 5.15.185.</td></tr>
+    <tr><td>Control</td><td><code>dexcontrol 0.5.0</code>: joint-position control. With <code>wait_time=0</code>, call continuously at 100–500 Hz. No public Cartesian, joint velocity or joint current control interface. The third-party CAN grippers are controlled separately.</td></tr>
+    <tr><td>Six-axis wrench</td><td><code>get_wrench_state()</code> returns <code>[fx, fy, fz, tx, ty, tz]</code> as <code>float32</code>. Units and reference frame were not specified and require confirmation or calibration. The sensor was already active during the measurement.</td></tr>
+  </tbody></table></div>
+  <h3>Measured publication rates</h3>
+  <div class="tw"><table><thead><tr><th>Stream</th><th>Measured rate</th></tr></thead><tbody>
+    <tr><td>Both arms: joint state</td><td>91–92 Hz</td></tr><tr><td>Head: joint state</td><td>48 Hz</td></tr><tr><td>Head IMU</td><td>186–190 Hz</td></tr><tr><td>RGB / depth</td><td>≈24 Hz</td></tr><tr><td>Six-axis wrench</td><td>91–92 Hz</td></tr>
+  </tbody></table></div>
+  <h3>Depth back-projection</h3>
+  <p>For a rectified pixel <code>(u, v)</code> with valid depth <code>Z</code> in metres, use the intrinsics of that stream:</p>
+  <div class="cmd"><div class="cmd-head"><span>Optical camera coordinates · metres</span><button type="button">Copy</button></div><pre>X = (u - cx) * Z / fx
+Y = (v - cy) * Z / fy
+p_camera = [X, Y, Z, 1]
+p_base = T_base_camera @ p_camera</pre></div>
+</section>
+
+<section id="tcp-extrinsics">
+  <div class="sechead"><span class="num">B13</span><h2>TCP, camera extrinsics and URDF files</h2></div>
+  <p class="lede">Calibration records from “暂存代码并重新标定区域”. Its final selection on September 24 restored the clean <code>b90bcac</code> TCP/camera pair. The measured pivot fit and the earlier Y-adjusted pair are listed separately below.</p>
+  <h3>Files</h3>
+  <ul>
+    <li><a href="files/urdf/vega_1u.urdf" download>vega_1u.urdf</a> · supplied robot model.</li>
+    <li><a href="files/urdf/vega_1u_gripper.urdf" download>vega_1u_gripper.urdf</a> · supplied gripper model, including <code>L_camera_link</code> and <code>R_camera_link</code>.</li>
+    <li><a href="files/urdf/custom/vega_1u_gripper.urdf" download>Custom gripper URDF from the calibration project</a> · the separate model containing <code>tip_l</code> / <code>tip_r</code>, used for the nominal TCP comparison.</li>
+    <li><a href="files/calibration/clean-20260924.json" download>Clean TCP + camera calibration</a> · <a href="files/calibration/adjusted-20260924.json" download>Earlier Y-adjusted pair</a> · <a href="files/calibration/tcp-pivot-fit.json" download>Measured pivot-fit result</a>.</li>
+    <li><a href="files/reference-data.json" download>All matrices, source file hashes and frame definitions (JSON)</a>.</li>
+  </ul>
+  <p>The two supplied URDFs match <code>dexmate_urdf 0.8.4</code> byte-for-byte. Their original bytes and relative mesh paths are retained. Meshes resolve within the package's directory tree; the URDF downloads alone do not include the meshes. The custom comparison model is a separate file.</p>
+  <h3>Coordinate convention</h3>
+  <p><code>T_parent_child</code> maps column-vector coordinates from child to parent: <code>p_parent = T_parent_child @ p_child</code>. Translations are in metres; angles in radians. <code>R = Rz(yaw) @ Ry(pitch) @ Rx(roll)</code>. Base axes: X forward, Y robot-left, Z up. The calibrated left-camera optical axes are X image-right, Y image-down, Z forward.</p>
+  <h3>Right TCP: model, measured fit and selected values</h3>
+  <p>The two supplied package URDFs define <code>L_ee</code> / <code>R_ee</code>, but do not define a <code>tip_l</code> / <code>tip_r</code> grasp TCP. The nominal tip below comes from the separate custom model.</p>
+  <div class="tw"><table><thead><tr><th>Source</th><th>XYZ in R_ee (mm)</th><th>Meaning</th></tr></thead><tbody>
+    <tr><td>Custom URDF nominal tip</td><td><code>≈ [0, -15, 198]</code></td><td>Model geometry; full composed transform below.</td></tr>
+    <tr><td>Pivot fit · September 19</td><td><code>[-1.025481, -10.438899, 196.928685]</code></td><td>Measured translation; fit RMS 1.801540 mm. Pivot fitting does not determine orientation.</td></tr>
+    <tr><td>Y-adjusted pair · September 24, 11:16</td><td><code>[-1.025481, -18, 196.928685]</code></td><td>Measured X/Z with user-selected Y; paired camera transform retained in the downloadable record.</td></tr>
+    <tr><td>Clean pair restored · September 24, 11:43</td><td><code>[-1, -15, 198]</code></td><td>Final selected pair in the referenced task.</td></tr>
+  </tbody></table></div>
+  <p>The selected and Y-adjusted tool-frame convention uses <code>rpy = [π, 0, π/2]</code>. This orientation is nominal, not a pivot-fit measurement. The supplied measured TCP data cover the right gripper.</p>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>{{CLEAN_TCP}}</pre></div>
+  <details><summary>Custom URDF TCP transforms (left and right)</summary>
+    <p>These compose all fixed joints between the named EE frame and tip. They are model values, not measured left/right grasp centres.</p>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>{{CUSTOM_RIGHT_TCP}}</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_L_ee_tip_l · metres</span><button type="button">Copy</button></div><pre>{{CUSTOM_LEFT_TCP}}</pre></div>
+  </details>
+  <h3>Measured head-camera extrinsics</h3>
+  <p>The clean camera transform was fitted with a horizontal checkerboard constraint and restored together with the clean TCP. Its recorded held-out RMS is 1.176229 mm. Use this pair at its reference head pose:</p>
+  <div class="cmd"><div class="cmd-head"><span>Reference joint positions</span><button type="button">Copy</button></div><pre>head_j1 = -0.00017453292093705386 rad
+head_j2 = -0.00017453292093705386 rad
+head_j3 = -0.5056219100952148 rad
+torso_flip = 0.22689280275926285 rad
+Lift = 0 m</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>{{CLEAN_CAMERA}}</pre></div>
+  <p>This matrix is for the listed head pose. Head movement changes the base-to-camera transform. The calibration record uses rectified-left <code>fx = fy = 734.7626953125</code>, <code>cx = 966.6296997070312</code>, <code>cy = 653.073486328125</code>, at 1920×1200; these are the saved calibration values, separately from the earlier values in B12.</p>
+  <details><summary>Earlier Y-adjusted TCP/camera pair</summary>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · metres</span><button type="button">Copy</button></div><pre>{{ADJUSTED_TCP}}</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>{{ADJUSTED_CAMERA}}</pre></div>
+  </details>
+  <h3>Nominal extrinsics in the supplied URDFs</h3>
+  <p>Each row is the parent-to-child joint origin as stored in the file. The head and EE rows occur in both files; gripper and wrist-camera mounts occur in <code>vega_1u_gripper.urdf</code>.</p>
+  <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ (m)</th><th>RPY (rad)</th></tr></thead><tbody>{{URDF_MOUNT_ROWS}}</tbody></table></div>
+  <p>Forward kinematics through the package URDF, evaluated at the same reference joint positions above, gives the following nominal head transform:</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF FK · T_base_link_zed_left_camera · metres</span><button type="button">Copy</button></div><pre>{{URDF_CAMERA}}</pre></div>
+  <h3>URDF wrist-camera mounting transforms</h3>
+  <p>The supplied gripper URDF contains both wrist-camera links. Composing its fixed joints gives:</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_L_ee_L_camera_link · metres</span><button type="button">Copy</button></div><pre>{{LEFT_WRIST}}</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_R_ee_R_camera_link · metres</span><button type="button">Copy</button></div><pre>{{RIGHT_WRIST}}</pre></div>
+  <p>These are nominal <code>camera_link</code> mounting frames. The files do not define separate wrist optical frames or establish a measured ISX031 optical-frame transform. The older task's statement that the gripper URDF had no wrist-camera links does not apply to these supplied files.</p>
+  <details><summary>Joint origins in the separate custom comparison model</summary>
+    <p>Its head parent is <code>vega_1u_head_l3</code>, rather than the package model's <code>head_l3</code>; compare complete frame chains, not isolated XYZ/RPY values.</p>
+    <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ (m)</th><th>RPY (rad)</th></tr></thead><tbody>{{CUSTOM_MOUNT_ROWS}}</tbody></table></div>
+  </details>
+</section>

@@ -16,5 +16,10 @@
   `jetson-board.jpg` and `jetson-pinout.png` were also supplied by the user as hardware references.
 - `IMG_*.jpg` and `IMG_*.mp4` are the user's installation photos/videos, converted for web use.
   EXIF/QuickTime metadata were removed; original video audio is preserved. Original files remain outside Git.
-- `docs/reference.html` preserves the supplied English field manual with public-data redaction
-  and an explicit historical-status banner. The bilingual manual is the current entry point.
+- `manual/vega1umanual.html` preserves the supplied English field manual. The bilingual website
+  appends the requested hardware, control and calibration reference chapters.
+- `docs/files/urdf/vega_1u.urdf` and `vega_1u_gripper.urdf` are user-supplied files matching
+  `dexmate_urdf` 0.8.4. The separately labeled `urdf/custom/` model comes from the lab's
+  calibration project. Their existing notices and licensing remain unchanged.
+- `docs/files/calibration/` contains the requested lab calibration records. Source paths,
+  hashes and the referenced task identifiers are recorded in `docs/files/reference-data.json`.

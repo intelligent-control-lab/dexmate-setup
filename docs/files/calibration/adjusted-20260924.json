@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "calibration_id": "vega_1u_2026-09-19",
+  "robot": "dm/vg3eb20f25bb-1u",
+  "status": "Provisional horizontal-constrained camera deployed 2026-09-23",
+  "deployed_to_runtime": true,
+  "conventions": {
+    "length_unit": "metre",
+    "angle_unit": "radian",
+    "transform": "T_parent_child maps column-vector coordinates from child into parent: p_parent = R @ p_child + t",
+    "base_frame": "base_link",
+    "base_axes": "x forward, y robot-left, z up",
+    "rotation_matrix_storage": "row-major nested arrays",
+    "rpy_definition": "R = Rz(yaw) @ Ry(pitch) @ Rx(roll)"
+  },
+  "tcp": {
+    "parent_frame": "R_ee",
+    "child_frame": "tip_r",
+    "physical_point": "User-adjusted effective TCP: measured pivot-fit X/Z with Y=-18 mm; awaiting grasp validation",
+    "adopted_translation_m": [
+      -0.0010254810072318691,
+      -0.018,
+      0.19692868534887836
+    ],
+    "adopted_rpy_rad": [
+      3.141592653589793,
+      0,
+      1.5707963267948966
+    ],
+    "T_R_ee_tip_r": [
+      [
+        0,
+        1,
+        0,
+        -0.0010254810072318691
+      ],
+      [
+        1,
+        0,
+        0,
+        -0.018
+      ],
+      [
+        0,
+        0,
+        -1,
+        0.19692868534887836
+      ],
+      [
+        0,
+        0,
+        0,
+        1
+      ]
+    ],
+    "translation_source": "User request 2026-09-24: set R_ee TCP Y to -18 mm; retain adopted measured pivot-fit X/Z and existing rotation",
+    "rotation_source": "nominal tool-frame convention; not calibrated by pivot fitting",
+    "pivot_fit_alternative": {
+      "adopted": false,
+      "translation_m": [
+        -0.0010254810072318691,
+        -0.010438898921222017,
+        0.19692868534887836
+      ],
+      "fit_rms_mm": 1.8015404335422287,
+      "nominal_fixed_tcp_rms_mm": 2.1319078106345857,
+      "source": "evidence/tcp_touch_20260919_160044/codex_review.json"
+    },
+    "limitations": [
+      "Fingertip geometry changes with jaw opening; use a consistent contact point and opening.",
+      "No calibrated gripping-pad-centre transform is supplied.",
+      "Pivot fitting alone does not determine TCP orientation; mounting orientation is not fully independently certified."
+    ],
+    "user_correction_history": [
+      {
+        "date": "2026-09-22",
+        "frame": "R_ee",
+        "previous_translation_m": [
+          0.006,
+          -0.024,
+          0.198
+        ],
+        "new_translation_m": [
+          -0.001,
+          -0.015,
+          0.198
+        ],
+        "increment_from_previous_m": [
+          -0.007,
+          0.009,
+          0
+        ],
+        "status": "user-requested restoration; not independently validated",
+        "backup": "outputs/photo_tcp_fit/calibration.before_restore_minus1_minus15.json"
+      },
+      {
+        "date": "2026-09-24",
+        "frame": "R_ee",
+        "previous_translation_m": [
+          -0.001,
+          -0.015,
+          0.198
+        ],
+        "new_translation_m": [
+          -0.0010254810072318691,
+          -0.010438898921222017,
+          0.19692868534887836
+        ],
+        "status": "Measured pivot-fit translation adopted at user request; orientation unchanged; grasp not yet validated",
+        "backup": "outputs/adopt_measured_tcp_20260924_104725/calibration.local.before.json"
+      }
+    ],
+    "user_correction": {
+      "date": "2026-09-24",
+      "frame": "R_ee",
+      "previous_translation_m": [
+        -0.0010254810072318691,
+        -0.010438898921222017,
+        0.19692868534887836
+      ],
+      "new_translation_m": [
+        -0.0010254810072318691,
+        -0.018,
+        0.19692868534887836
+      ],
+      "status": "User-requested Y adjustment; not yet grasp validated",
+      "backup": "outputs/tcp_y_minus18_20260924_105643/calibration.local.before.json"
+    }
+  },
+  "camera": {
+    "parent_frame": "base_link",
+    "child_frame": "zed_left_camera",
+    "optical_axes": "x image-right, y image-down, z forward",
+    "T_base_camera": [
+      [
+        -0.0013837130901385743,
+        -0.6362664678189364,
+        0.7714681245957596,
+        0.08905748732366152
+      ],
+      [
+        -0.9999302774818821,
+        -0.008166771632430021,
+        -0.008529010265557607,
+        0.023881858821925006
+      ],
+      [
+        0.011727127230930423,
+        -0.7714261375986157,
+        -0.636210805249794,
+        1.1704476979498903
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "reference_head_joint_names": [
+      "head_j1",
+      "head_j2",
+      "head_j3"
+    ],
+    "reference_head_q_rad": [
+      -0.00017453292093705386,
+      -0.00017453292093705386,
+      -0.5056219100952148
+    ],
+    "fixed_joint_assumptions": {
+      "torso_flip": 0.22689280275926285,
+      "Lift": 0
+    },
+    "fixed_joint_units": {
+      "torso_flip": "radian",
+      "Lift": "metre"
+    },
+    "camera_model": "ZedXMini",
+    "serial_number": 53756133,
+    "image_size_wh": [
+      1920,
+      1200
+    ],
+    "rectified_left_intrinsics": {
+      "cx": 966.6296997070312,
+      "cy": 653.073486328125,
+      "d_fov": 114.03307342529297,
+      "distortion": [],
+      "fx": 734.7626953125,
+      "fy": 734.7626953125,
+      "h_fov": 105.14381408691406,
+      "v_fov": 78.47179412841797
+    },
+    "method": "Horizontal checkerboard constraint: A-F XY/yaw fit, training mean touch Z; s00 PnP normalized to reference head.",
+    "source": "outputs/horizontal_extrinsics_20260923/comparison.json",
+    "head_pose_scope": "Transform is for the listed head pose and fixed torso/Lift assumptions. Other head poses were not generally validated.",
+    "recheck_20260923": {
+      "fit_rms_mm": 1.7929219039527606,
+      "heldout_rms_mm": 1.4957325579616725,
+      "heldout_max_mm": 1.6803078089104213,
+      "pnp_rms_px": 0.7961251236116945,
+      "user_measured_table_tilt_deg": 0,
+      "touch_plane_tilt_interpretation": "User measured table level; fitted touch tilt is not applied to support plane. Candidate retains unconstrained touch fit and may contain touch-Z bias.",
+      "limitations": [
+        "Only first image has complete detected corners; others occluded",
+        "No independent off-plane data",
+        "Head normalization relies on relative URDF kinematics",
+        "Single tool orientation cannot separate TCP translation bias from camera translation",
+        "23.6 mm checker square assumed unchanged; paper surface is above gray board studs",
+        "Pending clarification of manual distances; no manual-distance constraint used"
+      ],
+      "backup": "outputs/extrinsics_recheck_20260923/deployment/calibration.robot.before.json"
+    },
+    "horizontal_recheck_20260923": {
+      "heldout_rms_mm": 1.176228607215586,
+      "board_edge_p90_px": 4.460444614130438,
+      "checker_surface_z_m": 0.5968671236830878,
+      "limitations": [
+        "Single view, single wrist orientation, same-plane touch validation",
+        "Touch Z bias can shift camera height; horizontal constraint removes tilt but not common translation bias",
+        "23.6 mm checker squares and 380 mm gray board assumed",
+        "Gray board Z remains fixed .590 m; checker surface height is estimated separately",
+        "No live hardware motion or calibration deployment"
+      ],
+      "supersedes": "recheck_20260923 unconstrained result"
+    },
+    "tcp_pair_update_20260924": {
+      "source": "outputs/extrinsics_current_tcp_20260924/calculation.json",
+      "tcp_translation_m": [
+        -0.0010254810072318691,
+        -0.018,
+        0.19692868534887836
+      ],
+      "method": "Original nine-point data; horizontal A-F fit, GHI held out",
+      "heldout_xyz_rms_mm": 1.1762003069538702,
+      "limitation": "Existing single wrist orientation data; no new physical validation"
+    }
+  },
+  "validation": {
+    "table_fit_rms_mm": 1.8646166815883083,
+    "table_heldout_rms_mm": 2.686359321750409,
+    "table_heldout_max_mm": 3.1480132192380013,
+    "raised_repeat_labels": [
+      "F_prime",
+      "A"
+    ],
+    "raised_repeat_errors_mm": [
+      5.364642750343588,
+      3.9249527598170606
+    ],
+    "raised_repeat_rms_mm": 4.700247121461253,
+    "cross_orientation_same_point_separation_mm": 5.815255579847275,
+    "cross_orientation_change_deg": 20.002635126814532,
+    "summary": "Several-millimetre agreement at tested locations; approximately 5-6 mm is a session summary, not a global accuracy bound or precision-assembly certification."
+  },
+  "board": {
+    "square_size_m": 0.0236,
+    "inner_corner_grid": [
+      9,
+      6
+    ],
+    "corner_coordinates": "index i -> [(i%9)*0.0236, floor(i/9)*0.0236, 0] in board frame",
+    "fit_point_corner_ids": {
+      "A": 0,
+      "B": 18,
+      "C": 45,
+      "D": 53,
+      "E": 26,
+      "F": 8,
+      "G": 13,
+      "H": 30,
+      "I": 42
+    },
+    "raised_repeat_corner_ids": {
+      "F_prime": 7,
+      "A": 0
+    },
+    "orientation_check_corner_id": 36
+  },
+  "limitations": [
+    "Extrinsics and TCP were not refitted to raised-board or orientation validation samples.",
+    "Manual touch error, board deformation, changing contact geometry and robot kinematic errors are not separated.",
+    "Original jog data lack explicit image/joint timestamp synchronization; some camera_info fields are null.",
+    "Raised repeat uses a post-touch reference photo and user-confirmed board immobility.",
+    "Final desk move occurred before both orientation touches; their pairwise comparison is valid but no new absolute camera check was completed due to occlusion.",
+    "A pick trial lifted the brick then slipped; it is not a successful precision-placement validation."
+  ],
+  "urdf": {
+    "file": "evidence/vega_1u.urdf",
+    "sha256": "b8111dbda1c47aabb0d03fd84be14d638e90a163e1770b76efe9c8e5104924d5"
+  }
+}

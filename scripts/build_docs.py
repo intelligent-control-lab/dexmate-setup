@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish the supplied manual unchanged, adding only B10/B11 and a translation."""
+"""Publish the original manual with bilingual hardware and calibration additions."""
 import html
 from html.parser import HTMLParser
 import json
@@ -60,6 +60,31 @@ class Translator(HTMLParser):
         return result
 
 
+def reference_chapters(lang):
+    data = json.loads((DOCS / 'files/reference-data.json').read_text())
+    relative = data['relative_transforms']
+    matrices = {
+        'CLEAN_TCP': data['clean_T_R_ee_tip_r'],
+        'CLEAN_CAMERA': data['clean_T_base_camera'],
+        'ADJUSTED_TCP': data['adjusted_T_R_ee_tip_r'],
+        'ADJUSTED_CAMERA': data['adjusted_T_base_camera'],
+        'URDF_CAMERA': data['urdf_T_base_zed_left_camera'],
+        'CUSTOM_RIGHT_TCP': relative['custom_T_R_ee_tip_r'],
+        'CUSTOM_LEFT_TCP': relative['custom_T_L_ee_tip_l'],
+        'LEFT_WRIST': relative['T_L_ee_L_camera_link'],
+        'RIGHT_WRIST': relative['T_R_ee_R_camera_link'],
+    }
+    source = (SOURCE / f'reference.{lang}.html').read_text()
+    for key, matrix in matrices.items():
+        rows = ['[' + ', '.join(f'{(0 if abs(x) < 0.5e-9 else x): .9f}' for x in row) + ']' for row in matrix]
+        source = source.replace('{{' + key + '}}', '[\n  ' + ',\n  '.join(rows) + '\n]')
+    for key, records in [('URDF_MOUNT_ROWS', data['urdf_fixed_joints']), ('CUSTOM_MOUNT_ROWS', data['custom_fixed_joints'])]:
+        rows = ''.join('<tr><td><code>' + html.escape(row['parent']) + ' → ' + html.escape(row['child']) + '</code></td><td><code>' + html.escape(row['xyz_m']) + '</code></td><td><code>' + html.escape(row['rpy_rad']) + '</code></td></tr>' for row in records)
+        source = source.replace('{{' + key + '}}', rows)
+    assert '{{' not in source, 'Unresolved reference placeholder'
+    return source
+
+
 def build(lang):
     source = (SOURCE / 'vega1umanual.html').read_text()
     if lang == 'zh':
@@ -67,10 +92,10 @@ def build(lang):
         source = Translator(source, translations).result()
         # Copy-button feedback is UI text, outside the original prose nodes.
         source = source.replace("'Copied'", "'已复制'").replace("'Copy'", "'复制'").replace("'Failed'", "'复制失败'")
-    titles = ('Gripper hardware setup', 'PCB / camera hardware setup') if lang == 'en' else ('夹爪硬件连接', 'PCB／相机硬件安装')
-    entries = '\n'.join(f'<li><a href="#{ident}"><span>B{n}</span>{title}</a></li>' for n, ident, title in zip((10, 11), ('gripper-hardware', 'pcb-hardware'), titles))
+    titles = ('Gripper hardware setup', 'PCB / camera hardware setup', 'Hardware & control', 'TCP, extrinsics & URDF') if lang == 'en' else ('夹爪硬件连接', 'PCB／相机硬件安装', '硬件与控制信息', 'TCP、外参与 URDF')
+    entries = '\n'.join(f'<li><a href="#{ident}"><span>B{n}</span>{title}</a></li>' for n, ident, title in zip((10, 11, 12, 13), ('gripper-hardware', 'pcb-hardware', 'hardware-control-reference', 'tcp-extrinsics'), titles))
     source = source.replace('<li><a href="#src">', entries + '\n    <li><a href="#src">', 1)
-    source = source.replace('<section id="src">', (SOURCE / f'hardware.{lang}.html').read_text() + '\n<section id="src">', 1)
+    source = source.replace('<section id="src">', (SOURCE / f'hardware.{lang}.html').read_text() + reference_chapters(lang) + '\n<section id="src">', 1)
     switch = '<div class="manual-language"><a href="index.html" lang="zh-CN">中文</a><span> / </span><a href="en.html" lang="en">English</a></div>'
     source = source.replace('<div class="masthead-inner">', '<div class="masthead-inner">\n' + switch, 1)
     cut = source.index('</style>') + len('</style>')
@@ -83,4 +108,4 @@ def build(lang):
 if __name__ == '__main__':
     for language in ('en', 'zh'):
         build(language)
-    print('Built original manual + B10/B11, in English and Chinese.')
+    print('Built original manual + B10–B13, in English and Chinese.')

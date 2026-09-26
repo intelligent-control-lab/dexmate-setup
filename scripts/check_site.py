@@ -36,7 +36,7 @@ def check_original_preserved():
     sections = {m.group(1): m.group(0) for m in re.finditer(pattern, original, re.S)}
     en_sections = {m.group(1): m.group(0) for m in re.finditer(pattern, english, re.S)}
     zh_sections = {m.group(1): m.group(0) for m in re.finditer(pattern, chinese, re.S)}
-    assert set(en_sections) - set(sections) == {"gripper-hardware", "pcb-hardware"}
+    assert set(en_sections) - set(sections) == {"gripper-hardware", "pcb-hardware", "hardware-control-reference", "tcp-extrinsics"}
     for ident, source in sections.items():
         assert en_sections[ident] == source, f"Original chapter rewritten: {ident}"
         for tag in ("pre", "code"):

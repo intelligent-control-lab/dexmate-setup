@@ -1,0 +1,83 @@
+<section id="hardware-control-reference">
+  <div class="sechead"><span class="num">B12</span><h2>硬件与控制信息</h2></div>
+  <p class="lede">来自「整理 DexMate 硬件与控制信息」任务的测量记录（2026-09-14 UTC）。该次测量时，左右腕部相机均未启用。</p>
+  <div class="tw"><table><thead><tr><th>项目</th><th>记录配置</th></tr></thead><tbody>
+    <tr><td>相机</td><td>头部为 ZED X Mini 双目相机，接 ZED Link Duo；左右腕为 Sony ISX031。</td></tr>
+    <tr><td>头部输出</td><td>提供左右 RGB 和深度，无点云输出；需用 <code>depth + K</code> 反投影。</td></tr>
+    <tr><td>分辨率／频率</td><td>配置为 1920×1200、30 fps；实测 RGB 和深度约 24 Hz。</td></tr>
+    <tr><td>头部内参</td><td><code>fx = fy = 734.72; cx = 966.63; cy = 653.07</code>，单位为像素。双目基线：<code>0.0497 m</code>。</td></tr>
+    <tr><td>外参模型</td><td>名义机器人几何以 pip 包 <code>dexmate_urdf</code> 内的 URDF 为准。上传的模型及实测 TCP／相机变换见 <a href="#tcp-extrinsics">B13</a>。</td></tr>
+    <tr><td>通信</td><td>纯 Zenoh + dexcontrol，无 ROS 2。该次 RGB 实际走 <strong>Zenoh/JPEG</strong>，不是 RTC。延迟未测。</td></tr>
+    <tr><td>计算机</td><td>Jetson Orin Nano；L4T 36.5.0；kernel 5.15.185。</td></tr>
+    <tr><td>控制</td><td><code>dexcontrol 0.5.0</code>，仅支持关节位置控制；<code>wait_time=0</code> 时需以 100–500 Hz 循环调用。无公开笛卡尔、关节 velocity／current 控制接口。第三方 CAN 夹爪单独控制。</td></tr>
+    <tr><td>六维力</td><td><code>get_wrench_state()</code> 返回 <code>[fx, fy, fz, tx, ty, tz]</code>，类型为 <code>float32</code>。单位和参考坐标系未注明，需要确认或标定。传感器在该次测量时已激活。</td></tr>
+  </tbody></table></div>
+  <h3>实测发布频率</h3>
+  <div class="tw"><table><thead><tr><th>数据流</th><th>实测频率</th></tr></thead><tbody>
+    <tr><td>双臂关节状态</td><td>91–92 Hz</td></tr><tr><td>头部关节状态</td><td>48 Hz</td></tr><tr><td>头部 IMU</td><td>186–190 Hz</td></tr><tr><td>RGB／深度</td><td>≈24 Hz</td></tr><tr><td>六维力</td><td>91–92 Hz</td></tr>
+  </tbody></table></div>
+  <h3>深度反投影</h3>
+  <p>对校正后的像素 <code>(u, v)</code>，深度 <code>Z</code> 有效且单位为米时，使用对应图像流的内参：</p>
+  <div class="cmd"><div class="cmd-head"><span>相机光学坐标 · 米</span><button type="button">复制</button></div><pre>X = (u - cx) * Z / fx
+Y = (v - cy) * Z / fy
+p_camera = [X, Y, Z, 1]
+p_base = T_base_camera @ p_camera</pre></div>
+</section>
+
+<section id="tcp-extrinsics">
+  <div class="sechead"><span class="num">B13</span><h2>TCP、相机外参与 URDF 文件</h2></div>
+  <p class="lede">标定记录来自「暂存代码并重新标定区域」任务。该任务在 9 月 24 日最终恢复了 clean 提交 <code>b90bcac</code> 的 TCP／相机组合。原始 pivot 实测拟合值和此前调整 Y 后的组合在下方分别列出。</p>
+  <h3>文件</h3>
+  <ul>
+    <li><a href="files/urdf/vega_1u.urdf" download>vega_1u.urdf</a> · 上传的机器人模型。</li>
+    <li><a href="files/urdf/vega_1u_gripper.urdf" download>vega_1u_gripper.urdf</a> · 上传的夹爪模型，包含 <code>L_camera_link</code> 和 <code>R_camera_link</code>。</li>
+    <li><a href="files/urdf/custom/vega_1u_gripper.urdf" download>标定项目中的自定义夹爪 URDF</a> · 另一份包含 <code>tip_l</code>／<code>tip_r</code> 的模型，用于名义 TCP 对照。</li>
+    <li><a href="files/calibration/clean-20260924.json" download>Clean TCP＋相机标定</a> · <a href="files/calibration/adjusted-20260924.json" download>此前调整 Y 的组合</a> · <a href="files/calibration/tcp-pivot-fit.json" download>Pivot 实测拟合结果</a>。</li>
+    <li><a href="files/reference-data.json" download>全部矩阵、源文件校验值及坐标系定义（JSON）</a>。</li>
+  </ul>
+  <p>两份上传的 URDF 与 <code>dexmate_urdf 0.8.4</code> 包内文件逐字节一致，保留了原文件及相对 mesh 路径。Mesh 需在软件包的目录结构中解析；单独下载 URDF 不包含 mesh。用于对照的自定义模型单独存放。</p>
+  <h3>坐标约定</h3>
+  <p><code>T_parent_child</code> 将列向量坐标从 child 转到 parent：<code>p_parent = T_parent_child @ p_child</code>。平移单位为米，角度单位为弧度。<code>R = Rz(yaw) @ Ry(pitch) @ Rx(roll)</code>。基座轴向：X 向前、Y 向机器人左侧、Z 向上；已标定的左相机光学轴向：X 向图像右侧、Y 向图像下方、Z 向前。</p>
+  <h3>右侧 TCP：模型、实测拟合与选用值</h3>
+  <p>两份上传的软件包 URDF 定义了 <code>L_ee</code>／<code>R_ee</code>，但没有定义 <code>tip_l</code>／<code>tip_r</code> 夹持 TCP。下面的名义 tip 来自单独的自定义模型。</p>
+  <div class="tw"><table><thead><tr><th>来源</th><th>R_ee 中的 XYZ（mm）</th><th>含义</th></tr></thead><tbody>
+    <tr><td>自定义 URDF 名义 tip</td><td><code>≈ [0, -15, 198]</code></td><td>模型几何值；完整连乘变换见下方。</td></tr>
+    <tr><td>Pivot 拟合 · 9 月 19 日</td><td><code>[-1.025481, -10.438899, 196.928685]</code></td><td>实测平移；拟合 RMS 为 1.801540 mm。Pivot 拟合不确定旋转。</td></tr>
+    <tr><td>调整 Y 的组合 · 9 月 24 日 11:16</td><td><code>[-1.025481, -18, 196.928685]</code></td><td>采用实测 X／Z，Y 由用户指定；配套相机外参保存在可下载记录中。</td></tr>
+    <tr><td>恢复的 clean 组合 · 9 月 24 日 11:43</td><td><code>[-1, -15, 198]</code></td><td>引用任务最终选用的组合。</td></tr>
+  </tbody></table></div>
+  <p>最终选用值和调整 Y 的组合使用工具坐标约定 <code>rpy = [π, 0, π/2]</code>。这一旋转是名义约定，并非 pivot 实测结果。提供的实测 TCP 数据针对右夹爪。</p>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>{{CLEAN_TCP}}</pre></div>
+  <details><summary>自定义 URDF 中的左右 TCP 变换</summary>
+    <p>以下连乘对应 EE 坐标系到 tip 之间的全部固定关节，是模型值，不是左右夹持中心的实测值。</p>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>{{CUSTOM_RIGHT_TCP}}</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Custom · T_L_ee_tip_l · 米</span><button type="button">复制</button></div><pre>{{CUSTOM_LEFT_TCP}}</pre></div>
+  </details>
+  <h3>实测头部相机外参</h3>
+  <p>Clean 相机外参使用水平棋盘约束拟合，并与 clean TCP 一起恢复。记录中的留出点 RMS 为 1.176229 mm。该组合对应以下参考头部姿态：</p>
+  <div class="cmd"><div class="cmd-head"><span>参考关节位置</span><button type="button">复制</button></div><pre>head_j1 = -0.00017453292093705386 rad
+head_j2 = -0.00017453292093705386 rad
+head_j3 = -0.5056219100952148 rad
+torso_flip = 0.22689280275926285 rad
+Lift = 0 m</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>Clean · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>{{CLEAN_CAMERA}}</pre></div>
+  <p>矩阵对应上面的头部姿态；头部运动后，基座到相机的变换会变化。标定记录保存的校正左目内参为 <code>fx = fy = 734.7626953125</code>、<code>cx = 966.6296997070312</code>、<code>cy = 653.073486328125</code>，分辨率 1920×1200；这是该次标定保存的值，与 B12 中较早记录的值分别列出。</p>
+  <details><summary>此前调整 Y 的 TCP／相机组合</summary>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_R_ee_tip_r · 米</span><button type="button">复制</button></div><pre>{{ADJUSTED_TCP}}</pre></div>
+    <div class="cmd"><div class="cmd-head"><span>Adjusted · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>{{ADJUSTED_CAMERA}}</pre></div>
+  </details>
+  <h3>上传 URDF 中的名义外参</h3>
+  <p>每行是文件中存储的父子关节原点。两份文件均包含头部和 EE 条目；夹爪和腕部相机安装条目位于 <code>vega_1u_gripper.urdf</code>。</p>
+  <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody>{{URDF_MOUNT_ROWS}}</tbody></table></div>
+  <p>在上述相同参考关节位置下，通过软件包 URDF 正运动学计算出的名义头部变换如下：</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF FK · T_base_link_zed_left_camera · 米</span><button type="button">复制</button></div><pre>{{URDF_CAMERA}}</pre></div>
+  <h3>URDF 腕部相机安装变换</h3>
+  <p>上传的夹爪 URDF 包含两侧腕部相机 link。连乘固定关节后得到：</p>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_L_ee_L_camera_link · 米</span><button type="button">复制</button></div><pre>{{LEFT_WRIST}}</pre></div>
+  <div class="cmd"><div class="cmd-head"><span>URDF · T_R_ee_R_camera_link · 米</span><button type="button">复制</button></div><pre>{{RIGHT_WRIST}}</pre></div>
+  <p>这些是名义 <code>camera_link</code> 安装坐标系。文件没有单独定义腕部光学坐标系，也没有给出经实测确认的 ISX031 光学坐标变换。旧任务中“夹爪 URDF 没有腕部相机 link”的结论不适用于这次上传的文件。</p>
+  <details><summary>单独的自定义对照模型中的关节原点</summary>
+    <p>该模型头部父坐标系是 <code>vega_1u_head_l3</code>，软件包模型则为 <code>head_l3</code>；对比时应使用完整坐标链，不能只比较局部 XYZ／RPY。</p>
+    <div class="tw"><table><thead><tr><th>Parent → child</th><th>XYZ（m）</th><th>RPY（rad）</th></tr></thead><tbody>{{CUSTOM_MOUNT_ROWS}}</tbody></table></div>
+  </details>
+</section>

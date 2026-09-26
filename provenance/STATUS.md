@@ -20,9 +20,11 @@ The source's `goto_ready.py` was updated September 21–23, after the supplied m
 right-arm-first, step 0.04 rad, wait 0.8 s and head radians approximately `[0, 0, -0.505622]`.
 Those are reference robot values, not camera calibration for a replacement robot.
 
-The supplied manual is retained as the website source, with two added hardware chapters
-and a corresponding Chinese translation. Robot certificates, private keys and per-robot
-calibration files are excluded from the software export.
+The supplied manual is retained as the website source, with the requested hardware chapters,
+hardware/control and calibration references, and a corresponding Chinese translation.
+Robot certificates, private keys and per-robot calibration files are excluded from the software
+export. The separately requested calibration reference records are available in
+`docs/files/calibration/`; they are not installed on new robots by the installer.
 
 ## Packaging checks completed
 
