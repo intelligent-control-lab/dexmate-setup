@@ -36,13 +36,14 @@ def check_original_preserved():
     pattern = r'<section id="([^"]+)"[^>]*>.*?</section>'
     sections = {m.group(1): m.group(0) for m in re.finditer(pattern, renumber(original), re.S)}
     for lang, fragment in [("en", "english"), ("zh", "chinese")]:
-        addition = (ROOT.parent / f"manual/camera-help.{lang}.html").read_text() + "\n  "
-        if fragment == "english":
-            assert addition in english
-            english = english.replace(addition, "", 1)
-        else:
-            assert addition in chinese
-            chinese = chinese.replace(addition, "", 1)
+        for name in ('camera-help', 'registration'):
+            addition = (ROOT.parent / f"manual/{name}.{lang}.html").read_text() + "\n  "
+            if fragment == "english":
+                assert addition in english
+                english = english.replace(addition, "", 1)
+            else:
+                assert addition in chinese
+                chinese = chinese.replace(addition, "", 1)
     en_sections = {m.group(1): m.group(0) for m in re.finditer(pattern, english, re.S)}
     zh_sections = {m.group(1): m.group(0) for m in re.finditer(pattern, chinese, re.S)}
     assert set(en_sections) - set(sections) == {"gripper-hardware", "pcb-hardware", "hardware-control-reference", "tcp-extrinsics"}

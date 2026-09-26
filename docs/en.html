@@ -1041,6 +1041,8 @@ nmcli device wifi list</pre></div>
 
 <section id="cert">
   <div class="sechead"><span class="num">B4</span><h2>Certificate and firmware — once per robot</h2><span class="pill done">Done · one-time</span></div>
+  <div class="note"><span class="tag">Get this robot’s name and registration file first</span><p>Go to the <a href="https://platform.dexmate.ai/">official Dexmate platform</a> to obtain this robot’s name and download its corresponding <code>.dzcfg</code> registration file. Use that name for <code>ROBOT_NAME</code> and the installer’s <code>--robot-name</code>, and use that file for registration / certificate setup below. The robot name shown in this manual is an example from our robot; use the name and file issued for the robot you are installing.</p></div>
+
   <p class="lede">The certificate is the ticket onto the bus: install it once, it lasts until it expires. Firmware updates are optional; the certificate is not. Dexmate documents two paths, and <strong>the certificate can only go through the web portal</strong>.</p>
 
   <h3>Method 1 · Web portal (required for the certificate)</h3>

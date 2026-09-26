@@ -1041,6 +1041,8 @@ nmcli device wifi list</pre></div>
 
 <section id="cert">
   <div class="sechead"><span class="num">B4</span><h2>证书与固件——每台机器人一次</h2><span class="pill done">已完成 · 一次性</span></div>
+  <div class="note"><span class="tag">先获取本机名称与注册文件</span><p>请到 <a href="https://platform.dexmate.ai/">Dexmate 官方平台</a> 获取本机名称，并下载这台机器人对应的 <code>.dzcfg</code> 注册文件。将本机名称用于 <code>ROBOT_NAME</code> 和 installer 的 <code>--robot-name</code> 参数，并使用对应文件完成下方的注册／证书配置。手册中展示的机器人名称是我们这台机器的示例；安装新机器人时，请使用官网为该机提供的名称和文件。</p></div>
+
   <p class="lede">证书是接入总线的凭证：安装一次，直到过期前都有效。固件更新可选，证书不可省略。Dexmate 提供两条路径，而 <strong>证书只能通过 Web 管理页面安装</strong>.</p>
 
   <h3>方式 1 · Web 管理页面（证书必需）</h3>

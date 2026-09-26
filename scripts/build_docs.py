@@ -144,6 +144,10 @@ def organize(source, lang):
     start = source.index('<section id="camera-setup">')
     at = source.index('<div class="note warn">', start)
     source = source[:at] + camera + '\n  ' + source[at:]
+    registration = (SOURCE / f'registration.{lang}.html').read_text()
+    start = source.index('<section id="cert">')
+    at = source.index('<p class="lede">', start)
+    source = source[:at] + registration + '\n  ' + source[at:]
     return source
 
 
