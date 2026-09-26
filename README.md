@@ -18,7 +18,6 @@ Exact vendor filenames/hashes: [vendor-installers.json](provenance/vendor-instal
 ```bash
 git clone https://github.com/intelligent-control-lab/dexmate-setup.git
 cd dexmate-setup
-/usr/bin/python3 scripts/install.py  # read-only plan
 
 # Use THIS robot's serial, not the source robot's identity.
 sudo /usr/bin/python3 scripts/install.py --apply \
